@@ -1,0 +1,75 @@
+<%- include('partials/header', { active: 'home', pageTitle: 'Home', config }) %>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="kicker">AN ANIMATED HORROR SERIES BY MAYA CLARK</div>
+    <h1>THE DEAD <span>DON'T</span> FORGET</h1>
+    <div class="tagline"><%= config.tagline %></div>
+    <div class="cta-row">
+      <a class="btn" href="/episodes">Watch Free</a>
+      <a class="btn ghost" href="/bonus">Bonus Store</a>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <h2>Latest <span>Episode</span></h2>
+    <p class="section-sub">Episode 3: "The Ledger" — streaming free right now.</p>
+    <div class="player">
+      <iframe src="https://www.youtube.com/embed/<%= config.episodes[2].youtubeId %>" title="The Dead Don't Forget — Episode 3: The Ledger" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>The <span>Episodes</span></h2>
+    <p class="section-sub">Every episode streams free. The Bonus Store is where supporters go deeper.</p>
+    <div class="cards">
+      <% config.episodes.forEach(ep => { %>
+      <div class="card">
+        <img src="<%= ep.poster %>" alt="Poster for Episode <%= ep.n %>: <%= ep.title %>">
+        <div class="card-body">
+          <div class="ep-num">EPISODE <%= ep.n %></div>
+          <h3><%= ep.title %></h3>
+          <div class="runtime"><%= ep.runtime %></div>
+          <p><%= ep.synopsis %></p>
+          <a class="btn" href="https://youtu.be/<%= ep.youtubeId %>" target="_blank" rel="noopener">Watch Free</a>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Go <span>Deeper</span></h2>
+    <p class="section-sub">Early premieres and official art — straight from the creator.</p>
+    <div class="product">
+      <div>
+        <h3><%= config.products['ep4-early'].name %></h3>
+        <div class="tagline"><%= config.products['ep4-early'].tagline %></div>
+      </div>
+      <a class="btn" href="/bonus">Unlock — $<%= (config.products['ep4-early'].priceCents/100).toFixed(2) %></a>
+    </div>
+    <div class="product">
+      <div>
+        <h3><%= config.products['poster-pack'].name %></h3>
+        <div class="tagline"><%= config.products['poster-pack'].tagline %></div>
+      </div>
+      <a class="btn" href="/bonus">Unlock — $<%= (config.products['poster-pack'].priceCents/100).toFixed(2) %></a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap gate">
+    <h2>The Full <span>Story</span></h2>
+    <p>69 episodes of the original audio series — free on Pocket FM.</p>
+    <a class="btn ghost" href="<%= config.pocketFmUrl %>" target="_blank" rel="noopener">Listen on Pocket FM</a>
+  </div>
+</section>
+
+<%- include('partials/footer', { config }) %>

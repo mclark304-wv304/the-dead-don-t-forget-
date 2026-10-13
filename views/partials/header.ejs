@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= typeof pageTitle !== 'undefined' ? pageTitle + ' — ' : '' %>THE DEAD DON'T FORGET</title>
+<meta name="description" content="THE DEAD DON'T FORGET — an animated horror series by Maya Clark. Every name has a debt.">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<nav>
+  <div class="wrap">
+    <a class="brand" href="/">THE DEAD <span>DON'T</span> FORGET</a>
+    <ul>
+      <li><a href="/" class="<%= typeof active !== 'undefined' && active === 'home' ? 'active' : '' %>">Home</a></li>
+      <li><a href="/episodes" class="<%= typeof active !== 'undefined' && active === 'episodes' ? 'active' : '' %>">Episodes</a></li>
+      <li><a href="/bonus" class="<%= typeof active !== 'undefined' && active === 'bonus' ? 'active' : '' %>">Bonus Store</a></li>
+    </ul>
+  </div>
+</nav>
+<main>

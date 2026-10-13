@@ -1,0 +1,29 @@
+<%- include('partials/header', { active: 'episodes', pageTitle: 'Episodes', config }) %>
+
+<section>
+  <div class="wrap">
+    <h2>All <span>Episodes</span></h2>
+    <p class="section-sub">Every episode streams free, right here.</p>
+
+    <% config.episodes.forEach(ep => { %>
+    <div class="episode-block">
+      <div class="player">
+        <iframe src="https://www.youtube.com/embed/<%= ep.youtubeId %>" title="The Dead Don't Forget — Episode <%= ep.n %>: <%= ep.title %>" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <h3>Episode <%= ep.n %>: <%= ep.title %></h3>
+      <div class="meta"><%= ep.runtime %> &middot; <a href="https://youtu.be/<%= ep.youtubeId %>" target="_blank" rel="noopener">Watch on YouTube</a></div>
+      <p class="section-sub"><%= ep.synopsis %></p>
+    </div>
+    <% }) %>
+
+    <h2>Teasers &amp; <span>Shorts</span></h2>
+    <p class="section-sub">Quick hits. Share them everywhere.</p>
+    <div class="shorts-row">
+      <% config.shorts.forEach(s => { %>
+        <a class="btn ghost" href="<%= s.url %>" target="_blank" rel="noopener"><%= s.label %> &#9654;</a>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer', { config }) %>

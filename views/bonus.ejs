@@ -1,0 +1,67 @@
+<%- include('partials/header', { active: 'bonus', pageTitle: 'Bonus Store', config }) %>
+
+<section>
+  <div class="wrap">
+    <h2>Bonus <span>Store</span></h2>
+    <p class="section-sub">Early premieres and official art. Pay once, yours forever.</p>
+
+    <% if (notice.restored) { %>
+      <div class="notice">Access restored — your purchases are unlocked on this device.</div>
+    <% } %>
+    <% if (notice.cancelled) { %>
+      <div class="notice">Checkout was cancelled. No charge was made.</div>
+    <% } %>
+    <% if (notice.error === 'no-purchases') { %>
+      <div class="notice">No purchases found for that email. Check the spelling, or buy below.</div>
+    <% } %>
+    <% if (notice.error === 'bad-email') { %>
+      <div class="notice">That doesn't look like an email address. Try again.</div>
+    <% } %>
+
+    <div id="checkout-error" class="notice" style="display:none"></div>
+
+    <% Object.entries(config.products).forEach(([id, p]) => { %>
+    <div class="product">
+      <div>
+        <h3><%= p.name %></h3>
+        <div class="tagline"><%= p.tagline %></div>
+      </div>
+      <div class="unlock-form">
+        <div class="price">$<%= (p.priceCents/100).toFixed(2) %></div>
+        <button class="btn" data-checkout="<%= id %>">Unlock</button>
+      </div>
+    </div>
+    <% }) %>
+
+    <div class="restore">
+      <h2>Already <span>bought?</span></h2>
+      <p class="section-sub">Enter the email you paid with to restore access on this device.</p>
+      <form method="POST" action="/api/restore">
+        <input type="email" name="email" placeholder="you@example.com" required>
+        <button class="btn" type="submit" style="margin-left:.6rem">Restore access</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+document.querySelectorAll('[data-checkout]').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    const box = document.getElementById('checkout-error');
+    box.style.display = 'none';
+    try {
+      const r = await fetch('/api/checkout/' + btn.dataset.checkout, { method: 'POST' });
+      const data = await r.json();
+      if (data.url) { window.location = data.url; return; }
+      throw new Error(data.error || 'Checkout failed.');
+    } catch (e) {
+      box.textContent = e.message;
+      box.style.display = 'block';
+      btn.disabled = false;
+    }
+  });
+});
+</script>
+
+<%- include('partials/footer', { config }) %>
