@@ -1,0 +1,20 @@
+<%- include('partials/header', { active: '', pageTitle: 'Soul link claimed', config }) %>
+
+<section>
+  <div class="wrap gate">
+    <h2>You&rsquo;re on the list.</h2>
+    <p>This soul link has been claimed<% if (label) { %> (<%= label %>)<% } %>.</p>
+    <% if (allAccess) { %>
+      <p>It unlocks <strong>every episode</strong> &mdash; including all future ones. Watch anytime:</p>
+    <% } else { %>
+      <p>These are unlocked for you now &mdash; watch anytime:</p>
+    <% } %>
+    <ul class="promo-links">
+      <% links.forEach(l => { %>
+        <li><a class="btn" href="<%= l.path %>"><%= l.name %></a></li>
+      <% }); %>
+    </ul>
+  </div>
+</section>
+
+<%- include('partials/footer', { config }) %>

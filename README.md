@@ -154,3 +154,34 @@ Restart the server after editing.
 - **One claim per browser:** on success the JS sets `ddf_easter_egg_claimed` in
   localStorage; if present, the modal instead says "You already claimed your soul."
   (The server-side cap of 13 is the real backstop.)
+
+## Promo "soul links" (private paywall-bypass links)
+
+- **What:** the owner can mint unguessable links (`/promo/<code>`) that grant
+  free access for a capped number of redeemers — e.g. five individual
+  single-use "soul links". The recommended entitlement is **`all-access`**, a
+  master key honored by every gated watch page: it unlocks all episodes,
+  current and future, with no fixed episode list to maintain. Redeemers get the
+  **exact same signed, httpOnly entitlement cookie** the PayPal success flow
+  issues, so their views are unlimited.
+- **Create them:** `node scripts/make-promo.js --count 5 --max 1 --entitlements all-access --label "soul link"`.
+  Prints all five shareable URLs. `--count N` makes N individual codes;
+  `--max M` sets claims allowed per code (1 = single-use); `--label` is a
+  private note (numbered per link when count > 1). Codes are 16-char
+  alphanumeric (unguessable). Per-episode entitlements (e.g. `ep4-early`) also
+  work, including ones not in `config.products` yet — the cookie carries them
+  and the watch pages unlock automatically once they go live.
+- **Storage:** `data/promos.json` maps `code -> { entitlements, maxClaims, claims, label, created }`.
+  Every claim increments and rewrites the file atomically (temp + rename), so
+  counts survive restarts exactly like the Easter egg's SQLite count. Note: on
+  Render's free tier `data/` is ephemeral across redeploys — same caveat as the
+  Easter egg claims; redeploying resets both.
+- **Redeem:** `GET /promo/<code>`. Unknown code → friendly 404 page (never a
+  stack trace). Valid code with claims left → mints the entitlement cookie and
+  shows a "This soul link has been claimed" success page linking each entitled
+  watch page. Exhausted code → friendly "already been claimed" page. No
+  endpoint lists or enumerates codes — keep links private; anyone with a link
+  can claim it until its cap is hit.
+- **Deploying new codes:** codes are loaded from `data/promos.json` at server
+  startup — commit the file and redeploy (Render auto-deploys on push) for new
+  links to take effect.

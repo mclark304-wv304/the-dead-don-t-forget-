@@ -147,7 +147,12 @@ function readAccess(req) {
 function requireEntitlement(entitlement) {
   return (req, res, next) => {
     const access = readAccess(req);
-    if (access && Array.isArray(access.products) && access.products.includes(entitlement)) {
+    // "all-access" is a master key (promo free passes): it unlocks every
+    // gated page, including future episodes, alongside the specific
+    // per-episode entitlement. Purely additive — existing buyer cookies
+    // carrying only their own entitlements keep working exactly as before.
+    if (access && Array.isArray(access.products) &&
+        (access.products.includes(entitlement) || access.products.includes("all-access"))) {
       req.access = access;
       return next();
     }
@@ -289,6 +294,94 @@ app.post("/api/easter-egg/claim", (req, res) => {
   } catch (err) {
     res.status(500).json({ ok: false, reason: "error", message: err.message });
   }
+});
+
+// ── Promo codes: private free-pass links ─────────────────────
+// Owner-generated codes (scripts/make-promo.js) that bypass the paywall for
+// a capped number of redeemers. Each redeemer gets a unique per-claim
+// identity, the entitlements are granted server-side (SQLite), and the
+// signed httpOnly cookie is the EXACT same shape the PayPal success flow
+// issues — unlimited views, no expiry games. Claim counts persist in
+// data/promos.json (atomic write on every claim), the same durability the
+// Easter egg gets from its SQLite count.
+const PROMOS_FILE = path.join(DATA_DIR, "promos.json");
+function loadPromos() {
+  try {
+    const data = JSON.parse(fs.readFileSync(PROMOS_FILE, "utf8"));
+    return data && typeof data === "object" ? data : {};
+  } catch {
+    return {};
+  }
+}
+function savePromos(promos) {
+  // Atomic write: temp file + rename, so a crash can't corrupt the file.
+  const tmp = PROMOS_FILE + ".tmp";
+  fs.writeFileSync(tmp, JSON.stringify(promos, null, 2));
+  fs.renameSync(tmp, PROMOS_FILE);
+}
+const promos = loadPromos();
+function watchPathFor(entitlement) {
+  const product = config.products[entitlement];
+  if (product && product.deliveryPath) return product.deliveryPath;
+  const m = /^ep(\d+)-early$/.exec(entitlement);
+  if (m) return `/watch/ep${m[1]}`; // future episodes unlock when their pages go live
+  return "/bonus";
+}
+function promoDisplayName(entitlement) {
+  if (entitlement === "all-access") return "All Episodes — Full Access";
+  const product = config.products[entitlement];
+  if (product) return product.name;
+  const m = /^ep(\d+)-early$/.exec(entitlement);
+  if (m) return `Episode ${m[1]} — Early Access`;
+  return entitlement;
+}
+function promoLinks(entitlements) {
+  // "all-access" unlocks every episode, current and future: link every
+  // episode watch page that exists right now.
+  if (entitlements.includes("all-access")) {
+    const seen = new Set();
+    const links = [];
+    for (const p of Object.values(config.products)) {
+      if (p.deliveryPath && p.deliveryPath.startsWith("/watch/") && !seen.has(p.deliveryPath)) {
+        seen.add(p.deliveryPath);
+        links.push({ name: p.name, path: p.deliveryPath });
+      }
+    }
+    return links;
+  }
+  return entitlements.map(e => ({ name: promoDisplayName(e), path: watchPathFor(e) }));
+}
+
+app.get("/promo/:code", (req, res) => {
+  const promo = promos[req.params.code];
+  if (!promo || !Array.isArray(promo.entitlements)) {
+    return res.status(404).render("error", {
+      title: "Not found",
+      message: "That pass doesn't exist. Check the link and try again.",
+      cta: "/bonus"
+    });
+  }
+  if (promo.claims >= promo.maxClaims) {
+    return res.render("error", {
+      title: "Already claimed",
+      message: "This soul link has already been claimed.",
+      cta: "/bonus"
+    });
+  }
+  // Claim it: persist the incremented count FIRST (same crash-safety order
+  // as the Easter egg), then mint the entitlement cookie.
+  const claimNumber = promo.claims + 1;
+  const email = `promo-pass-${claimNumber}-${crypto.randomBytes(4).toString("hex")}@example.invalid`;
+  for (const entitlement of promo.entitlements) grantEntitlement(email, entitlement);
+  promo.claims = claimNumber;
+  savePromos(promos);
+  issueAccessCookie(res, email);
+  res.render("promo-success", {
+    config,
+    label: promo.label,
+    allAccess: promo.entitlements.includes("all-access"),
+    links: promoLinks(promo.entitlements)
+  });
 });
 
 // ── Gated delivery pages ─────────────────────────────────────
