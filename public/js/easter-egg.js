@@ -1,5 +1,6 @@
 // THE DEAD DON'T FORGET — hidden Easter egg.
-// Type E-L-I-A-S in sequence, anywhere on the site, and Elias whispers back.
+// DESKTOP: type E-L-I-A-S in sequence, anywhere on the site, and Elias whispers back.
+// MOBILE (no keyboard): tap the footer 5 times quickly (not on a link) — same modal.
 // No visible hint exists anywhere on the site; this file is the only trace.
 (function () {
   "use strict";
@@ -153,5 +154,34 @@
     document.body.appendChild(overlay);
     document.addEventListener("keydown", escHandler);
     render(alreadyClaimed() ? "already" : "offer", null);
+  }
+
+  // ── Touch fallback: phones have no keyboard, so 5 quick taps on the
+  // footer (anywhere that isn't a link or button) opens the same modal. ──
+  var TAP_COUNT = 5;
+  var TAP_WINDOW_MS = 3000;
+  var taps = 0;
+  var tapTimer = null;
+
+  function footerTap(e) {
+    var t = e.target;
+    if (t && t.closest && t.closest("a,button")) return; // real taps keep working
+    taps++;
+    if (tapTimer) clearTimeout(tapTimer);
+    tapTimer = setTimeout(function () { taps = 0; tapTimer = null; }, TAP_WINDOW_MS);
+    if (taps >= TAP_COUNT) {
+      taps = 0;
+      if (tapTimer) { clearTimeout(tapTimer); tapTimer = null; }
+      openModal();
+    }
+  }
+
+  function armFooter() {
+    var footer = document.querySelector("footer");
+    if (footer) { footer.addEventListener("click", footerTap); return true; }
+    return false;
+  }
+  if (!armFooter()) {
+    document.addEventListener("DOMContentLoaded", armFooter);
   }
 })();
