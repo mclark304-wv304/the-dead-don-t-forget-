@@ -164,6 +164,9 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
+// Every template (including the error page) gets `config` — the header and
+// footer partials depend on it, so this must run before any res.render.
+app.use((req, res, next) => { res.locals.config = config; next(); });
 
 // PayPal webhook (backup only — the capture-on-return flow below is the
 // primary, server-verified path, so this endpoint only logs for now).
