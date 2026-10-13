@@ -1,5 +1,5 @@
 // THE DEAD DON'T FORGET — official site server
-// Paywall is server-verified: Stripe sessions are checked via the Stripe API,
+// Paywall is server-verified: PayPal orders are captured via the PayPal API,
 // entitlements are stored server-side, and gated pages require a signed JWT.
 
 const path = require("path");
@@ -7,7 +7,6 @@ const fs = require("fs");
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
-const Stripe = require("stripe");
 const Database = require("better-sqlite3");
 const archiver = require("archiver");
 
@@ -50,10 +49,46 @@ function buildPosterZip() {
   });
 }
 
-// ── Stripe ───────────────────────────────────────────────────
-const keysConfigured = () =>
-  config.stripeSecretKey && !config.stripeSecretKey.includes("PASTE_YOUR");
-const stripe = keysConfigured() ? new Stripe(config.stripeSecretKey) : null;
+// ── PayPal (direct REST API, no SDK) ─────────────────────────
+const paypalBase = () => config.paypalMode === "live"
+  ? "https://api-m.paypal.com"
+  : "https://api-m.sandbox.paypal.com";
+const paypalConfigured = () =>
+  config.paypalClientId && !config.paypalClientId.includes("PASTE_YOUR") &&
+  config.paypalClientSecret && !config.paypalClientSecret.includes("PASTE_YOUR");
+
+let paypalTokenCache = { token: null, expiresAt: 0 };
+async function paypalAccessToken() {
+  if (paypalTokenCache.token && Date.now() < paypalTokenCache.expiresAt - 60000) {
+    return paypalTokenCache.token;
+  }
+  const creds = Buffer.from(`${config.paypalClientId}:${config.paypalClientSecret}`).toString("base64");
+  const r = await fetch(`${paypalBase()}/v1/oauth2/token`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Basic ${creds}`,
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: "grant_type=client_credentials"
+  });
+  if (!r.ok) throw new Error(`PayPal auth failed (HTTP ${r.status})`);
+  const data = await r.json();
+  paypalTokenCache = { token: data.access_token, expiresAt: Date.now() + (data.expires_in * 1000) };
+  return data.access_token;
+}
+async function paypalApi(method, path, body) {
+  const token = await paypalAccessToken();
+  const r = await fetch(`${paypalBase()}${path}`, {
+    method,
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  const data = await r.json().catch(() => ({}));
+  return { ok: r.ok, status: r.status, data };
+}
 
 // ── Access tokens (signed, httpOnly cookie) ──────────────────
 const COOKIE_NAME = "ddf_access";
@@ -97,25 +132,14 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
 
-// Webhook needs the RAW body — register before express.json()
-app.post("/api/webhook", express.raw({ type: "application/json" }), (req, res) => {
-  if (!keysConfigured() || !config.stripeWebhookSecret.includes("whsec_")) {
-    return res.status(400).json({ error: "Webhooks not configured." });
-  }
-  let event;
-  try {
-    event = stripe.webhooks.constructEvent(req.body, req.headers["stripe-signature"], config.stripeWebhookSecret);
-  } catch (err) {
-    return res.status(400).json({ error: "Invalid signature." });
-  }
-  if (event.type === "checkout.session.completed") {
-    const session = event.data.object;
-    const email = session.customer_details && session.customer_details.email;
-    const productId = session.metadata && session.metadata.productId;
-    if (email && productId && config.products[productId]) {
-      grantEntitlement(email, config.products[productId].entitlement);
-    }
-  }
+// PayPal webhook (backup only — the capture-on-return flow below is the
+// primary, server-verified path, so this endpoint only logs for now).
+// TODO: verify webhook signatures per
+// https://developer.paypal.com/docs/api/webhooks/#verify-webhook-signature
+// before trusting these events for anything beyond logging.
+app.post("/api/paypal-webhook", express.json(), (req, res) => {
+  const evt = req.body || {};
+  console.log("PayPal webhook event:", evt.event_type, evt.id);
   res.json({ received: true });
 });
 
@@ -127,52 +151,62 @@ app.get("/", (req, res) => res.render("index", { config }));
 app.get("/episodes", (req, res) => res.render("episodes", { config }));
 app.get("/bonus", (req, res) => res.render("bonus", { config, notice: req.query }));
 
-// ── Checkout ─────────────────────────────────────────────────
+// ── Checkout (PayPal order → buyer approves on paypal.com) ─────
 app.post("/api/checkout/:productId", async (req, res) => {
   const product = config.products[req.params.productId];
   if (!product) return res.status(404).json({ error: "Unknown product." });
-  if (!keysConfigured()) {
+  if (!paypalConfigured()) {
     return res.status(500).json({
-      error: "Payments are not connected yet. The site owner needs to add her Stripe keys in config.js — see README."
+      error: "Payments are not connected yet. The site owner needs to add her PayPal keys — see README."
     });
   }
   try {
-    const session = await stripe.checkout.sessions.create({
-      mode: "payment",
-      line_items: [{
-        price_data: {
-          currency: "usd",
-          unit_amount: product.priceCents,
-          product_data: { name: `${config.siteName} — ${product.name}` }
-        },
-        quantity: 1
+    const dollars = (product.priceCents / 100).toFixed(2);
+    const { ok, status, data } = await paypalApi("POST", "/v2/checkout/orders", {
+      intent: "CAPTURE",
+      purchase_units: [{
+        amount: { currency_code: "USD", value: dollars },
+        description: `${config.siteName} — ${product.name}`
       }],
-      metadata: { productId: req.params.productId },
-      success_url: `${config.baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${config.baseUrl}/bonus?cancelled=1`
+      application_context: {
+        brand_name: "THE DEAD DON'T FORGET",
+        return_url: `${config.baseUrl}/paypal/return?product=${encodeURIComponent(req.params.productId)}`,
+        cancel_url: `${config.baseUrl}/bonus?cancelled=1`,
+        user_action: "PAY_NOW"
+      }
     });
-    res.json({ url: session.url });
+    if (!ok) throw new Error(`PayPal order failed (HTTP ${status}): ${(data && data.message) || "unknown error"}`);
+    const approve = (data.links || []).find(l => l.rel === "approve");
+    if (!approve || !approve.href) throw new Error("PayPal did not return an approval link.");
+    res.json({ url: approve.href });
   } catch (err) {
     res.status(500).json({ error: "Could not start checkout: " + err.message });
   }
 });
 
-// ── Post-payment: verify with Stripe (never trust the redirect alone) ──
-app.get("/success", async (req, res) => {
-  if (!keysConfigured()) {
+// ── PayPal return: capture the order server-side (never trust the redirect alone) ──
+app.get("/paypal/return", async (req, res) => {
+  const product = config.products[req.query.product];
+  const orderId = req.query.token; // PayPal returns the order id as ?token=
+  if (!paypalConfigured()) {
     return res.status(500).render("error", { title: "Not configured", message: "Payments are not connected yet.", cta: "/bonus" });
   }
+  if (!product || !orderId) {
+    return res.status(400).render("error", { title: "Hmm", message: "Missing order details. Try checking out again.", cta: "/bonus" });
+  }
   try {
-    const session = await stripe.checkout.sessions.retrieve(req.query.session_id);
-    if (session.payment_status !== "paid") {
-      return res.status(402).render("error", { title: "Payment not completed", message: "Your payment didn't go through. Try again.", cta: "/bonus" });
+    const { ok, status, data } = await paypalApi("POST", `/v2/checkout/orders/${encodeURIComponent(orderId)}/capture`);
+    if (!ok || data.status !== "COMPLETED") {
+      return res.status(402).render("error", {
+        title: "Payment not completed",
+        message: "Your PayPal payment didn't go through. No charge was made — try again.",
+        cta: "/bonus"
+      });
     }
-    const email = session.customer_details && session.customer_details.email;
-    const productId = session.metadata && session.metadata.productId;
-    const product = config.products[productId];
-    if (!email || !product) {
-      return res.status(500).render("error", { title: "Hmm", message: "Payment went through but we couldn't identify the product. Contact support.", cta: "/bonus" });
-    }
+    // Email from the payer feeds the restore-by-email flow; fall back to a
+    // stable per-order id so the record is still useful if PayPal omits it.
+    const payer = data.payer || {};
+    const email = (payer.email_address || `paypal-buyer-${String(orderId).toLowerCase()}@example.invalid`).toLowerCase();
     grantEntitlement(email, product.entitlement);
     issueAccessCookie(res, email);
     res.redirect(product.deliveryPath);
@@ -204,7 +238,9 @@ buildPosterZip()
   .then(() => {
     app.listen(config.port, () => {
       console.log(`THE DEAD DON'T FORGET — site live at http://localhost:${config.port}`);
-      console.log(keysConfigured() ? "Stripe: CONNECTED" : "Stripe: NOT CONFIGURED (see README to go live)");
+      console.log(paypalConfigured()
+        ? `PayPal: CONNECTED (${config.paypalMode})`
+        : "PayPal: NOT CONFIGURED (see README to go live)");
     });
   })
   .catch(err => {

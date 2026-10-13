@@ -8,17 +8,18 @@ module.exports = {
   tagline: "Every name has a debt.",
   creator: "Maya Clark",
 
-  // Base URL of the deployed site (used for Stripe redirect URLs).
+  // Base URL of the deployed site (used for PayPal return URLs).
   // Locally: http://localhost:3000 — in production set the BASE_URL env var.
   baseUrl: process.env.BASE_URL || "http://localhost:3000",
   port: process.env.PORT || 3000,
 
-  // ── Stripe keys ────────────────────────────────────────────
-  // Test mode first: https://dashboard.stripe.com/test/apikeys
-  // Go live: flip to live keys from https://dashboard.stripe.com/apikeys
-  // You can also set these as environment variables instead of editing here.
-  stripeSecretKey: process.env.STRIPE_SECRET_KEY || "PASTE_YOUR_TEST_KEY_HERE",
-  stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET || "PASTE_YOUR_WEBHOOK_SECRET_HERE",
+  // ── PayPal keys ────────────────────────────────────────────
+  // Sandbox first: https://developer.paypal.com → Apps & Credentials → create app
+  // Go live: create a Live app, swap the credentials, set PAYPAL_MODE=live
+  // Set these as environment variables on your host (Render → Environment).
+  paypalClientId: process.env.PAYPAL_CLIENT_ID || "PASTE_YOUR_PAYPAL_CLIENT_ID",
+  paypalClientSecret: process.env.PAYPAL_CLIENT_SECRET || "PASTE_YOUR_PAYPAL_CLIENT_SECRET",
+  paypalMode: process.env.PAYPAL_MODE || "sandbox", // "sandbox" or "live"
 
   // Secret used to sign access cookies. Change to a long random string.
   // You can also set the JWT_SECRET env var.

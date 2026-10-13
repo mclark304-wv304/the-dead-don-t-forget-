@@ -2,7 +2,7 @@
 
 The series hub for Maya Clark's animated horror series. Episodes stream free
 (via YouTube embeds); the **Bonus Store** sells early access and bonus content
-through a real, server-verified Stripe paywall (pay per item).
+through a real, server-verified PayPal paywall (pay per item).
 
 ## Run locally
 
@@ -20,31 +20,37 @@ Then open http://localhost:3000
 - `/watch/ep4` — gated: Episode 4 early access (buyers only)
 - `/download/posters` — gated: poster pack zip download (buyers only)
 
-## Go live with Stripe (take real payments)
+## Go live with PayPal (take real payments)
 
-1. **Create a Stripe account** at https://stripe.com (free; she'll connect her bank
-   there to receive payouts).
-2. In the Stripe dashboard, stay in **Test mode** first and go to Developers →
-   API keys. Copy the **Secret key** (starts with `sk_test_`).
-3. Open `config.js` and replace `"PASTE_YOUR_TEST_KEY_HERE"` with that key.
-   (Or set the `STRIPE_SECRET_KEY` environment variable instead — better for hosting.)
-4. Test a purchase: on the `/bonus` page click Unlock → pay with the test card
-   `4242 4242 4242 4242`, any future expiry, any CVC. You should land on the
-   unlocked content.
-5. **Webhooks (recommended backup):** in the Stripe dashboard go to Developers →
-   Webhooks → Add endpoint: `https://YOUR-DOMAIN/api/webhook`, listen for
-   `checkout.session.completed`. Copy the **Signing secret** (starts with `whsec_`)
-   into `config.js` as `stripeWebhookSecret`. This records purchases even if the
-   buyer closes the tab before returning to the site.
-6. **Go live:** in the Stripe dashboard toggle **off** Test mode, copy the
-   **live** Secret key (starts with `sk_live_`) into `config.js` (or env var),
-   and update the webhook endpoint to use the live signing secret.
-7. Also change `jwtSecret` in `config.js` to a long random string (or set the
+1. **Log into PayPal** at https://www.paypal.com (or create a free account;
+   connect your bank there to receive payouts).
+2. Go to https://developer.paypal.com → **Apps & Credentials**. Stay in
+   **Sandbox** mode first and **Create App** (name it e.g. "Dead Dont Forget").
+   Copy the **Client ID** and the **Secret**.
+3. Set them as environment variables on your host (Render dashboard → your
+   service → Environment):
+   - `PAYPAL_CLIENT_ID` = your sandbox Client ID
+   - `PAYPAL_CLIENT_SECRET` = your sandbox Secret
+   - `PAYPAL_MODE` = `sandbox`
+   (Or put them in `config.js` — env vars are better for hosting.)
+4. Test a purchase: on the `/bonus` page click Unlock → pay with a PayPal
+   **sandbox buyer account** (create one at developer.paypal.com → Testing
+   Tools → Sandbox Accounts). You should land on the unlocked content.
+5. **Go live:** in Apps & Credentials toggle to **Live**, create a Live app,
+   and swap the env vars to the live Client ID and Secret, with
+   `PAYPAL_MODE` = `live`.
+6. Also change `jwtSecret` in `config.js` to a long random string (or set the
    `JWT_SECRET` env var), and set `BASE_URL` to the real domain
-   (e.g. `https://thedeaddontforget.com`) so Stripe redirects work.
+   (e.g. `https://thedeaddontforget.com`) so PayPal return URLs work.
 
 Until real keys are pasted in, the Unlock buttons show a clear message:
 "Payments are not connected yet." Nothing charges by accident.
+
+**Webhooks (optional backup):** the app exposes `/api/paypal-webhook`, which
+currently just logs events. The capture-on-return flow below already verifies
+every payment server-side, so webhooks are not required. If you add one later
+in the PayPal dashboard, note that signature verification is a documented
+TODO in `server.js`.
 
 ## Deploy on Render (free tier)
 
@@ -52,12 +58,13 @@ Until real keys are pasted in, the Unlock buttons show a clear message:
 2. Go to https://dashboard.render.com → New → **Web Service** → connect the repo.
 3. Build command: `npm install` — Start command: `npm start`
 4. Under Environment, add:
-   - `STRIPE_SECRET_KEY` = your live secret key
-   - `STRIPE_WEBHOOK_SECRET` = your webhook signing secret
+   - `PAYPAL_CLIENT_ID` = your PayPal Client ID (sandbox first, live later)
+   - `PAYPAL_CLIENT_SECRET` = your PayPal Secret
+   - `PAYPAL_MODE` = `sandbox` (change to `live` when going live)
    - `JWT_SECRET` = a long random string
    - `BASE_URL` = your Render URL, e.g. `https://deaddontforget.onrender.com`
    - `NODE_ENV` = `production`
-5. Deploy. Then add `https://YOUR-URL/api/webhook` as the webhook endpoint in Stripe.
+5. Deploy.
 
 Same idea works on Railway (railway.app): New Project → deploy from repo,
 add the same env vars, done.
@@ -93,16 +100,18 @@ Restart the server after editing.
 
 ## How the paywall works (the honest version)
 
-- Clicking Unlock creates a **Stripe Checkout Session** on the server and sends
-  the buyer to Stripe to pay. Card details never touch this site.
-- After payment, Stripe redirects back; the server **re-verifies the session
-  with the Stripe API** (the redirect alone is never trusted), records the
-  purchase in `data/entitlements.db`, and sets a **signed, httpOnly cookie**.
+- Clicking Unlock asks the server to create a **PayPal order** (Orders API v2,
+  intent CAPTURE) and sends the buyer to PayPal to approve it. Card and PayPal
+  details never touch this site.
+- PayPal returns the buyer to `/paypal/return`; the server **captures the
+  order via the PayPal API** and only grants access when the capture status is
+  COMPLETED (the redirect alone is never trusted). It then records the
+  purchase in `data/entitlements.db` and sets a **signed, httpOnly cookie**.
 - Gated pages (`/watch/ep4`, `/download/posters`) check that signed cookie
   **on the server** on every request. No video IDs or download links exist in
   any public page or JavaScript.
-- A Stripe **webhook** records purchases as backup; buyers who lose their
-  cookie can restore access with the email they paid with on `/bonus`.
+- Buyers who lose their cookie can restore access with the PayPal email they
+  paid with on `/bonus`.
 - One honest limit: determined buyers *can* share the unlisted YouTube link or
   the zip. For this stage that's the standard indie-creator tradeoff — full
   DRM would need a paid video host (e.g. Vimeo OTT). The paywall stops casual
