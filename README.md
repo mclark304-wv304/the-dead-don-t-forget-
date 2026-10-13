@@ -19,6 +19,8 @@ Then open http://localhost:3000
 - `/bonus` — the store (Unlock buttons, restore-access form)
 - `/watch/ep4` — gated: Episode 4 early access (buyers only)
 - `/download/posters` — gated: poster pack zip download (buyers only)
+- `/download/scripts` — gated: Complete Scripts PDF download (buyers only)
+- `/download/character-art` — gated: character art pack zip download (buyers only)
 
 ## Go live with PayPal (take real payments)
 
@@ -85,8 +87,10 @@ That's it — every early-access buyer instantly sees the premiere on `/watch/ep
 In `config.js`, under `products`, edit `priceCents` (in cents — `299` = $2.99):
 
 ```js
-"ep4-early":   { ..., priceCents: 299 },  // Episode 4 Early Access
-"poster-pack": { ..., priceCents: 199 },  // Official Poster Pack
+"ep4-early":        { ..., priceCents: 299 },  // Episode 4 Early Access
+"poster-pack":      { ..., priceCents: 199 },  // Official Poster Pack
+"complete-scripts": { ..., priceCents: 299 },  // The Complete Scripts (PDF)
+"character-art-pack": { ..., priceCents: 199 },  // Character Art Pack
 ```
 
 Restart the server after editing.
@@ -107,7 +111,8 @@ Restart the server after editing.
   order via the PayPal API** and only grants access when the capture status is
   COMPLETED (the redirect alone is never trusted). It then records the
   purchase in `data/entitlements.db` and sets a **signed, httpOnly cookie**.
-- Gated pages (`/watch/ep4`, `/download/posters`) check that signed cookie
+- Gated pages (`/watch/ep4`, `/download/posters`, `/download/scripts`,
+  `/download/character-art`) check that signed cookie
   **on the server** on every request. No video IDs or download links exist in
   any public page or JavaScript.
 - Buyers who lose their cookie can restore access with the PayPal email they

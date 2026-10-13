@@ -47,20 +47,15 @@
   <div class="wrap">
     <h2>Go <span>Deeper</span></h2>
     <p class="section-sub">Early premieres and official art — straight from the creator.</p>
+    <% Object.entries(config.products).forEach(([id, p]) => { %>
     <div class="product">
       <div>
-        <h3><%= config.products['ep4-early'].name %></h3>
-        <div class="tagline"><%= config.products['ep4-early'].tagline %></div>
+        <h3><%= p.name %></h3>
+        <div class="tagline"><%= p.tagline %></div>
       </div>
-      <a class="btn" href="/bonus">Unlock — $<%= (config.products['ep4-early'].priceCents/100).toFixed(2) %></a>
+      <a class="btn" href="/bonus">Unlock — $<%= (p.priceCents/100).toFixed(2) %></a>
     </div>
-    <div class="product">
-      <div>
-        <h3><%= config.products['poster-pack'].name %></h3>
-        <div class="tagline"><%= config.products['poster-pack'].tagline %></div>
-      </div>
-      <a class="btn" href="/bonus">Unlock — $<%= (config.products['poster-pack'].priceCents/100).toFixed(2) %></a>
-    </div>
+    <% }) %>
   </div>
 </section>
 

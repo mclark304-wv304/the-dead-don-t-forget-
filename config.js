@@ -86,6 +86,20 @@ module.exports = {
       priceCents: 199,
       entitlement: "poster-pack",
       deliveryPath: "/download/posters"
+    },
+    "complete-scripts": {
+      name: "The Complete Scripts",
+      tagline: "Every word of Episodes 1–3 in one collectible PDF. Exactly as written.",
+      priceCents: 299,
+      entitlement: "complete-scripts",
+      deliveryPath: "/download/scripts"
+    },
+    "character-art-pack": {
+      name: "Character Art Pack",
+      tagline: "10 original dark-horror portraits and wallpapers — Daniel, Elias, Mara and more. Yours to keep.",
+      priceCents: 199,
+      entitlement: "character-art-pack",
+      deliveryPath: "/download/character-art"
     }
   }
 };

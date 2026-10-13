@@ -49,6 +49,38 @@ function buildPosterZip() {
   });
 }
 
+// ── Character art pack zip (built once at startup, served only to buyers) ──
+const CHARACTER_ART_ZIP = path.join(DATA_DIR, "character-art-pack.zip");
+const CHARACTER_ART_DIR = path.join(__dirname, "assets", "character-art");
+const CHARACTER_ART_FILES = [
+  ["daniel.jpg", "01-daniel.jpg"],
+  ["elias.jpg", "02-elias.jpg"],
+  ["mara.jpg", "03-mara.jpg"],
+  ["guard.jpg", "04-the-guard.jpg"],
+  ["lena-mercer.jpg", "05-lena-mercer.jpg"],
+  ["emily.jpg", "06-emily.jpg"],
+  ["jonah-bell.jpg", "07-jonah-bell.jpg"],
+  ["ruth-mercer.jpg", "08-ruth-mercer.jpg"],
+  ["wallpaper-gate.jpg", "09-wallpaper-the-gate.jpg"],
+  ["wallpaper-wall-of-names.jpg", "10-wallpaper-wall-of-names.jpg"]
+];
+function buildCharacterArtZip() {
+  return new Promise((resolve, reject) => {
+    const out = fs.createWriteStream(CHARACTER_ART_ZIP);
+    const archive = archiver("zip", { zlib: { level: 9 } });
+    out.on("close", resolve);
+    archive.on("error", reject);
+    archive.pipe(out);
+    for (const [src, name] of CHARACTER_ART_FILES) {
+      archive.file(path.join(CHARACTER_ART_DIR, src), { name });
+    }
+    archive.finalize();
+  });
+}
+
+// ── Complete Scripts PDF (built offline, committed to the repo) ──
+const SCRIPTS_PDF = path.join(DATA_DIR, "complete-scripts.pdf");
+
 // ── PayPal (direct REST API, no SDK) ─────────────────────────
 const paypalBase = () => config.paypalMode === "live"
   ? "https://api-m.paypal.com"
@@ -233,8 +265,16 @@ app.get("/download/posters", requireEntitlement("poster-pack"), (req, res) => {
   res.download(POSTER_ZIP, "the-dead-dont-forget-poster-pack.zip");
 });
 
+app.get("/download/scripts", requireEntitlement("complete-scripts"), (req, res) => {
+  res.download(SCRIPTS_PDF, "the-dead-dont-forget-complete-scripts.pdf");
+});
+
+app.get("/download/character-art", requireEntitlement("character-art-pack"), (req, res) => {
+  res.download(CHARACTER_ART_ZIP, "the-dead-dont-forget-character-art-pack.zip");
+});
+
 // ── Start ────────────────────────────────────────────────────
-buildPosterZip()
+Promise.all([buildPosterZip(), buildCharacterArtZip()])
   .then(() => {
     app.listen(config.port, () => {
       console.log(`THE DEAD DON'T FORGET — site live at http://localhost:${config.port}`);
