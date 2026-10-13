@@ -18,6 +18,7 @@ Then open http://localhost:3000
 - `/episodes` — all 3 episodes embedded + teaser Shorts
 - `/bonus` — the store (Unlock buttons, restore-access form)
 - `/watch/ep4` — gated: Episode 4 early access (buyers only)
+- `/watch/ep5` — gated: Episode 5 early access (buyers only)
 - `/download/posters` — gated: poster pack zip download (buyers only)
 - `/download/scripts` — gated: Complete Scripts PDF download (buyers only)
 - `/download/character-art` — gated: character art pack zip download (buyers only)
@@ -83,12 +84,24 @@ ep4VideoId: "PASTE_THE_YOUTUBE_VIDEO_ID_HERE",
 That's it — every early-access buyer instantly sees the premiere on `/watch/ep4`.
 (Upload Ep4 to YouTube as **Unlisted** so only your site's buyers can watch it.)
 
+## Add Episode 5's video when it's ready
+
+In `config.js`, set:
+
+```js
+ep5VideoId: "PASTE_THE_YOUTUBE_VIDEO_ID_HERE",
+```
+
+That's it — every early-access buyer instantly sees the premiere on `/watch/ep5`.
+(Upload Ep5 to YouTube as **Unlisted** so only your site's buyers can watch it.)
+
 ## Change prices
 
 In `config.js`, under `products`, edit `priceCents` (in cents — `299` = $2.99):
 
 ```js
 "ep4-early":        { ..., priceCents: 299 },  // Episode 4 Early Access
+"ep5-early":        { ..., priceCents: 299 },  // Episode 5 Early Access
 "poster-pack":      { ..., priceCents: 199 },  // Official Poster Pack
 "complete-scripts": { ..., priceCents: 299 },  // The Complete Scripts (PDF)
 "character-art-pack": { ..., priceCents: 199 },  // Character Art Pack
@@ -112,7 +125,7 @@ Restart the server after editing.
   order via the PayPal API** and only grants access when the capture status is
   COMPLETED (the redirect alone is never trusted). It then records the
   purchase in `data/entitlements.db` and sets a **signed, httpOnly cookie**.
-- Gated pages (`/watch/ep4`, `/download/posters`, `/download/scripts`,
+- Gated pages (`/watch/ep4`, `/watch/ep5`, `/download/posters`, `/download/scripts`,
   `/download/character-art`) check that signed cookie
   **on the server** on every request. No video IDs or download links exist in
   any public page or JavaScript.

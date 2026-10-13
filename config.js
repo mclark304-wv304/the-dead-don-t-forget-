@@ -30,6 +30,11 @@ module.exports = {
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
   ep4VideoId: "VQcFVY8a4tw",
 
+  // Episode 5 premiere: paste the YouTube video ID here when Ep5 is ready
+  // and it will appear on the early-access watch page automatically.
+  // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
+  ep5VideoId: "",
+
   pocketFmUrl: "https://pocketfm.com/show/850e2acdfbf37afa82efe1af45a3d32ea6e188f2",
 
   // ── Free episodes (YouTube stays free) ─────────────────────
@@ -79,6 +84,13 @@ module.exports = {
       priceCents: 299,
       entitlement: "ep4-early",
       deliveryPath: "/watch/ep4"
+    },
+    "ep5-early": {
+      name: "Episode 5 — Early Access",
+      tagline: "Watch Episode 5 'The First Memory' here before it hits YouTube.",
+      priceCents: 299,
+      entitlement: "ep5-early",
+      deliveryPath: "/watch/ep5"
     },
     "poster-pack": {
       name: "Official Poster Pack",
