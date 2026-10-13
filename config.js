@@ -101,5 +101,24 @@ module.exports = {
       entitlement: "character-art-pack",
       deliveryPath: "/download/character-art"
     }
-  }
+  },
+
+  // ── Free downloads (no payment, no login — public) ────────
+  freebies: [
+    {
+      name: "Episode 1 Script — Free Sample",
+      tagline: "The full 'Man at the Gate' script, exactly as written. A free taste of The Complete Scripts.",
+      downloadPath: "/free/ep1-script"
+    },
+    {
+      name: "Free Wallpaper — The Gate at Night",
+      tagline: "The gate after dark, in full resolution. For your phone or desktop.",
+      downloadPath: "/free/wallpaper"
+    },
+    {
+      name: "Free Series Poster",
+      tagline: "The official series key art. Print it, frame it, hang it.",
+      downloadPath: "/free/poster"
+    }
+  ]
 };

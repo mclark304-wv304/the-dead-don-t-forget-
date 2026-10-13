@@ -21,6 +21,7 @@ Then open http://localhost:3000
 - `/download/posters` — gated: poster pack zip download (buyers only)
 - `/download/scripts` — gated: Complete Scripts PDF download (buyers only)
 - `/download/character-art` — gated: character art pack zip download (buyers only)
+- `/free/ep1-script`, `/free/wallpaper`, `/free/poster` — free downloads (no payment, no login)
 
 ## Go live with PayPal (take real payments)
 

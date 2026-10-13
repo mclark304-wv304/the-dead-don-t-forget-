@@ -273,6 +273,33 @@ app.get("/download/character-art", requireEntitlement("character-art-pack"), (re
   res.download(CHARACTER_ART_ZIP, "the-dead-dont-forget-character-art-pack.zip");
 });
 
+// ── Free downloads (public — no payment, no entitlement) ────
+const FREEBIES = {
+  "ep1-script": {
+    file: path.join(DATA_DIR, "ep1-script-free.pdf"),
+    name: "the-dead-dont-forget-ep1-script-free-sample.pdf"
+  },
+  "wallpaper": {
+    file: path.join(__dirname, "assets", "character-art", "wallpaper-gate.jpg"),
+    name: "the-dead-dont-forget-wallpaper-the-gate.jpg"
+  },
+  "poster": {
+    file: path.join(__dirname, "public", "img", "series-key-art.webp"),
+    name: "the-dead-dont-forget-series-poster.webp"
+  }
+};
+app.get("/free/:item", (req, res) => {
+  const item = FREEBIES[req.params.item];
+  if (!item || !fs.existsSync(item.file)) {
+    return res.status(404).render("error", {
+      title: "Not found",
+      message: "That download doesn't exist.",
+      cta: "/bonus"
+    });
+  }
+  res.download(item.file, item.name);
+});
+
 // ── Start ────────────────────────────────────────────────────
 Promise.all([buildPosterZip(), buildCharacterArtZip()])
   .then(() => {

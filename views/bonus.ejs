@@ -34,6 +34,21 @@
     </div>
     <% }) %>
 
+    <h2 style="margin-top:3rem">Free <span>Downloads</span></h2>
+    <p class="section-sub">On the house. No payment, no account — just take them.</p>
+
+    <% config.freebies.forEach(f => { %>
+    <div class="product">
+      <div>
+        <h3><%= f.name %> <span class="free-badge">FREE</span></h3>
+        <div class="tagline"><%= f.tagline %></div>
+      </div>
+      <div class="unlock-form">
+        <a class="btn" href="<%= f.downloadPath %>">Download</a>
+      </div>
+    </div>
+    <% }) %>
+
     <div class="restore">
       <h2>Already <span>bought?</span></h2>
       <p class="section-sub">Enter the email you paid with to restore access on this device.</p>
