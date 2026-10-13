@@ -103,6 +103,13 @@ module.exports = {
     }
   },
 
+  // ── Easter egg: the hidden ELIAS trigger ──────────────────
+  // Typing E-L-I-A-S in sequence anywhere on the site opens a whisper
+  // modal offering free Episode 4 Early Access. Only this many souls
+  // ever get it. The server enforces this cap (SQLite); browsers also
+  // remember a claim in localStorage as a courtesy.
+  easterEggMaxClaims: 13,
+
   // ── Free downloads (no payment, no login — public) ────────
   freebies: [
     {

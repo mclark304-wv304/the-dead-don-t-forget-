@@ -122,3 +122,22 @@ Restart the server after editing.
   the zip. For this stage that's the standard indie-creator tradeoff — full
   DRM would need a paid video host (e.g. Vimeo OTT). The paywall stops casual
   access, which is what matters.
+
+## Hidden Easter egg (ELIAS)
+
+- **Trigger:** a visitor types the letters **E-L-I-A-S** in sequence (case-insensitive)
+  anywhere on any page. Implemented in `public/js/easter-egg.js`, loaded site-wide
+  via the footer partial. The listener ignores keystrokes inside form fields and the
+  sequence resets after 2 seconds of no matching input.
+- **What happens:** a horror-styled whisper modal appears ("You heard him."). The
+  visitor can claim **Episode 4 Early Access free**. There is deliberately no hint
+  about this anywhere on the site — no nav, footer, or sitemap mention.
+- **Cap:** only `easterEggMaxClaims` souls ever get it — change it in `config.js`
+  (currently **13**). The server counts claims in the `easter_egg_claims` table in
+  `data/entitlements.db` and refuses claim #14 with `{ ok: false, reason: "closed" }`.
+- **Claim endpoint:** `POST /api/easter-egg/claim` → `{ ok: true, soulNumber: N }` on
+  success. It grants the `ep4-early` entitlement and sets the **exact same signed,
+  httpOnly cookie** the PayPal success flow issues, so `/watch/ep4` opens immediately.
+- **One claim per browser:** on success the JS sets `ddf_easter_egg_claimed` in
+  localStorage; if present, the modal instead says "You already claimed your soul."
+  (The server-side cap of 13 is the real backstop.)

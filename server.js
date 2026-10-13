@@ -4,6 +4,7 @@
 
 const path = require("path");
 const fs = require("fs");
+const crypto = require("crypto");
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
@@ -254,6 +255,37 @@ app.post("/api/restore", (req, res) => {
   if (productsForEmail(email).length === 0) return res.redirect("/bonus?error=no-purchases");
   issueAccessCookie(res, email);
   res.redirect("/bonus?restored=1");
+});
+
+// ── Easter egg: hidden ELIAS trigger ─────────────────────────
+// Typing E-L-I-A-S anywhere fires public/js/easter-egg.js, which POSTs here.
+// The first config.easterEggMaxClaims claims get Episode 4 Early Access
+// free — via the EXACT same signed entitlement cookie the PayPal success
+// flow issues (entitlement "ep4-early"). The SQLite count is the real
+// backstop; browsers also keep a localStorage flag as a courtesy.
+db.exec(`
+  CREATE TABLE IF NOT EXISTS easter_egg_claims (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL UNIQUE,
+    claimed_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )
+`);
+app.post("/api/easter-egg/claim", (req, res) => {
+  try {
+    const claimed = db.prepare("SELECT COUNT(*) AS n FROM easter_egg_claims").get().n;
+    if (claimed >= config.easterEggMaxClaims) {
+      return res.json({ ok: false, reason: "closed" });
+    }
+    const soulNumber = claimed + 1;
+    // Unique per-claim identity so the entitlement cookie is per-soul.
+    const email = `easter-egg-soul-${soulNumber}-${crypto.randomBytes(4).toString("hex")}@example.invalid`;
+    db.prepare("INSERT INTO easter_egg_claims (email) VALUES (?)").run(email);
+    grantEntitlement(email, "ep4-early");
+    issueAccessCookie(res, email);
+    res.json({ ok: true, soulNumber });
+  } catch (err) {
+    res.status(500).json({ ok: false, reason: "error", message: err.message });
+  }
 });
 
 // ── Gated delivery pages ─────────────────────────────────────
