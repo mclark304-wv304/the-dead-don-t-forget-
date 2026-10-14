@@ -35,6 +35,11 @@ module.exports = {
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
   ep5VideoId: "x5F5mygGxVs",
 
+  // Episode 6 premiere: paste the YouTube video ID here when Ep6 is ready
+  // and it will appear on the early-access watch page automatically.
+  // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
+  ep6VideoId: "",
+
   pocketFmUrl: "https://pocketfm.com/show/850e2acdfbf37afa82efe1af45a3d32ea6e188f2",
 
   // ── Free episodes (YouTube stays free) ─────────────────────
@@ -91,6 +96,13 @@ module.exports = {
       priceCents: 299,
       entitlement: "ep5-early",
       deliveryPath: "/watch/ep5"
+    },
+    "ep6-early": {
+      name: "Episode 6 — Early Access",
+      tagline: "Watch Episode 6 'What We Keep' here before it hits YouTube.",
+      priceCents: 299,
+      entitlement: "ep6-early",
+      deliveryPath: "/watch/ep6"
     },
     "poster-pack": {
       name: "Official Poster Pack",
