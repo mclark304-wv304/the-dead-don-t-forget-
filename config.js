@@ -80,6 +80,11 @@ module.exports = {
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
   ep12VideoId: "",
 
+  // Episode 15 premiere: paste the YouTube video ID here when Ep15 is ready
+  // and it will appear on the early-access watch page automatically.
+  // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
+  ep15VideoId: "",
+
   pocketFmUrl: "https://pocketfm.com/show/850e2acdfbf37afa82efe1af45a3d32ea6e188f2",
 
   // ── Free episodes (YouTube stays free) ─────────────────────
@@ -165,6 +170,12 @@ module.exports = {
       title: "Eleven Minutes",
       runtime: "TBD",
       synopsis: "Eleven minutes dead. Twenty minutes until the first wave. The dead are coming for everyone who remembers."
+    },
+    {
+      n: 15,
+      title: "The Man Before the Forty-Three",
+      runtime: "TBD",
+      synopsis: "The original archive. Daniel Vale. Noah remembers four children — but the fourth child's identity was removed."
     }
   ],
 
@@ -243,6 +254,13 @@ module.exports = {
       priceCents: 299,
       entitlement: "ep12-early",
       deliveryPath: "/watch/ep12"
+    },
+    "ep15-early": {
+      name: "Episode 15 — Early Access",
+      tagline: "Watch Episode 15 'The Man Before the Forty-Three' here before it hits YouTube.",
+      priceCents: 299,
+      entitlement: "ep15-early",
+      deliveryPath: "/watch/ep15"
     },
     "poster-pack": {
       name: "Official Poster Pack",
