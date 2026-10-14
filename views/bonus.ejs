@@ -6,6 +6,8 @@
     <p class="section-sub">Early premieres and official art. Pay once, yours forever.</p>
     <p class="section-sub">Secure checkout via PayPal.</p>
 
+    <%- include('partials/donate', { compact: false }) %>
+
     <% if (notice.restored) { %>
       <div class="notice">Access restored — your purchases are unlocked on this device.</div>
     <% } %>

@@ -185,3 +185,20 @@ Restart the server after editing.
 - **Deploying new codes:** codes are loaded from `data/promos.json` at server
   startup — commit the file and redeploy (Render auto-deploys on push) for new
   links to take effect.
+
+## Donations ("Feed the dead 🖤")
+
+- **What:** a cute-and-gory blood-drip Donate button (homepage hero, top of
+  `/bonus`, and the footer on every page). Donors pick any amount ($1–$500),
+  approve on paypal.com, and land on a "The dead thank you" page.
+- **Money goes to:** the same PayPal account as the store — donations are
+  created through the exact same PayPal REST credentials (`PAYPAL_CLIENT_ID` /
+  `PAYPAL_CLIENT_SECRET`), so no separate email or handle is needed. Pure
+  support: no product, no entitlement, no access cookie.
+- **Flow:** `POST /api/donate/order` (validates amount server-side) returns the
+  PayPal approval URL → donor approves → `GET /paypal/donate-return` captures
+  server-side and records the donation in the `donations` SQLite table
+  (order id, amount, donor email, timestamp) for the owner's records.
+- **Files:** `views/partials/donate.ejs` (reusable component),
+  `public/js/donate.js`, `views/donate-thanks.ejs`, blood-drip styles in
+  `public/css/style.css` (`.btn-blood`).

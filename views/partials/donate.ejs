@@ -1,0 +1,22 @@
+<% const _compact = (typeof compact !== 'undefined' && compact); %>
+<div class="donate-block<%= _compact ? ' donate-compact' : '' %>" data-donate>
+  <% if (!_compact) { %>
+    <p class="donate-cta">Like what you hear in the dark?
+      <button type="button" class="btn-blood btn-blood-sm" data-donate-toggle>Feed the dead 🖤</button>
+    </p>
+  <% } else { %>
+    <button type="button" class="btn-blood btn-blood-sm" data-donate-toggle>Feed the dead 🖤</button>
+  <% } %>
+  <form class="donate-form" data-donate-form hidden>
+    <div class="donate-amounts">
+      <button type="button" class="chip" data-amount="1">$1</button>
+      <button type="button" class="chip selected" data-amount="5">$5</button>
+      <button type="button" class="chip" data-amount="10">$10</button>
+      <button type="button" class="chip" data-amount="25">$25</button>
+      <label class="donate-custom">$<input type="number" min="1" max="500" step="0.01" placeholder="Custom" data-donate-custom></label>
+    </div>
+    <button type="submit" class="btn-blood" data-donate-submit>Donate via PayPal</button>
+    <div class="donate-error notice" data-donate-error hidden></div>
+    <p class="donate-note">Secure, through PayPal. Any amount keeps the whispers coming.</p>
+  </form>
+</div>

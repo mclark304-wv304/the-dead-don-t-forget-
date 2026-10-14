@@ -256,6 +256,86 @@ app.get("/paypal/return", async (req, res) => {
   }
 });
 
+// ── Donations: same PayPal account as the store, donor-chosen amount ──
+// No product, no entitlement, no access cookie — pure support. The order is
+// created through the exact same PayPal REST credentials as checkout, so the
+// money lands in the same PayPal account that receives store payments.
+db.exec(`
+  CREATE TABLE IF NOT EXISTS donations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    paypal_order_id TEXT NOT NULL UNIQUE,
+    amount_cents INTEGER NOT NULL,
+    donor_email TEXT,
+    donated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )
+`);
+app.post("/api/donate/order", express.json(), async (req, res) => {
+  if (!paypalConfigured()) {
+    return res.status(500).json({
+      error: "Donations aren't connected yet. The site owner needs to add her PayPal keys — see README."
+    });
+  }
+  // Donor-chosen amount, validated server-side: $1.00 – $500.00.
+  const cents = Math.round(Number(req.body && req.body.amount) * 100);
+  if (!Number.isFinite(cents) || cents < 100 || cents > 50000) {
+    return res.status(400).json({ error: "Pick an amount between $1 and $500." });
+  }
+  try {
+    const dollars = (cents / 100).toFixed(2);
+    const { ok, status, data } = await paypalApi("POST", "/v2/checkout/orders", {
+      intent: "CAPTURE",
+      purchase_units: [{
+        amount: { currency_code: "USD", value: dollars },
+        description: `${config.siteName} — Fan donation`
+      }],
+      application_context: {
+        brand_name: "THE DEAD DON'T FORGET",
+        return_url: `${config.baseUrl}/paypal/donate-return`,
+        cancel_url: `${config.baseUrl}/bonus?cancelled=1`,
+        user_action: "PAY_NOW"
+      }
+    });
+    if (!ok) throw new Error(`PayPal order failed (HTTP ${status}): ${(data && data.message) || "unknown error"}`);
+    const approve = (data.links || []).find(l => l.rel === "approve");
+    if (!approve || !approve.href) throw new Error("PayPal did not return an approval link.");
+    res.json({ url: approve.href });
+  } catch (err) {
+    res.status(500).json({ error: "Could not start the donation: " + err.message });
+  }
+});
+
+// Donor returns from paypal.com — capture and thank them. No entitlement.
+app.get("/paypal/donate-return", async (req, res) => {
+  const orderId = req.query.token; // PayPal returns the order id as ?token=
+  if (!paypalConfigured()) {
+    return res.status(500).render("error", { title: "Not configured", message: "Donations are not connected yet.", cta: "/bonus" });
+  }
+  if (!orderId) {
+    return res.status(400).render("error", { title: "Hmm", message: "Missing donation details. Try again.", cta: "/" });
+  }
+  try {
+    const { ok, status, data } = await paypalApi("POST", `/v2/checkout/orders/${encodeURIComponent(orderId)}/capture`);
+    if (!ok || data.status !== "COMPLETED") {
+      return res.status(402).render("error", {
+        title: "Donation not completed",
+        message: "Your PayPal donation didn't go through. No charge was made — try again.",
+        cta: "/"
+      });
+    }
+    const unit = (data.purchase_units && data.purchase_units[0]) || {};
+    const captured = (unit.payments && unit.payments.captures && unit.payments.captures[0]) || {};
+    const amount = (captured.amount && captured.amount.value) || "?";
+    const donorEmail = (data.payer && data.payer.email_address) || null;
+    try {
+      db.prepare("INSERT OR IGNORE INTO donations (paypal_order_id, amount_cents, donor_email) VALUES (?, ?, ?)")
+        .run(String(orderId), Math.round(Number(amount) * 100) || 0, donorEmail);
+    } catch { /* record-keeping only — never block the thank-you */ }
+    res.render("donate-thanks", { amount });
+  } catch (err) {
+    res.status(500).render("error", { title: "Something went wrong", message: err.message, cta: "/" });
+  }
+});
+
 // Lost your access cookie? Re-issue it from the purchase record.
 app.post("/api/restore", (req, res) => {
   const email = (req.body.email || "").trim().toLowerCase();

@@ -2,9 +2,11 @@
 <footer>
   <div class="wrap">
     <div>THE DEAD DON'T FORGET &copy; <%= new Date().getFullYear() %> Maya Clark. All rights reserved.</div>
+    <div><%- include('donate', { compact: true }) %></div>
     <div><a href="<%= config.pocketFmUrl %>" target="_blank" rel="noopener">Listen free on Pocket FM</a></div>
   </div>
 </footer>
 <script src="/js/easter-egg.js"></script>
+<script src="/js/donate.js"></script>
 </body>
 </html>
