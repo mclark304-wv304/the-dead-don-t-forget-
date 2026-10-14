@@ -15,7 +15,7 @@
 
   var ctx = null, ambGain = null, faded = false;
   var groanBufs = {};
-  var AMB_VOL = 0.15, GROAN_VOL = 0.5;
+  var AMB_VOL = 0.28, GROAN_VOL = 0.7;
 
   function ensureCtx() {
     try {
@@ -26,7 +26,7 @@
         ambGain = ctx.createGain();
         ambGain.gain.value = 0;
         ambGain.connect(ctx.destination);
-        loadLoop('/audio/ambience.mp3?v=20261014f');
+        loadLoop('/audio/ambience.mp3?v=20261014h');
         [1, 2, 3].forEach(function (i) { loadGroan(i); });
       }
       if (ctx.state === 'suspended') {
