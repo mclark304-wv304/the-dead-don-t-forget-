@@ -32,7 +32,7 @@
     <div class="cards">
       <% config.episodes.forEach(ep => { %>
       <div class="card">
-        <img src="<%= ep.poster %>" alt="Poster for Episode <%= ep.n %>: <%= ep.title %>">
+        <div class="thumb"><img src="<%= ep.poster %>" alt="Poster for Episode <%= ep.n %>: <%= ep.title %>"></div>
         <div class="card-body">
           <div class="ep-num">EPISODE <%= ep.n %></div>
           <h3><%= ep.title %></h3>
