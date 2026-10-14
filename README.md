@@ -21,6 +21,8 @@ Then open http://localhost:3000
 - `/watch/ep5` — gated: Episode 5 early access (buyers only)
 - `/watch/ep6` — gated: Episode 6 early access (buyers only)
 - `/watch/ep7` — gated: Episode 7 early access (buyers only)
+- `/watch/ep8` — gated: Episode 8 early access (buyers only)
+- `/watch/ep9` — gated: Episode 9 early access (buyers only)
 - `/download/posters` — gated: poster pack zip download (buyers only)
 - `/download/scripts` — gated: Complete Scripts PDF download (buyers only)
 - `/download/character-art` — gated: character art pack zip download (buyers only)
