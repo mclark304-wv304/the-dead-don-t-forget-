@@ -43,17 +43,16 @@
   }
 
   /* ── The dead pop up and vanish ──
-     A shadowy figure fades in at a random spot, lingers, then dissolves.
-     Tap it to banish it (with a sting). Respects reduced-motion. */
+     Actual dead characters from the story fade in, linger, then dissolve.
+     Tap one to banish it. Respects reduced-motion. */
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  var GHOST_SVGS = [
-    /* Tall shadow figure with hollow eyes */
-    '<svg viewBox="0 0 100 220" aria-hidden="true"><ellipse cx="50" cy="200" rx="34" ry="14" fill="rgba(0,0,0,.5)"/><path d="M50 10 C30 10 24 40 26 80 L20 200 L38 200 L44 120 L56 120 L62 200 L80 200 L74 80 C76 40 70 10 50 10 Z" fill="rgba(8,8,12,.92)"/><circle cx="40" cy="52" r="6" fill="#c1121f" opacity=".85"/><circle cx="60" cy="52" r="6" fill="#c1121f" opacity=".85"/><ellipse cx="50" cy="78" rx="5" ry="9" fill="rgba(0,0,0,.9)"/></svg>',
-    /* Pale face in the dark */
-    '<svg viewBox="0 0 120 150" aria-hidden="true"><ellipse cx="60" cy="75" rx="42" ry="58" fill="rgba(210,205,195,.16)"/><ellipse cx="44" cy="62" rx="10" ry="14" fill="rgba(0,0,0,.85)"/><ellipse cx="76" cy="62" rx="10" ry="14" fill="rgba(0,0,0,.85)"/><ellipse cx="60" cy="105" rx="9" ry="13" fill="rgba(0,0,0,.85)"/><ellipse cx="60" cy="75" rx="42" ry="58" fill="none" stroke="rgba(210,205,195,.25)" stroke-width="2"/></svg>',
-    /* Reaching hand */
-    '<svg viewBox="0 0 120 160" aria-hidden="true"><g fill="rgba(15,15,20,.92)"><ellipse cx="60" cy="130" rx="26" ry="22"/><rect x="42" y="60" width="12" height="70" rx="6" transform="rotate(-8 48 95)"/><rect x="56" y="50" width="12" height="80" rx="6"/><rect x="70" y="58" width="12" height="72" rx="6" transform="rotate(8 76 94)"/><rect x="30" y="95" width="11" height="45" rx="5" transform="rotate(-28 35 117)"/><rect x="82" y="95" width="11" height="45" rx="5" transform="rotate(28 87 117)"/></g><circle cx="62" cy="52" r="4" fill="#c1121f" opacity=".7"/></svg>'
+  var DEAD = [
+    { img: '/img/apparitions/elias.jpg', name: 'ELIAS' },
+    { img: '/img/apparitions/mara.jpg', name: 'MARA' },
+    { img: '/img/apparitions/jonah-bell.jpg', name: 'JONAH BELL' },
+    { img: '/img/apparitions/ruth-mercer.jpg', name: 'RUTH MERCER' },
+    { img: '/img/apparitions/lena-mercer.jpg', name: 'ELENA MERCER' }
   ];
 
   var apparition = null;
@@ -74,17 +73,17 @@
     if (apparitionCount >= 4) return; /* rested for this page view */
     if (apparition || document.hidden || donateOpen()) { scheduleNext(); return; }
     apparitionCount++;
-    var kind = Math.floor(Math.random() * GHOST_SVGS.length);
+    var dead = DEAD[Math.floor(Math.random() * DEAD.length)];
     apparition = document.createElement('div');
-    apparition.className = 'apparition kind-' + kind;
-    apparition.innerHTML = GHOST_SVGS[kind];
+    apparition.className = 'apparition dead-visage';
+    apparition.innerHTML =
+      '<div class="visage-frame"><img src="' + dead.img + '" alt="" aria-hidden="true"></div>' +
+      '<div class="visage-name">' + dead.name + '</div>';
     /* Random position: keep clear of edges so it never covers nav/buttons. */
     var x = 8 + Math.random() * 70;   /* vw */
     var y = 18 + Math.random() * 55;  /* vh */
     apparition.style.left = x + 'vw';
     apparition.style.top = y + 'vh';
-    var size = 90 + Math.random() * 90; /* px */
-    apparition.style.width = size + 'px';
 
     apparition.addEventListener('click', function () {
       banish(true);
