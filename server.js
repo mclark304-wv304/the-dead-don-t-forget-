@@ -464,6 +464,46 @@ app.get("/promo/:code", (req, res) => {
   });
 });
 
+// ── Private soul-link usage dashboard ────────────────────────
+// Owner-only: GET /admin/soul-links?token=<SOUL_STATS_TOKEN>.
+// The token is compared timing-safely against the SOUL_STATS_TOKEN env var.
+// Env var unset OR token mismatch -> plain 404 (endpoint stays invisible).
+// Reads data/promos.json fresh on every request so counts are live.
+// Never log the token.
+function soulStatsAuthorized(req) {
+  const expected = process.env.SOUL_STATS_TOKEN;
+  const provided = req.query.token;
+  if (!expected || typeof provided !== "string" || !provided) return false;
+  const a = Buffer.from(expected, "utf8");
+  const b = Buffer.from(provided, "utf8");
+  if (a.length !== b.length) return false;
+  return crypto.timingSafeEqual(a, b);
+}
+app.get("/admin/soul-links", (req, res) => {
+  if (!soulStatsAuthorized(req)) {
+    return res.status(404).render("error", {
+      title: "Not found",
+      message: "That page doesn't exist.",
+      cta: "/"
+    });
+  }
+  const live = loadPromos(); // fresh read — claim counts are current
+  const base = String(config.baseUrl || "").replace(/\/$/, "");
+  const rows = Object.keys(live).sort().map(code => {
+    const p = live[code] || {};
+    const claims = Number(p.claims) || 0;
+    const max = Number(p.maxClaims) || 0;
+    return {
+      label: p.label || "soul link",
+      url: `${base}/promo/${code}`,
+      claims,
+      max,
+      claimed: claims >= max
+    };
+  });
+  res.render("admin-soul-links", { config, rows });
+});
+
 // ── Gated delivery pages ─────────────────────────────────────
 app.get("/watch/ep4", requireEntitlement("ep4-early"), (req, res) => {
   res.render("watch-ep4", { config });

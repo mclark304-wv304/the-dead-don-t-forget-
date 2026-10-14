@@ -187,6 +187,22 @@ Restart the server after editing.
   startup — commit the file and redeploy (Render auto-deploys on push) for new
   links to take effect.
 
+### Soul-link usage dashboard (private)
+
+- **What:** `GET /admin/soul-links?token=<SOUL_STATS_TOKEN>` renders a dark
+  table of every soul link: label, full URL, claims used / max, and status
+  (AVAILABLE / CLAIMED). Claim counts are read fresh from
+  `data/promos.json` on every request, so they are always current.
+- **Security:** the `token` query param is compared timing-safely against the
+  `SOUL_STATS_TOKEN` environment variable. If the env var is **unset** or the
+  token does not match, the endpoint returns a plain **404** — indistinguishable
+  from an unknown page, so nothing reveals the endpoint exists. Set the env var
+  on Render (Dashboard → Environment), never commit the token to the repo, and
+  never open the dashboard URL where someone could see it. The token itself is
+  never logged.
+- **Generate a token:** `node -e "console.log(require('crypto').randomBytes(24).toString('base64url'))"`
+  (32 URL-safe chars). Hand the full URL to the owner privately.
+
 ## Donations ("Feed the dead 🖤")
 
 - **What:** a cute-and-gory blood-drip Donate button (homepage hero, top of
