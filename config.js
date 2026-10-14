@@ -65,7 +65,7 @@ module.exports = {
   // Episode 10 premiere: paste the YouTube video ID here when Ep10 is ready
   // and it will appear on the early-access watch page automatically.
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
-  ep10VideoId: "",
+  ep10VideoId: "0bRYqq_yflY",
 
   pocketFmUrl: "https://pocketfm.com/show/850e2acdfbf37afa82efe1af45a3d32ea6e188f2",
 
