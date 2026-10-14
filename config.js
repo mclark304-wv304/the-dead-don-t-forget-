@@ -8,6 +8,9 @@ module.exports = {
   tagline: "Every name has a debt.",
   creator: "Maya Clark",
 
+  // Bump this when CSS/JS/audio change so phones fetch fresh files.
+  assetV: "20261014c",
+
   // Base URL of the deployed site (used for PayPal return URLs).
   // Locally: http://localhost:3000 — in production set the BASE_URL env var.
   baseUrl: process.env.BASE_URL || "http://localhost:3000",
