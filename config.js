@@ -45,6 +45,16 @@ module.exports = {
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
   ep7VideoId: "OAVjulr7FKg",
 
+  // Episode 8 premiere: paste the YouTube video ID here when Ep8 is ready
+  // and it will appear on the early-access watch page automatically.
+  // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
+  ep8VideoId: "",
+
+  // Episode 9 premiere: paste the YouTube video ID here when Ep9 is ready
+  // and it will appear on the early-access watch page automatically.
+  // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
+  ep9VideoId: "",
+
   pocketFmUrl: "https://pocketfm.com/show/850e2acdfbf37afa82efe1af45a3d32ea6e188f2",
 
   // ── Free episodes (YouTube stays free) ─────────────────────
@@ -100,6 +110,18 @@ module.exports = {
       title: "The Choice",
       runtime: "22:01",
       synopsis: "Evelyn's dead sister is back. The warehouse is surrounded. Choose."
+    },
+    {
+      n: 8,
+      title: "What Elena Knows",
+      runtime: "19:20",
+      synopsis: "A cassette tape. A photograph of Elena, alive. A woman at the gate who knows how she died."
+    },
+    {
+      n: 9,
+      title: "The Road Beneath the City",
+      runtime: "18:16",
+      synopsis: "The dead lead them under Columbus. An old hospital. A doctor who chose who would live."
     }
   ],
 
@@ -143,6 +165,20 @@ module.exports = {
       priceCents: 299,
       entitlement: "ep7-early",
       deliveryPath: "/watch/ep7"
+    },
+    "ep8-early": {
+      name: "Episode 8 — Early Access",
+      tagline: "Watch Episode 8 'What Elena Knows' here before it hits YouTube.",
+      priceCents: 299,
+      entitlement: "ep8-early",
+      deliveryPath: "/watch/ep8"
+    },
+    "ep9-early": {
+      name: "Episode 9 — Early Access",
+      tagline: "Watch Episode 9 'The Road Beneath the City' here before it hits YouTube.",
+      priceCents: 299,
+      entitlement: "ep9-early",
+      deliveryPath: "/watch/ep9"
     },
     "poster-pack": {
       name: "Official Poster Pack",
