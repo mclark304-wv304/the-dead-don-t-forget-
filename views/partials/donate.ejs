@@ -1,4 +1,5 @@
 <% const _compact = (typeof compact !== 'undefined' && compact); %>
+<% const _stripe = (typeof stripeOn !== 'undefined' && stripeOn); %>
 <div class="donate-block<%= _compact ? ' donate-compact' : '' %>" data-donate>
   <% if (!_compact) { %>
     <p class="donate-cta">Like what you hear in the dark?
@@ -15,8 +16,11 @@
       <button type="button" class="chip" data-amount="25">$25</button>
       <label class="donate-custom">$<input type="number" min="1" max="500" step="0.01" placeholder="Custom" data-donate-custom></label>
     </div>
-    <button type="submit" class="btn-blood" data-donate-submit>Donate via PayPal</button>
+    <button type="submit" class="btn-blood" data-donate-submit data-via="paypal">Donate via PayPal</button>
+    <% if (_stripe) { %>
+    <button type="submit" class="btn-stripe btn-sm donate-alt" data-donate-submit data-via="stripe">Donate with card</button>
+    <% } %>
     <div class="donate-error notice" data-donate-error hidden></div>
-    <p class="donate-note">Secure, through PayPal. Any amount keeps the whispers coming.</p>
+    <p class="donate-note">Secure, through PayPal<%= _stripe ? ' or card (Stripe)' : '' %>. Any amount keeps the whispers coming.</p>
   </form>
 </div>

@@ -5,7 +5,6 @@ document.querySelectorAll("[data-donate]").forEach(block => {
   const errBox = block.querySelector("[data-donate-error]");
   const custom = block.querySelector("[data-donate-custom]");
   const chips = Array.from(block.querySelectorAll(".chip"));
-  const submit = block.querySelector("[data-donate-submit]");
 
   const showError = msg => {
     errBox.textContent = msg;
@@ -34,9 +33,14 @@ document.querySelectorAll("[data-donate]").forEach(block => {
     const amount = custom.value
       ? custom.value
       : (block.querySelector(".chip.selected") || {}).dataset?.amount || "5";
-    submit.disabled = true;
+    // Which button was pressed — PayPal (default) or Stripe card.
+    const via = (e.submitter && e.submitter.dataset && e.submitter.dataset.via) || "paypal";
+    const endpoint = via === "stripe" ? "/api/stripe/donate/order" : "/api/donate/order";
+    // Disable both donate buttons while the request is in flight.
+    const submits = Array.from(block.querySelectorAll("[data-donate-submit]"));
+    submits.forEach(s => { s.disabled = true; });
     try {
-      const r = await fetch("/api/donate/order", {
+      const r = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount })
@@ -46,7 +50,7 @@ document.querySelectorAll("[data-donate]").forEach(block => {
       throw new Error(data.error || "Donation failed to start.");
     } catch (e2) {
       showError(e2.message);
-      submit.disabled = false;
+      submits.forEach(s => { s.disabled = false; });
     }
   });
 });

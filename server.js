@@ -137,6 +137,24 @@ async function paypalApi(method, path, body) {
   return { ok: r.ok, status: r.status, data };
 }
 
+// ── Stripe (Checkout Sessions, hosted card payments) ───────────
+const stripeConfigured = () =>
+  config.stripeSecretKey && !config.stripeSecretKey.includes("PASTE_YOUR");
+let stripeClient = null;
+function stripe() {
+  if (!stripeClient) {
+    const opts = {};
+    // Test-only override (never set in production): point the Stripe client
+    // at a local mock API server, e.g. STRIPE_API_HOST=localhost:4567.
+    if (process.env.STRIPE_API_HOST) {
+      const [h, p] = String(process.env.STRIPE_API_HOST).split(":");
+      opts.host = h; opts.port = p || "443"; opts.protocol = "http";
+    }
+    stripeClient = require("stripe")(config.stripeSecretKey, opts);
+  }
+  return stripeClient;
+}
+
 // ── Access tokens (signed, httpOnly cookie) ──────────────────
 const COOKIE_NAME = "ddf_access";
 function issueAccessCookie(res, email) {
@@ -185,7 +203,9 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
 // Every template (including the error page) gets `config` — the header and
 // footer partials depend on it, so this must run before any res.render.
-app.use((req, res, next) => { res.locals.config = config; next(); });
+// stripeOn gates the Stripe ("pay with card") buttons in the donate partial
+// and on /bonus; it is false until STRIPE_SECRET_KEY is set.
+app.use((req, res, next) => { res.locals.config = config; res.locals.stripeOn = stripeConfigured(); next(); });
 
 // PayPal webhook (backup only — the capture-on-return flow below is the
 // primary, server-verified path, so this endpoint only logs for now).
@@ -359,6 +379,148 @@ app.get("/paypal/donate-return", async (req, res) => {
     try {
       db.prepare("INSERT OR IGNORE INTO donations (paypal_order_id, amount_cents, donor_email) VALUES (?, ?, ?)")
         .run(String(orderId), Math.round(Number(amount) * 100) || 0, donorEmail);
+    } catch { /* record-keeping only — never block the thank-you */ }
+    res.render("donate-thanks", { amount });
+  } catch (err) {
+    res.status(500).render("error", { title: "Something went wrong", message: err.message, cta: "/" });
+  }
+});
+
+// ── Stripe checkout (hosted card payments) ───────────────────
+// Mirrors the PayPal flow exactly: server creates a Checkout Session, the
+// buyer pays on stripe.com, then returns here where the server verifies the
+// session via the Stripe API before granting the entitlement. Card data
+// never touches this server. If Stripe keys aren't set, the endpoints fail
+// gracefully and PayPal keeps working alone.
+app.post("/api/stripe/checkout/:productId", express.json(), async (req, res) => {
+  const product = config.products[req.params.productId];
+  if (!product) return res.status(404).json({ error: "Unknown product." });
+  if (!stripeConfigured()) {
+    return res.status(500).json({
+      error: "Card payments aren't connected yet. PayPal still works — use the PayPal button instead."
+    });
+  }
+  try {
+    const session = await stripe().checkout.sessions.create({
+      mode: "payment",
+      line_items: [{
+        price_data: {
+          currency: "usd",
+          unit_amount: product.priceCents,
+          product_data: { name: `${config.siteName} — ${product.name}` }
+        },
+        quantity: 1
+      }],
+      metadata: { productId: req.params.productId },
+      success_url: `${config.baseUrl}/stripe/return?product=${encodeURIComponent(req.params.productId)}&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${config.baseUrl}/bonus?cancelled=1`
+    });
+    if (!session.url) throw new Error("Stripe did not return a checkout URL.");
+    res.json({ url: session.url });
+  } catch (err) {
+    res.status(500).json({ error: "Could not start card checkout: " + err.message });
+  }
+});
+
+// Stripe return: verify the session server-side (never trust the redirect alone) ──
+app.get("/stripe/return", async (req, res) => {
+  const productId = req.query.product;
+  const product = config.products[productId];
+  const sessionId = req.query.session_id;
+  if (!stripeConfigured()) {
+    return res.status(500).render("error", { title: "Not configured", message: "Card payments are not connected yet.", cta: "/bonus" });
+  }
+  if (!product || !sessionId) {
+    return res.status(400).render("error", { title: "Hmm", message: "Missing payment details. Try checking out again.", cta: "/bonus" });
+  }
+  try {
+    const session = await stripe().checkout.sessions.retrieve(sessionId);
+    // Must be THIS product's session, and the payment must be complete.
+    if (!session || session.metadata.productId !== productId || session.payment_status !== "paid") {
+      return res.status(402).render("error", {
+        title: "Payment not completed",
+        message: "Your card payment didn't go through. No charge was made — try again.",
+        cta: "/bonus"
+      });
+    }
+    // Email from the buyer feeds the restore-by-email flow; fall back to a
+    // stable per-session id so the record is still useful if Stripe omits it.
+    const email = ((session.customer_details && session.customer_details.email) ||
+      `stripe-buyer-${String(sessionId).toLowerCase()}@example.invalid`).toLowerCase();
+    grantEntitlement(email, product.entitlement);
+    issueAccessCookie(res, email);
+    res.redirect(product.deliveryPath);
+  } catch (err) {
+    res.status(500).render("error", { title: "Something went wrong", message: err.message, cta: "/bonus" });
+  }
+});
+
+// ── Stripe donations (separate table; PayPal donations table untouched) ──
+db.exec(`
+  CREATE TABLE IF NOT EXISTS stripe_donations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    stripe_session_id TEXT NOT NULL UNIQUE,
+    amount_cents INTEGER NOT NULL,
+    donor_email TEXT,
+    donated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )
+`);
+app.post("/api/stripe/donate/order", express.json(), async (req, res) => {
+  if (!stripeConfigured()) {
+    return res.status(500).json({
+      error: "Card donations aren't connected yet. PayPal still works — use the PayPal button instead."
+    });
+  }
+  // Donor-chosen amount, validated server-side: $1.00 – $500.00.
+  const cents = Math.round(Number(req.body && req.body.amount) * 100);
+  if (!Number.isFinite(cents) || cents < 100 || cents > 50000) {
+    return res.status(400).json({ error: "Pick an amount between $1 and $500." });
+  }
+  try {
+    const session = await stripe().checkout.sessions.create({
+      mode: "payment",
+      line_items: [{
+        price_data: {
+          currency: "usd",
+          unit_amount: cents,
+          product_data: { name: `${config.siteName} — Fan donation` }
+        },
+        quantity: 1
+      }],
+      metadata: { type: "donation", amount_cents: String(cents) },
+      success_url: `${config.baseUrl}/stripe/donate-return?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${config.baseUrl}/bonus?cancelled=1`
+    });
+    if (!session.url) throw new Error("Stripe did not return a checkout URL.");
+    res.json({ url: session.url });
+  } catch (err) {
+    res.status(500).json({ error: "Could not start the donation: " + err.message });
+  }
+});
+
+// Donor returns from stripe.com — verify and thank them. No entitlement.
+app.get("/stripe/donate-return", async (req, res) => {
+  const sessionId = req.query.session_id;
+  if (!stripeConfigured()) {
+    return res.status(500).render("error", { title: "Not configured", message: "Card donations are not connected yet.", cta: "/bonus" });
+  }
+  if (!sessionId) {
+    return res.status(400).render("error", { title: "Hmm", message: "Missing donation details. Try again.", cta: "/" });
+  }
+  try {
+    const session = await stripe().checkout.sessions.retrieve(sessionId);
+    if (!session || session.metadata.type !== "donation" || session.payment_status !== "paid") {
+      return res.status(402).render("error", {
+        title: "Donation not completed",
+        message: "Your card donation didn't go through. No charge was made — try again.",
+        cta: "/"
+      });
+    }
+    const amount = (session.amount_total || 0) / 100;
+    const donorEmail = (session.customer_details && session.customer_details.email) || null;
+    try {
+      db.prepare("INSERT OR IGNORE INTO stripe_donations (stripe_session_id, amount_cents, donor_email) VALUES (?, ?, ?)")
+        .run(String(sessionId), Math.round((session.amount_total || 0)) || 0, donorEmail);
     } catch { /* record-keeping only — never block the thank-you */ }
     res.render("donate-thanks", { amount });
   } catch (err) {
@@ -679,6 +841,9 @@ Promise.all([buildPosterZip(), buildCharacterArtZip()])
       console.log(paypalConfigured()
         ? `PayPal: CONNECTED (${config.paypalMode})`
         : "PayPal: NOT CONFIGURED (see README to go live)");
+      console.log(stripeConfigured()
+        ? "Stripe: CONNECTED (card payments on)"
+        : "Stripe: NOT CONFIGURED (card buttons hidden, PayPal unaffected)");
     });
   })
   .catch(err => {

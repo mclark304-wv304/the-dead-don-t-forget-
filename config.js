@@ -21,6 +21,13 @@ module.exports = {
   paypalClientSecret: process.env.PAYPAL_CLIENT_SECRET || "PASTE_YOUR_PAYPAL_CLIENT_SECRET",
   paypalMode: process.env.PAYPAL_MODE || "sandbox", // "sandbox" or "live"
 
+  // ── Stripe keys (card payments) ──────────────────────────
+  // https://dashboard.stripe.com → Developers → API keys
+  // Use "test mode" keys while testing, swap to live keys when going live.
+  // Set these as environment variables on your host (Render → Environment).
+  stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY || "PASTE_YOUR_STRIPE_PUBLISHABLE_KEY",
+  stripeSecretKey: process.env.STRIPE_SECRET_KEY || "PASTE_YOUR_STRIPE_SECRET_KEY",
+
   // Secret used to sign access cookies. Change to a long random string.
   // You can also set the JWT_SECRET env var.
   jwtSecret: process.env.JWT_SECRET || "change-this-to-a-long-random-string-before-going-live",

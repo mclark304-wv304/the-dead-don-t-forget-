@@ -54,6 +54,30 @@ Then open http://localhost:3000
 Until real keys are pasted in, the Unlock buttons show a clear message:
 "Payments are not connected yet." Nothing charges by accident.
 
+## Go live with Stripe (take card payments)
+
+1. **Log into Stripe** at https://dashboard.stripe.com (or create a free
+   account; connect your bank there to receive payouts).
+2. Go to **Developers → API keys**. Stay in **test mode** first and copy the
+   **Publishable key** (`pk_test_...`) and the **Secret key** (`sk_test_...`).
+3. Set them as environment variables on your host (Render dashboard → your
+   service → Environment):
+   - `STRIPE_PUBLISHABLE_KEY` = your publishable key
+   - `STRIPE_SECRET_KEY` = your secret key
+   (Or put them in `config.js` — env vars are better for hosting.)
+4. The "Card" buttons on `/bonus` and the "Donate with card" buttons appear
+   automatically once the secret key is set. Test a purchase with a Stripe
+   test card (e.g. `4242 4242 4242 4242`, any future expiry, any CVC).
+   You should land on the unlocked content.
+5. **Go live:** in the Stripe dashboard toggle off test mode, copy the live
+   keys (`pk_live_...`, `sk_live_...`), and swap the env vars.
+
+Until the Stripe secret key is set, the card buttons stay hidden and PayPal
+keeps working alone — nothing breaks. No webhooks needed: every Stripe
+payment is verified server-side on the return URL before access is granted
+(session `payment_status` must be `paid`, and the session's metadata must
+match the purchased product). Card data never touches this server.
+
 **Webhooks (optional backup):** the app exposes `/api/paypal-webhook`, which
 currently just logs events. The capture-on-return flow below already verifies
 every payment server-side, so webhooks are not required. If you add one later
@@ -72,6 +96,8 @@ TODO in `server.js`.
    - `JWT_SECRET` = a long random string
    - `BASE_URL` = your Render URL, e.g. `https://deaddontforget.onrender.com`
    - `NODE_ENV` = `production`
+   - `STRIPE_SECRET_KEY` = your Stripe secret key (adds "Card" buttons alongside PayPal)
+   - `STRIPE_PUBLISHABLE_KEY` = your Stripe publishable key
 5. Deploy.
 
 Same idea works on Railway (railway.app): New Project → deploy from repo,

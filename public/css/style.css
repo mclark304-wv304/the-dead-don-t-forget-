@@ -61,6 +61,20 @@ nav ul a:hover, nav ul a.active { color: var(--bone); }
 .btn:hover { background: var(--blood-dark); }
 .btn.ghost { background: transparent; border: 1px solid var(--blood); color: var(--bone); }
 .btn.ghost:hover { background: rgba(193,18,31,.15); }
+
+/* ── Pay with card (Stripe) — same house shapes, blurple accent ── */
+.pay-row { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; }
+.btn-stripe {
+  display: inline-block; background: linear-gradient(180deg, #7a75ff 0%, #635bff 55%, #4a3fd4 100%);
+  color: #fff; padding: .85rem 1.9rem; text-decoration: none; letter-spacing: .12em;
+  font-size: 1rem; border: none; cursor: pointer; border-radius: 2px; font-family: inherit;
+}
+.btn-stripe:hover { background: #4a3fd4; }
+.btn-stripe:disabled { opacity: .6; cursor: wait; }
+.btn-card-ghost { background: transparent; border: 1px solid #635bff; color: #b8b3ff; }
+.btn-card-ghost:hover { background: rgba(99,91,255,.15); }
+.btn-sm { padding: .55rem 1.2rem; font-size: .9rem; }
+.donate-form .donate-alt { margin-top: .6rem; }
 .hero .cta-row { display: flex; gap: 1rem; flex-wrap: wrap; }
 
 /* ── Sections ── */

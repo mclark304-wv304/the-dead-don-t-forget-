@@ -4,7 +4,7 @@
   <div class="wrap">
     <h2>Bonus <span>Store</span></h2>
     <p class="section-sub">Early premieres and official art. Pay once, yours forever.</p>
-    <p class="section-sub">Secure checkout via PayPal.</p>
+    <p class="section-sub">Secure checkout via PayPal<%= stripeOn ? ' or card (Stripe)' : '' %>.</p>
 
     <%- include('partials/donate', { compact: false }) %>
 
@@ -31,7 +31,12 @@
       </div>
       <div class="unlock-form">
         <div class="price">$<%= (p.priceCents/100).toFixed(2) %></div>
-        <button class="btn" data-checkout="<%= id %>">Unlock</button>
+        <div class="pay-row">
+          <button class="btn" data-checkout="<%= id %>" data-via="paypal">Unlock — PayPal</button>
+          <% if (stripeOn) { %>
+          <button class="btn-stripe" data-checkout="<%= id %>" data-via="stripe">Card</button>
+          <% } %>
+        </div>
       </div>
     </div>
     <% }) %>
@@ -69,7 +74,10 @@ document.querySelectorAll('[data-checkout]').forEach(btn => {
     const box = document.getElementById('checkout-error');
     box.style.display = 'none';
     try {
-      const r = await fetch('/api/checkout/' + btn.dataset.checkout, { method: 'POST' });
+      const endpoint = btn.dataset.via === 'stripe'
+        ? '/api/stripe/checkout/' + btn.dataset.checkout
+        : '/api/checkout/' + btn.dataset.checkout;
+      const r = await fetch(endpoint, { method: 'POST' });
       const data = await r.json();
       if (data.url) { window.location = data.url; return; }
       throw new Error(data.error || 'Checkout failed.');
