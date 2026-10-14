@@ -40,6 +40,11 @@ module.exports = {
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
   ep6VideoId: "D2vwDzioBu4",
 
+  // Episode 7 premiere: paste the YouTube video ID here when Ep7 is ready
+  // and it will appear on the early-access watch page automatically.
+  // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
+  ep7VideoId: "",
+
   pocketFmUrl: "https://pocketfm.com/show/850e2acdfbf37afa82efe1af45a3d32ea6e188f2",
 
   // ── Free episodes (YouTube stays free) ─────────────────────
@@ -89,6 +94,12 @@ module.exports = {
       title: "What We Keep",
       runtime: "18:59",
       synopsis: "Handprints on the clinic window. The dead keep what the living try to bury."
+    },
+    {
+      n: 7,
+      title: "The Choice",
+      runtime: "22:01",
+      synopsis: "Evelyn's dead sister is back. The warehouse is surrounded. Choose."
     }
   ],
 
@@ -125,6 +136,13 @@ module.exports = {
       priceCents: 299,
       entitlement: "ep6-early",
       deliveryPath: "/watch/ep6"
+    },
+    "ep7-early": {
+      name: "Episode 7 — Early Access",
+      tagline: "Watch Episode 7 'The Choice' here before it hits YouTube.",
+      priceCents: 299,
+      entitlement: "ep7-early",
+      deliveryPath: "/watch/ep7"
     },
     "poster-pack": {
       name: "Official Poster Pack",
