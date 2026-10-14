@@ -70,6 +70,16 @@ module.exports = {
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
   ep10VideoId: "0bRYqq_yflY",
 
+  // Episode 11 premiere: paste the YouTube video ID here when Ep11 is ready
+  // and it will appear on the early-access watch page automatically.
+  // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
+  ep11VideoId: "",
+
+  // Episode 12 premiere: paste the YouTube video ID here when Ep12 is ready
+  // and it will appear on the early-access watch page automatically.
+  // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
+  ep12VideoId: "",
+
   pocketFmUrl: "https://pocketfm.com/show/850e2acdfbf37afa82efe1af45a3d32ea6e188f2",
 
   // ── Free episodes (YouTube stays free) ─────────────────────
@@ -143,6 +153,18 @@ module.exports = {
       title: "The Things We Buried",
       runtime: "18:08",
       synopsis: "Daniel confronts the signature that doomed Elena. Seven underground levels. A photograph taken three days ago — and she may be alive."
+    },
+    {
+      n: 11,
+      title: "The Woman in the Photograph",
+      runtime: "TBD",
+      synopsis: "A voice in the stairwell. Three recordings of Daniel. Elena is alive — and she was Subject Zero."
+    },
+    {
+      n: 12,
+      title: "Eleven Minutes",
+      runtime: "TBD",
+      synopsis: "Eleven minutes dead. Twenty minutes until the first wave. The dead are coming for everyone who remembers."
     }
   ],
 
@@ -207,6 +229,20 @@ module.exports = {
       priceCents: 299,
       entitlement: "ep10-early",
       deliveryPath: "/watch/ep10"
+    },
+    "ep11-early": {
+      name: "Episode 11 — Early Access",
+      tagline: "Watch Episode 11 'The Woman in the Photograph' here before it hits YouTube.",
+      priceCents: 299,
+      entitlement: "ep11-early",
+      deliveryPath: "/watch/ep11"
+    },
+    "ep12-early": {
+      name: "Episode 12 — Early Access",
+      tagline: "Watch Episode 12 'Eleven Minutes' here before it hits YouTube.",
+      priceCents: 299,
+      entitlement: "ep12-early",
+      deliveryPath: "/watch/ep12"
     },
     "poster-pack": {
       name: "Official Poster Pack",
