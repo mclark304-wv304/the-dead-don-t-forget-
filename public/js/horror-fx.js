@@ -4,62 +4,22 @@
 (function () {
   'use strict';
 
-  /* ── Ambient sound toggle ── */
-  var SOUND_KEY = 'ddf-sound-on';
-  var ambient = null;
-  var soundOn = false;
-  try { soundOn = localStorage.getItem(SOUND_KEY) === '1'; } catch (e) {}
-
+  /* ── Ambient sound toggle ──
+     Delegates to ambience.js (Web Audio API, iOS-safe). This button is just
+     the visible switch; all audio lives over there. */
   var toggle = document.createElement('button');
   toggle.className = 'sound-toggle';
   toggle.setAttribute('aria-label', 'Toggle ambient sound');
-  toggle.innerHTML = '<span class="sound-icon" aria-hidden="true">♪</span>';
+  toggle.innerHTML = '<span class="sound-icon" aria-hidden="true">🔊</span>';
   document.body.appendChild(toggle);
 
-  function setIcon() {
-    toggle.classList.toggle('on', soundOn);
-    toggle.setAttribute('aria-label', soundOn ? 'Mute ambient sound' : 'Play ambient sound');
-  }
-
-  function ensureAmbient() {
-    if (!ambient) {
-      ambient = new Audio('/audio/ambient.mp3');
-      ambient.loop = true;
-      ambient.volume = 0.5;
-      ambient.preload = 'auto';
-    }
-    return ambient;
-  }
-
-  function applySound() {
-    setIcon();
-    try { localStorage.setItem(SOUND_KEY, soundOn ? '1' : '0'); } catch (e) {}
-    if (soundOn) {
-      ensureAmbient().play().catch(function () {
-        /* autoplay blocked — user can tap again */
-        soundOn = false;
-        applySound();
-      });
-    } else if (ambient) {
-      ambient.pause();
-    }
-  }
-
   toggle.addEventListener('click', function () {
-    soundOn = !soundOn;
-    applySound();
+    /* Don't let this tap also count as the "first gesture" twice — harmless. */
+    if (window.__ddfSetMuted && window.__ddfMuted) {
+      window.__ddfSetMuted(!window.__ddfMuted());
+    }
   });
-  setIcon();
-  /* Don't autoplay on load — but if they left it on, start on first touch. */
-  if (soundOn) {
-    var kickstart = function () {
-      applySound();
-      window.removeEventListener('touchstart', kickstart);
-      window.removeEventListener('click', kickstart);
-    };
-    window.addEventListener('touchstart', kickstart, { passive: true });
-    window.addEventListener('click', kickstart);
-  }
+  if (window.__ddfPaintToggle) window.__ddfPaintToggle();
 
   /* ── Tap the hero: disturb the dead ── */
   var hero = document.querySelector('.hero');
@@ -97,14 +57,23 @@
   ];
 
   var apparition = null;
+  var apparitionCount = 0; /* cap: max ~4 visitations per page view, then they rest */
   var sting2 = null;
   function getSting() {
     if (!sting2) { sting2 = new Audio('/audio/sting.mp3'); sting2.volume = 0.4; sting2.preload = 'auto'; }
     return sting2;
   }
 
+  function donateOpen() {
+    /* Never haunt anyone mid-donation. */
+    var f = document.querySelector('[data-donate-form]');
+    return !!(f && !f.hidden);
+  }
+
   function spawnApparition() {
-    if (apparition || document.hidden) { scheduleNext(); return; }
+    if (apparitionCount >= 4) return; /* rested for this page view */
+    if (apparition || document.hidden || donateOpen()) { scheduleNext(); return; }
+    apparitionCount++;
     var kind = Math.floor(Math.random() * GHOST_SVGS.length);
     apparition = document.createElement('div');
     apparition.className = 'apparition kind-' + kind;
@@ -126,10 +95,13 @@
     }, { passive: true });
 
     document.body.appendChild(apparition);
-    /* Trigger the fade-in on the next frame. */
+    /* Trigger the fade-in on the next frame, with a groan as it rises. */
     requestAnimationFrame(function () {
       requestAnimationFrame(function () {
-        if (apparition) apparition.classList.add('risen');
+        if (apparition) {
+          apparition.classList.add('risen');
+          if (window.__ddfGroan) { try { window.__ddfGroan(); } catch (e) {} }
+        }
       });
     });
     /* It dissolves on its own after a few seconds. */
@@ -150,9 +122,80 @@
   }
 
   function scheduleNext() {
+    if (apparitionCount >= 4) return; /* the dead rest */
     /* The dead are patient: every 20–45 seconds. */
     setTimeout(spawnApparition, 20000 + Math.random() * 25000);
   }
   /* First visitation comes a little sooner, once the page has settled. */
   setTimeout(spawnApparition, 9000 + Math.random() * 8000);
+
+  /* ── Blood splatter burst at tap point (max 12 particles, WAAPI transform/opacity) ── */
+  document.addEventListener('pointerdown', function (e) {
+    var btn = e.target.closest ? e.target.closest('.btn, .btn-blood, .btn-stripe') : null;
+    if (!btn) return;
+    var n = 8 + Math.floor(Math.random() * 5); /* 8–12 */
+    for (var i = 0; i < n; i++) {
+      (function () {
+        var p = document.createElement('div');
+        p.className = 'splatter-bit';
+        var size = 5 + Math.random() * 9;
+        p.style.width = size + 'px';
+        p.style.height = size + 'px';
+        p.style.left = e.clientX + 'px';
+        p.style.top = e.clientY + 'px';
+        document.body.appendChild(p);
+        var ang = Math.random() * Math.PI * 2;
+        var dist = 26 + Math.random() * 58;
+        var dx = Math.cos(ang) * dist - size / 2;
+        var dy = Math.sin(ang) * dist - size / 2;
+        var anim = p.animate([
+          { transform: 'translate(-50%,-50%) scale(1)', opacity: 0.95 },
+          { transform: 'translate(calc(-50% + ' + dx + 'px), calc(-50% + ' + dy + 'px)) scale(.2)', opacity: 0 }
+        ], { duration: 450 + Math.random() * 350, easing: 'cubic-bezier(.2,.7,.3,1)' });
+        anim.onfinish = function () { p.remove(); };
+      })();
+    }
+  }, { passive: true });
+
+  /* ── Section headers: staggered word-rise with red glow on scroll ── */
+  function battleHead(h) {
+    var frag = document.createDocumentFragment();
+    var idx = 0;
+    function addWordEl(el) {
+      var wrap = document.createElement('span');
+      wrap.className = 'w';
+      el.style.transitionDelay = (idx * 70) + 'ms';
+      wrap.appendChild(el);
+      frag.appendChild(wrap);
+      idx++;
+    }
+    Array.prototype.slice.call(h.childNodes).forEach(function (node) {
+      if (node.nodeType === 3) {
+        node.textContent.split(/(\s+)/).forEach(function (part) {
+          if (!part) return;
+          if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(' ')); return; }
+          var s = document.createElement('span');
+          s.textContent = part;
+          addWordEl(s);
+        });
+      } else if (node.nodeType === 1) {
+        addWordEl(node);
+      }
+    });
+    h.textContent = '';
+    h.appendChild(frag);
+    h.classList.add('battle-head');
+  }
+  var heads = document.querySelectorAll('main h2');
+  if (heads.length && 'IntersectionObserver' in window) {
+    var hio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('lit');
+          hio.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.35 });
+    heads.forEach(function (h) { battleHead(h); hio.observe(h); });
+  }
 })();

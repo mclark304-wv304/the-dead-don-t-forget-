@@ -568,3 +568,86 @@ body.disturbed .smoke { animation: disturb-flicker .65s steps(2) ; }
   }
   .shorts-row .btn { flex: 0 0 auto; scroll-snap-align: start; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   FINAL BATTLE — big bold interactions (phase 2)
+   All continuous animation is transform/opacity-only. -webkit- prefixed.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* 1. Buttons: dramatic hover/tap — scale up, blood-red glow */
+.btn, .btn-stripe { position: relative; }
+.btn:hover { transform: translateY(-3px) scale(1.06);
+  box-shadow: 0 0 34px rgba(193,18,31,.75), 0 12px 32px rgba(193,18,31,.4); }
+.btn-stripe:hover { transform: translateY(-3px) scale(1.06);
+  box-shadow: 0 0 34px rgba(99,91,255,.7), 0 12px 32px rgba(99,91,255,.4); }
+.btn-blood:hover { transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 0 40px rgba(217,32,48,.8), inset 0 1px 0 rgba(255,255,255,.2); }
+.btn:active, .btn-blood:active, .btn-stripe:active { transform: scale(.94); }
+
+/* 2. Cards: lift higher with tilt + red glow border + deep shadow */
+.card { transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease; }
+.card:hover, .card:active {
+  transform: translateY(-8px) rotate(-.6deg) scale(1.02);
+  border-color: var(--blood);
+  box-shadow: 0 20px 55px rgba(0,0,0,.65), 0 0 30px rgba(193,18,31,.45);
+}
+.product { transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease; }
+.product:hover {
+  transform: translateY(-4px);
+  border-color: rgba(193,18,31,.6);
+  box-shadow: 0 14px 40px rgba(0,0,0,.55), 0 0 22px rgba(193,18,31,.3);
+}
+
+/* 3. "Feed the dead": slow blood-pulse halo + drips that fall */
+.btn-blood { z-index: 0; }
+.btn-blood::before {
+  content: ""; position: absolute; inset: -6px; border-radius: 6px; z-index: -1;
+  background: radial-gradient(ellipse at center, rgba(217,32,48,.55), transparent 70%);
+  opacity: 0; pointer-events: none;
+  -webkit-animation: blood-halo 3.2s ease-in-out infinite;
+  animation: blood-halo 3.2s ease-in-out infinite;
+}
+@-webkit-keyframes blood-halo {
+  0%, 100% { opacity: 0; -webkit-transform: scale(.94); transform: scale(.94); }
+  50%      { opacity: .85; -webkit-transform: scale(1.07); transform: scale(1.07); }
+}
+@keyframes blood-halo {
+  0%, 100% { opacity: 0; transform: scale(.94); }
+  50%      { opacity: .85; transform: scale(1.07); }
+}
+.btn-blood::after {
+  -webkit-transform-origin: top center; transform-origin: top center;
+  -webkit-animation: drip-fall 4.5s ease-in-out infinite;
+  animation: drip-fall 4.5s ease-in-out infinite;
+}
+@-webkit-keyframes drip-fall {
+  0%, 100% { -webkit-transform: scaleY(1); transform: scaleY(1); }
+  50%      { -webkit-transform: scaleY(1.7); transform: scaleY(1.7); }
+}
+@keyframes drip-fall {
+  0%, 100% { transform: scaleY(1); }
+  50%      { transform: scaleY(1.7); }
+}
+
+/* 4. Blood-splatter burst particles (spawned by JS at tap point, max 12) */
+.splatter-bit {
+  position: fixed; z-index: 10001; pointer-events: none; border-radius: 50%;
+  background: radial-gradient(circle, #e02030 0%, #8f0e18 65%, transparent 72%);
+  will-change: transform, opacity;
+}
+
+/* 5. Section headers: staggered word-rise with red glow on scroll */
+main h2.battle-head .w { display: inline-block; overflow: hidden; vertical-align: bottom; }
+main h2.battle-head .w > span {
+  display: inline-block; transform: translateY(115%); opacity: 0;
+  transition: transform .65s cubic-bezier(.2,.7,.2,1), opacity .5s ease;
+}
+main h2.battle-head.lit .w > span { transform: translateY(0); opacity: 1;
+  text-shadow: 0 0 26px rgba(193,18,31,.55); }
+
+/* Reduced motion: kill the battle FX too */
+@media (prefers-reduced-motion: reduce) {
+  .btn-blood::before, .btn-blood::after { -webkit-animation: none; animation: none; }
+  main h2.battle-head .w > span { transform: none; opacity: 1; transition: none; }
+  .card:hover, .card:active, .product:hover { transform: none; }
+}
