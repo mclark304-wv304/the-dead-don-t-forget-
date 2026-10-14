@@ -183,6 +183,13 @@ Restart the server after editing.
   watch page. Exhausted code → friendly "already been claimed" page. No
   endpoint lists or enumerates codes — keep links private; anyone with a link
   can claim it until its cap is hit.
+- **Personal unlock link:** at claim time the success page also mints a
+  personal bearer link, `GET /s/<token>` — a JWT (`{ soul: true, products }`,
+  ~10-year expiry) shown in a "Save this link" box with a copy button.
+  Opening it in ANY browser/device issues the same signed access cookie, so
+  the unlock follows the person instead of being trapped in the cookie jar of
+  the browser that claimed the soul link. Bad/expired token → plain 404.
+  Same trust model as the soul link itself: don't share it, it's theirs.
 - **Deploying new codes:** codes are loaded from `data/promos.json` at server
   startup — commit the file and redeploy (Render auto-deploys on push) for new
   links to take effect.

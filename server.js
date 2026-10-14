@@ -456,12 +456,48 @@ app.get("/promo/:code", (req, res) => {
   promo.claims = claimNumber;
   savePromos(promos);
   issueAccessCookie(res, email);
+  // Personal unlock link: a long-lived bearer token the redeemer can save
+  // and open in any browser/device. Same trust model as the soul link itself.
+  const soulToken = jwt.sign(
+    { soul: true, products: promo.entitlements },
+    config.jwtSecret,
+    { expiresIn: "3650d" } // ~10 years — effectively forever
+  );
   res.render("promo-success", {
     config,
     label: promo.label,
     allAccess: promo.entitlements.includes("all-access"),
-    links: promoLinks(promo.entitlements)
+    links: promoLinks(promo.entitlements),
+    personalUrl: "https://the-dead-don-t-forget-1.onrender.com/s/" + soulToken
   });
+});
+
+// ── Personal unlock links ──────────────────────────────────────
+// Bearer links minted at soul-link claim time (/promo/:code). Opening one in
+// ANY browser/device issues the same signed access cookie the promo route
+// issues, so the unlock follows the person, not the cookie jar.
+// Bad/expired token -> plain 404, indistinguishable from an unknown page.
+app.get("/s/:token", (req, res) => {
+  let payload = null;
+  try {
+    payload = jwt.verify(req.params.token, config.jwtSecret);
+  } catch {
+    payload = null;
+  }
+  if (!payload || payload.soul !== true || !Array.isArray(payload.products) ||
+      !payload.products.every(p => typeof p === "string" && p.length > 0 && p.length < 64)) {
+    return res.status(404).render("error", {
+      title: "Not found",
+      message: "That link doesn't exist. Check the link and try again.",
+      cta: "/bonus"
+    });
+  }
+  // Deterministic per-token identity so repeat opens are idempotent
+  // (no entitlement-row buildup no matter how often the link is opened).
+  const email = "soul-" + crypto.createHash("sha256").update(req.params.token).digest("hex").slice(0, 16) + "@example.invalid";
+  for (const p of payload.products) grantEntitlement(email, p);
+  issueAccessCookie(res, email);
+  res.redirect("/bonus");
 });
 
 // ── Private soul-link usage dashboard ────────────────────────

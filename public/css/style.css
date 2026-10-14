@@ -221,3 +221,12 @@ footer .wrap { display: flex; justify-content: space-between; gap: 1rem; flex-wr
 }
 .donate-error { margin-top: .8rem; }
 .donate-note { color: var(--dim); font-size: .85rem; font-style: italic; margin-top: .8rem; margin-bottom: 0; }
+
+/* ── Personal unlock link (soul-link success page) ── */
+.personal-link { margin-top: 2.2rem; padding: 1.4rem; border: 1px solid var(--blood); border-radius: 4px; background: rgba(193,18,31,.06); }
+.personal-link h3 { margin: 0 0 .4rem; letter-spacing: .08em; }
+.personal-link p { color: var(--dim); margin: 0 0 1rem; }
+.copy-row { display: flex; gap: .6rem; }
+.copy-row input { flex: 1; min-width: 0; background: #0d0d0f; color: var(--bone); border: 1px solid #333; border-radius: 2px; padding: .7rem .9rem; font-family: inherit; font-size: .85rem; }
+.copy-row .btn { padding: .7rem 1.2rem; white-space: nowrap; }
+@media (max-width: 520px) { .copy-row { flex-direction: column; } }
