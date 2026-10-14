@@ -89,6 +89,17 @@ section h2 span { color: var(--blood); }
 .episode-block { margin-bottom: 3rem; }
 .episode-block h3 { font-size: 1.6rem; margin: 1rem 0 .3rem; }
 .episode-block .meta { color: var(--dim); margin-bottom: 1rem; }
+.early-access-banner {
+  margin: 1rem 0 3rem;
+  padding: 2.2rem 2rem;
+  text-align: center;
+  border: 1px solid var(--blood-dark);
+  border-radius: 6px;
+  background: linear-gradient(180deg, rgba(122,12,20,.16), rgba(0,0,0,.35));
+  box-shadow: 0 0 28px rgba(193,18,31,.18);
+}
+.early-access-banner h2 { margin: 0 0 .6rem; }
+.early-access-banner .section-sub { margin: 0 auto 1.4rem; max-width: 34rem; }
 .shorts-row { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 2.5rem; }
 
 /* ── Store ── */
