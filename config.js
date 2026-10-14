@@ -62,6 +62,11 @@ module.exports = {
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
   ep9VideoId: "53hiQIxjbdA",
 
+  // Episode 10 premiere: paste the YouTube video ID here when Ep10 is ready
+  // and it will appear on the early-access watch page automatically.
+  // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
+  ep10VideoId: "",
+
   pocketFmUrl: "https://pocketfm.com/show/850e2acdfbf37afa82efe1af45a3d32ea6e188f2",
 
   // ── Free episodes (YouTube stays free) ─────────────────────
@@ -129,6 +134,12 @@ module.exports = {
       title: "The Road Beneath the City",
       runtime: "18:16",
       synopsis: "The dead lead them under Columbus. An old hospital. A doctor who chose who would live."
+    },
+    {
+      n: 10,
+      title: "The Things We Buried",
+      runtime: "18:08",
+      synopsis: "Daniel confronts the signature that doomed Elena. Seven underground levels. A photograph taken three days ago — and she may be alive."
     }
   ],
 
@@ -186,6 +197,13 @@ module.exports = {
       priceCents: 299,
       entitlement: "ep9-early",
       deliveryPath: "/watch/ep9"
+    },
+    "ep10-early": {
+      name: "Episode 10 — Early Access",
+      tagline: "Watch Episode 10 'The Things We Buried' here before it hits YouTube.",
+      priceCents: 299,
+      entitlement: "ep10-early",
+      deliveryPath: "/watch/ep10"
     },
     "poster-pack": {
       name: "Official Poster Pack",
