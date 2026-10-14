@@ -481,10 +481,16 @@ footer .wrap { display: flex; justify-content: space-between; gap: 1rem; flex-wr
   from { transform: translate3d(0,0,0); }
   to   { transform: translate3d(18vw,0,0); }
 }
-/* ── Mobile: keep every layer, soften blur for phone GPUs ── */
+/* ── Mobile: blur() on huge layers crashes phone GPUs (black screen) — use soft gradients only ── */
 @media (max-width: 768px) {
-  .smoke-layer { filter: blur(18px); }
-  .smoke-4 { filter: blur(22px); }
+  .smoke-layer {
+    filter: none !important;
+    -webkit-filter: none !important;
+    background: radial-gradient(closest-side, rgba(200,200,210,.35), rgba(200,200,210,0) 72%) !important;
+  }
+  .smoke-3, .smoke-4 { display: none !important; }
+  .smoke-1 { width: 70vmax !important; height: 70vmax !important; }
+  .smoke-2 { width: 80vmax !important; height: 80vmax !important; }
 }
 /* ── Respect reduced-motion: still air, no drift ── */
 @media (prefers-reduced-motion: reduce) {
