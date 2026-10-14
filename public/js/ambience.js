@@ -26,7 +26,7 @@
         ambGain = ctx.createGain();
         ambGain.gain.value = 0;
         ambGain.connect(ctx.destination);
-        loadLoop('/audio/ambience.mp3');
+        loadLoop('/audio/ambience.mp3?v=20261014f');
         [1, 2, 3].forEach(function (i) { loadGroan(i); });
       }
       if (ctx.state === 'suspended') {
