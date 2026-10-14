@@ -54,6 +54,8 @@
     { img: '/img/apparitions/ruth-mercer.jpg', name: 'RUTH MERCER' },
     { img: '/img/apparitions/lena-mercer.jpg', name: 'ELENA MERCER' }
   ];
+  /* Preload the visages so they pop instantly, even on phones. */
+  DEAD.forEach(function (d) { var im = new Image(); im.src = d.img; });
 
   var apparition = null;
   var apparitionCount = 0; /* cap: max ~4 visitations per page view, then they rest */
