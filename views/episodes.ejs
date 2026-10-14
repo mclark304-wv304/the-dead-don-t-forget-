@@ -16,11 +16,17 @@
     </div>
     <% }) %>
 
-    <div class="early-access-banner">
-      <h2>Episode 4 is <span>waiting</span></h2>
-      <p class="section-sub">"The Man That Wasn't There" — plus Episodes 5 &amp; 6 — are streaming exclusively in the Bonus store. The dead don't wait.</p>
-      <a class="btn" href="/bonus">Enter the Bonus Store</a>
+    <% config.lockedEpisodes.forEach(ep => { %>
+    <div class="episode-block locked-episode">
+      <div class="locked-poster">
+        <span class="locked-badge">LOCKED</span>
+      </div>
+      <h3>Episode <%= ep.n %>: <%= ep.title %></h3>
+      <div class="meta"><%= ep.runtime %> &middot; Website Exclusive</div>
+      <p class="section-sub"><%= ep.synopsis %></p>
+      <a class="btn" href="/bonus">Unlock in the Bonus Store — $2.99</a>
     </div>
+    <% }) %>
 
     <h2>Teasers &amp; <span>Shorts</span></h2>
     <p class="section-sub">Quick hits. Share them everywhere.</p>

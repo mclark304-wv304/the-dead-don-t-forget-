@@ -70,6 +70,28 @@ module.exports = {
     }
   ],
 
+  // ── Locked episodes (website-exclusive Early Access) ────
+  lockedEpisodes: [
+    {
+      n: 4,
+      title: "The Man That Wasn't There",
+      runtime: "12:34",
+      synopsis: "A man who was never there. Daniel can't stop remembering him."
+    },
+    {
+      n: 5,
+      title: "The First Memory",
+      runtime: "22:55",
+      synopsis: "Three knocks. A child's voice. The first memory changes everything."
+    },
+    {
+      n: 6,
+      title: "What We Keep",
+      runtime: "18:59",
+      synopsis: "Handprints on the clinic window. The dead keep what the living try to bury."
+    }
+  ],
+
   // ── Teasers / Shorts ───────────────────────────────────────
   shorts: [
     { label: "Episode 1 — Teaser 1", url: "https://www.tiktok.com/@mayaclark04/video/7695838328632954125" },
