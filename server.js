@@ -34,6 +34,20 @@ const productsForEmail = (email) => {
   return db.prepare("SELECT product FROM entitlements WHERE email = ?").all(email.toLowerCase()).map(r => r.product);
 };
 
+// ── Traffic analytics (privacy-friendly pageviews) ──────────
+db.exec(`
+  CREATE TABLE IF NOT EXISTS pageviews (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    path TEXT NOT NULL,
+    day TEXT NOT NULL,
+    visitor_hash TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+  CREATE INDEX IF NOT EXISTS idx_pageviews_day ON pageviews(day);
+  CREATE INDEX IF NOT EXISTS idx_pageviews_path_day ON pageviews(path, day);
+`);
+const TRAFFIC_SALT = crypto.randomBytes(16).toString("hex");
+
 // ── Poster pack zip (built once at startup, served only to buyers) ──
 const POSTER_ZIP = path.join(DATA_DIR, "poster-pack.zip");
 function buildPosterZip() {
@@ -186,6 +200,22 @@ app.post("/api/paypal-webhook", express.json(), (req, res) => {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// ── Track pageviews (skip static assets, admin, and file downloads) ──
+app.use((req, res, next) => {
+  if (req.method === "GET"
+      && !req.path.startsWith("/admin")
+      && !req.path.startsWith("/api/")
+      && !/\.(css|js|png|jpg|jpeg|webp|gif|svg|ico|mp4|pdf|zip|woff2?)$/i.test(req.path)) {
+    try {
+      const day = new Date().toISOString().slice(0, 10);
+      const ip = req.ip || req.socket.remoteAddress || "unknown";
+      const visitor_hash = crypto.createHash("sha256").update(TRAFFIC_SALT + day + ip).digest("hex").slice(0, 16);
+      db.prepare("INSERT INTO pageviews (path, day, visitor_hash) VALUES (?, ?, ?)").run(req.path, day, visitor_hash);
+    } catch (e) { /* analytics must never break the site */ }
+  }
+  next();
+});
 
 // ── Public pages ─────────────────────────────────────────────
 app.get("/", (req, res) => res.render("index", { config }));
@@ -538,6 +568,43 @@ app.get("/admin/soul-links", (req, res) => {
     };
   });
   res.render("admin-soul-links", { config, rows });
+});
+
+// ── Owner-only: GET /admin/traffic?token=<SOUL_STATS_TOKEN> ──
+app.get("/admin/traffic", (req, res) => {
+  if (!soulStatsAuthorized(req)) {
+    return res.status(404).render("error", {
+      title: "Not found",
+      message: "That page doesn't exist.",
+      cta: "/"
+    });
+  }
+  const days = db.prepare(`
+    SELECT day,
+           COUNT(*) AS views,
+           COUNT(DISTINCT visitor_hash) AS visitors
+    FROM pageviews
+    GROUP BY day
+    ORDER BY day DESC
+    LIMIT 30
+  `).all();
+  const pages = db.prepare(`
+    SELECT path,
+           COUNT(*) AS views,
+           COUNT(DISTINCT visitor_hash) AS visitors
+    FROM pageviews
+    WHERE day >= date('now', '-30 days')
+    GROUP BY path
+    ORDER BY views DESC
+    LIMIT 20
+  `).all();
+  const totals = db.prepare(`
+    SELECT COUNT(*) AS views,
+           COUNT(DISTINCT day || visitor_hash) AS visitors
+    FROM pageviews
+    WHERE day >= date('now', '-30 days')
+  `).get();
+  res.render("admin-traffic", { config, days, pages, totals });
 });
 
 // ── Gated delivery pages ─────────────────────────────────────

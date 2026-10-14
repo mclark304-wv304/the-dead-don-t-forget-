@@ -1,0 +1,39 @@
+<%- include('partials/header', { active: '', pageTitle: 'Traffic', config }) %>
+
+<section>
+  <div class="wrap">
+    <h2>Site <span>Traffic</span></h2>
+    <p class="section-sub">Last 30 days. Private — only you can see this.</p>
+
+    <div class="traffic-totals">
+      <div class="traffic-stat">
+        <span class="traffic-num"><%= totals.views %></span>
+        <span class="traffic-label">pageviews</span>
+      </div>
+      <div class="traffic-stat">
+        <span class="traffic-num"><%= totals.visitors %></span>
+        <span class="traffic-label">visitors</span>
+      </div>
+    </div>
+
+    <h3>By day</h3>
+    <table class="traffic-table">
+      <tr><th>Day</th><th>Views</th><th>Visitors</th></tr>
+      <% days.forEach(d => { %>
+      <tr><td><%= d.day %></td><td><%= d.views %></td><td><%= d.visitors %></td></tr>
+      <% }) %>
+      <% if (!days.length) { %><tr><td colspan="3">No traffic recorded yet.</td></tr><% } %>
+    </table>
+
+    <h3>Top pages</h3>
+    <table class="traffic-table">
+      <tr><th>Page</th><th>Views</th><th>Visitors</th></tr>
+      <% pages.forEach(p => { %>
+      <tr><td><%= p.path %></td><td><%= p.views %></td><td><%= p.visitors %></td></tr>
+      <% }) %>
+      <% if (!pages.length) { %><tr><td colspan="3">No traffic recorded yet.</td></tr><% } %>
+    </table>
+  </div>
+</section>
+
+<%- include('partials/footer', { config }) %>

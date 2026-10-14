@@ -266,3 +266,12 @@ footer .wrap { display: flex; justify-content: space-between; gap: 1rem; flex-wr
 .copy-row input { flex: 1; min-width: 0; background: #0d0d0f; color: var(--bone); border: 1px solid #333; border-radius: 2px; padding: .7rem .9rem; font-family: inherit; font-size: .85rem; }
 .copy-row .btn { padding: .7rem 1.2rem; white-space: nowrap; }
 @media (max-width: 520px) { .copy-row { flex-direction: column; } }
+
+/* ── Traffic dashboard ── */
+.traffic-totals { display: flex; gap: 1.5rem; margin: 1.5rem 0 2rem; }
+.traffic-stat { border: 1px solid var(--blood-dark); border-radius: 6px; padding: 1.2rem 2rem; text-align: center; background: rgba(0,0,0,.4); }
+.traffic-num { display: block; font-size: 2.2rem; color: var(--blood); }
+.traffic-label { color: var(--dim); font-size: .85rem; letter-spacing: .15em; }
+.traffic-table { width: 100%; border-collapse: collapse; margin: 1rem 0 2.5rem; }
+.traffic-table th, .traffic-table td { text-align: left; padding: .6rem .8rem; border-bottom: 1px solid rgba(193,18,31,.25); }
+.traffic-table th { color: var(--blood); letter-spacing: .1em; font-size: .85rem; }
