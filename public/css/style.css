@@ -41,7 +41,18 @@ nav ul a:hover, nav ul a.active { color: var(--bone); }
   position: relative;
   min-height: 72vh;
   display: flex; align-items: flex-end;
-  background: #000 url('/img/series-key-art.webp') center/cover no-repeat;
+  background: #000;
+  overflow: hidden;
+}
+.hero::before {
+  content: ""; position: absolute; inset: 0;
+  background: url('/img/series-key-art.webp') center/cover no-repeat;
+  animation: hero-breathe 42s ease-in-out infinite alternate;
+  will-change: transform;
+}
+@keyframes hero-breathe {
+  from { transform: scale(1) translateX(0); }
+  to   { transform: scale(1.07) translateX(-1.5%); }
 }
 .hero::after {
   content: ""; position: absolute; inset: 0;
@@ -289,3 +300,31 @@ footer .wrap { display: flex; justify-content: space-between; gap: 1rem; flex-wr
 .traffic-table { width: 100%; border-collapse: collapse; margin: 1rem 0 2.5rem; }
 .traffic-table th, .traffic-table td { text-align: left; padding: .6rem .8rem; border-bottom: 1px solid rgba(193,18,31,.25); }
 .traffic-table th { color: var(--blood); letter-spacing: .1em; font-size: .85rem; }
+
+/* ── Drifting smoke overlay (site-wide, subtle horror atmosphere) ── */
+.smoke { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 1; }
+.smoke-layer {
+  position: absolute; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(205,205,215,.55), rgba(205,205,215,0) 72%);
+  filter: blur(55px); mix-blend-mode: screen;
+  will-change: transform, opacity;
+}
+.smoke-1 { width: 62vmax; height: 62vmax; top: -12%; left: -14%; opacity: .10; animation: smoke-drift-a 65s ease-in-out infinite alternate; }
+.smoke-2 { width: 74vmax; height: 74vmax; top: 22%; right: -20%; opacity: .08; animation: smoke-drift-b 90s ease-in-out infinite alternate; }
+.smoke-3 { width: 52vmax; height: 52vmax; bottom: -16%; left: 24%; opacity: .12; animation: smoke-drift-c 45s ease-in-out infinite alternate; }
+@keyframes smoke-drift-a {
+  from { transform: translate3d(0,0,0) scale(1); opacity: .07; }
+  to   { transform: translate3d(14vw,6vh,0) scale(1.22); opacity: .14; }
+}
+@keyframes smoke-drift-b {
+  from { transform: translate3d(0,0,0) scale(1.15); opacity: .11; }
+  to   { transform: translate3d(-17vw,-5vh,0) scale(.95); opacity: .06; }
+}
+@keyframes smoke-drift-c {
+  from { transform: translate3d(0,0,0) scale(.95) rotate(0deg); opacity: .13; }
+  to   { transform: translate3d(-9vw,7vh,0) scale(1.18) rotate(8deg); opacity: .07; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .smoke-layer, .hero::before { animation: none; }
+  .smoke-layer { opacity: .06; }
+}
