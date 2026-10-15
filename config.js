@@ -174,7 +174,7 @@ module.exports = {
     {
       n: 15,
       title: "The Man Before the Forty-Three",
-      runtime: "TBD",
+      runtime: "30:09",
       synopsis: "The original archive. Daniel Vale. Noah remembers four children — but the fourth child's identity was removed."
     }
   ],
