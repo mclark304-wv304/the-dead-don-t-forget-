@@ -162,7 +162,7 @@ module.exports = {
     {
       n: 11,
       title: "The Woman in the Photograph",
-      runtime: "TBD",
+      runtime: "17:12",
       synopsis: "A voice in the stairwell. Three recordings of Daniel. Elena is alive — and she was Subject Zero."
     },
     {
