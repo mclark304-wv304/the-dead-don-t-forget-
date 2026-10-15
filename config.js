@@ -80,6 +80,11 @@ module.exports = {
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
   ep12VideoId: "",
 
+  // Episode 14 premiere: paste the YouTube video ID here when Ep14 is ready
+  // and it will appear on the early-access watch page automatically.
+  // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
+  ep14VideoId: "",
+
   // Episode 15 premiere: paste the YouTube video ID here when Ep15 is ready
   // and it will appear on the early-access watch page automatically.
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
@@ -172,6 +177,12 @@ module.exports = {
       synopsis: "Eleven minutes dead. Twenty minutes until the first wave. The dead are coming for everyone who remembers."
     },
     {
+      n: 14,
+      title: "The Rules of the Vault",
+      runtime: "37:12",
+      synopsis: "The Vault tests every memory. Forty-three Daniels. A woman's voice through the speaker. The first memory was never lost — it was hidden."
+    },
+    {
       n: 15,
       title: "The Man Before the Forty-Three",
       runtime: "30:09",
@@ -254,6 +265,13 @@ module.exports = {
       priceCents: 299,
       entitlement: "ep12-early",
       deliveryPath: "/watch/ep12"
+    },
+    "ep14-early": {
+      name: "Episode 14 — Early Access",
+      tagline: "Watch Episode 14 'The Rules of the Vault' here before it hits YouTube.",
+      priceCents: 299,
+      entitlement: "ep14-early",
+      deliveryPath: "/watch/ep14"
     },
     "ep15-early": {
       name: "Episode 15 — Early Access",
