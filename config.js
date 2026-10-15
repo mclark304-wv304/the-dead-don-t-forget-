@@ -168,7 +168,7 @@ module.exports = {
     {
       n: 12,
       title: "Eleven Minutes",
-      runtime: "TBD",
+      runtime: "20:26",
       synopsis: "Eleven minutes dead. Twenty minutes until the first wave. The dead are coming for everyone who remembers."
     },
     {
