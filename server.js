@@ -75,6 +75,24 @@ app.post("/api/candles/light", express.json(), (req, res) => {
   const n = db.prepare("SELECT COUNT(*) AS n FROM candle_lights").get().n;
   res.json({ count: n });
 });
+/* "Light them all" — one bulk insert instead of 13 throttled singles. */
+app.post("/api/candles/light-many", express.json(), (req, res) => {
+  const ip = String(req.ip || "unknown");
+  const now = Date.now();
+  const key = ip + ":many";
+  const last = candleThrottle.get(key) || 0;
+  if (now - last < 60000) {
+    return res.status(429).json({ error: "The dead need a moment." });
+  }
+  let n = parseInt(req.body && req.body.n, 10);
+  if (!n || n < 1) n = 1;
+  n = Math.min(n, 13);
+  candleThrottle.set(key, now);
+  const stmt = db.prepare("INSERT INTO candle_lights (ip) VALUES (?)");
+  db.transaction((count) => { for (let i = 0; i < count; i++) stmt.run(ip); })(n);
+  const total = db.prepare("SELECT COUNT(*) AS n FROM candle_lights").get().n;
+  res.json({ count: total });
+});
 
 // ── Poster pack zip (built once at startup, served only to buyers) ──
 const POSTER_ZIP = path.join(DATA_DIR, "poster-pack.zip");

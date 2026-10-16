@@ -160,6 +160,8 @@
   /* ── Candles: thirteen, tap each to light ──
      Light all 13 and the candle Easter egg wakes: a free episode. */
   var CANDLE_TOTAL = 13;
+  var CANDLE_NAMES = ['Elias', 'Mara', 'Daniel', 'Jonah', 'Ruth', 'Elena',
+    'Reed', 'Evelyn', 'Marcus', 'Claire', 'Rusk', 'Richard', 'the nameless one'];
   var LIT_KEY = 'ddf_candles_lit_v2';
   var CANDLE_EGG_KEY = 'ddf_candle_egg_claimed';
   var shrine = document.getElementById('candle-shrine');
@@ -194,15 +196,22 @@
     for (var i = 0; i < CANDLE_TOTAL; i++) {
       (function (idx) {
         var isLit = lit.indexOf(idx) !== -1;
+        var wrap = document.createElement('div');
+        wrap.className = 'candle-wrap';
         var c = document.createElement('button');
         c.type = 'button';
         c.className = 'candle' + (isLit ? ' lit' : '');
-        c.setAttribute('aria-label', isLit ? 'Candle ' + (idx + 1) + ' is lit' : 'Light candle ' + (idx + 1));
+        c.setAttribute('aria-label', isLit ? 'Candle for ' + CANDLE_NAMES[idx] + ' is lit' : 'Light a candle for ' + CANDLE_NAMES[idx]);
         c.innerHTML = '<span class="flame"></span><span class="wick"></span><span class="wax"></span>';
         if (!isLit) {
           c.addEventListener('click', function () { lightCandle(idx, c); });
         }
-        shrine.appendChild(c);
+        var lab = document.createElement('span');
+        lab.className = 'candle-label';
+        lab.textContent = 'For ' + CANDLE_NAMES[idx];
+        wrap.appendChild(c);
+        wrap.appendChild(lab);
+        shrine.appendChild(wrap);
       })(i);
     }
     paintCandleCount();
@@ -325,6 +334,37 @@
       .then(function (r) { return r.json(); })
       .then(function (d) { setGlobalCount(d.count || 0); })
       .catch(function () { setGlobalCount('many'); });
+    var lightAll = document.getElementById('light-all');
+    if (lightAll) {
+      lightAll.addEventListener('click', function () {
+        var lit = litIdx();
+        var unlit = [];
+        for (var i = 0; i < CANDLE_TOTAL; i++) {
+          if (lit.indexOf(i) === -1) unlit.push(i);
+        }
+        if (!unlit.length) return;
+        whisper(1.25);
+        fetch('/api/candles/light-many', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ n: unlit.length })
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (d) { if (d && typeof d.count === 'number') setGlobalCount(d.count); })
+          .catch(function () {});
+        saveLit(unlit.concat(lit));
+        renderCandles();
+        setTimeout(wakeCandleEgg, 900);
+      });
+    }
+    var snuffAll = document.getElementById('snuff-all');
+    if (snuffAll) {
+      snuffAll.addEventListener('click', function () {
+        saveLit([]);
+        renderCandles();
+        toast('The flames die. The dark leans closer.');
+      });
+    }
   }
 
   /* ── Souls released (banished apparitions) ── */
@@ -371,6 +411,10 @@
   function paintSigils() {
     var f = foundSigils();
     if (sigilCount) sigilCount.textContent = String(Math.min(f.length, SIGIL_TOTAL));
+    var dots = document.querySelectorAll('#sigil-dots span');
+    dots.forEach(function (dt, i) {
+      dt.classList.toggle('on', i < f.length);
+    });
     document.querySelectorAll('.sigil').forEach(function (s) {
       if (f.indexOf(s.getAttribute('data-sigil')) !== -1) s.classList.add('found');
     });

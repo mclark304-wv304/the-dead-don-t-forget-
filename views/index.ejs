@@ -85,8 +85,8 @@
 <section>
   <div class="wrap gate has-sigils">
     <button class="sigil" data-sigil="3" style="top:.2rem;left:.6rem" aria-label="A strange marking">ᛚ</button>
-    <h2>The Wall <span>of Names</span></h2>
-    <p class="section-sub">Every name has a debt. Click one — and listen.</p>
+    <h2>The Wall <span>Is Listening</span></h2>
+    <p class="section-sub">Tap a name. Lean in close — they don't speak loudly anymore.</p>
     <div id="wall-of-names" class="name-wall" role="list" aria-label="Wall of the dead"></div>
   </div>
 </section>
@@ -95,10 +95,14 @@
   <div class="wrap gate has-sigils">
     <button class="sigil" data-sigil="4" style="top:.2rem;right:.8rem" aria-label="A strange marking">ᛇ</button>
     <h2>Light a <span>Candle</span></h2>
+    <p class="section-sub">One flame for each of them. They notice.</p>
     <p class="section-sub"><strong><span id="candle-count">…</span> <span id="candle-word">candles</span></strong> burning for the dead.</p>
-    <p class="fine">Thirteen candles. Tap each one to light it — light them all, and something wakes.</p>
     <div id="candle-shrine" class="shrine" role="group" aria-label="Thirteen candles"></div>
-    <p class="fine">You have lit <span id="my-candles">0/13</span>.</p>
+    <p>
+      <button id="light-all" class="btn" type="button">Light them all</button>
+      <button id="snuff-all" class="btn btn-ghost" type="button">Snuff them all</button>
+    </p>
+    <p class="fine">You have lit <span id="my-candles">0/13</span>. Light them all, and something wakes.</p>
   </div>
 </section>
 
@@ -111,8 +115,10 @@
 
 <section>
   <div class="wrap gate">
-    <h2>The Hidden <span>Sigils</span></h2>
-    <p class="section-sub">Five sigils hide across this page — faint marks in unlikely corners. Found: <strong><span id="sigil-count">0</span>/5</strong>.</p>
+    <h2>Find All <span>Five</span></h2>
+    <p class="section-sub"><strong>How to hunt:</strong> the sigils are faint — barely a glimmer, like something half-seen from the corner of your eye. Tap anything that shimmers. Found sigils light up and stay lit.</p>
+    <div id="sigil-dots" class="sigil-dots" aria-label="Sigils found"><span></span><span></span><span></span><span></span><span></span></div>
+    <p class="fine"><span id="sigil-count">0</span>/5 found.</p>
     <p id="sigil-reward" hidden>The dead acknowledge you. They whisper a single name: <strong>ELIAS</strong>… — he hides in the dark corners of this site. Tap everything.</p>
   </div>
 </section>
