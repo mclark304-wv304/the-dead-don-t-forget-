@@ -181,7 +181,11 @@
     var n = litIdx().length;
     if (myEl) myEl.textContent = n + '/' + CANDLE_TOTAL;
   }
-  function setGlobalCount(n) { if (countEl) countEl.textContent = String(n); }
+  function setGlobalCount(n) {
+    if (countEl) countEl.textContent = String(n);
+    var w = document.getElementById('candle-word');
+    if (w) w.textContent = (n === 1) ? 'candle' : 'candles';
+  }
 
   function renderCandles() {
     if (!shrine) return;
