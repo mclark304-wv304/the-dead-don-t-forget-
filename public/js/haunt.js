@@ -106,20 +106,47 @@
     requestAnimationFrame(tick);
   })();
 
-  /* ── Wall of Names ── */
+  /* ── Wall of Names (faces underneath) ── */
   var NAMES = [
-    'ELIAS', 'MARA', 'DANIEL VALE', 'JONAH BELL',
-    'RUTH MERCER', 'ELENA MERCER', 'THOMAS REED', 'EVELYN SHAW',
-    'MARCUS', 'CLAIRE', 'THOMAS RUSK', 'RICHARD CRANE'
+    { name: 'ELIAS',        img: '/img/apparitions/elias.jpg' },
+    { name: 'MARA',         img: '/img/apparitions/mara.jpg' },
+    { name: 'DANIEL VALE',  img: '/img/wall/daniel-vale.jpg' },
+    { name: 'JONAH BELL',   img: '/img/apparitions/jonah-bell.jpg' },
+    { name: 'RUTH MERCER',  img: '/img/apparitions/ruth-mercer.jpg' },
+    { name: 'ELENA MERCER', img: '/img/apparitions/lena-mercer.jpg' },
+    { name: 'THOMAS REED',  img: null }, /* face still lost to the dark */
+    { name: 'EVELYN SHAW',  img: '/img/wall/evelyn-shaw.jpg' },
+    { name: 'MARCUS',       img: '/img/wall/marcus.jpg' },
+    { name: 'CLAIRE',       img: '/img/wall/claire.jpg' },
+    { name: 'THOMAS RUSK',  img: null }, /* face still lost to the dark */
+    { name: 'RICHARD CRANE', img: null } /* face still lost to the dark */
   ];
   var wall = document.getElementById('wall-of-names');
   if (wall) {
-    NAMES.forEach(function (name, i) {
+    NAMES.forEach(function (n, i) {
       var b = document.createElement('button');
       b.type = 'button';
       b.className = 'wall-name';
       b.setAttribute('role', 'listitem');
-      b.textContent = name;
+      b.setAttribute('aria-label', 'Hear ' + n.name + ' whisper');
+      if (n.img) {
+        var face = document.createElement('img');
+        face.className = 'wall-face';
+        face.src = n.img;
+        face.alt = '';
+        face.loading = 'lazy';
+        b.appendChild(face);
+      } else {
+        var veil = document.createElement('span');
+        veil.className = 'wall-face wall-veiled';
+        veil.setAttribute('aria-hidden', 'true');
+        veil.textContent = '?';
+        b.appendChild(veil);
+      }
+      var label = document.createElement('span');
+      label.className = 'wall-label';
+      label.textContent = n.name;
+      b.appendChild(label);
       b.addEventListener('click', function () {
         whisper(0.75 + (i % 6) * 0.12);
         b.classList.remove('heard');
@@ -130,70 +157,170 @@
     });
   }
 
-  /* ── Candles ── */
+  /* ── Candles: thirteen, tap each to light ──
+     Light all 13 and the candle Easter egg wakes: a free episode. */
+  var CANDLE_TOTAL = 13;
+  var LIT_KEY = 'ddf_candles_lit_v2';
+  var CANDLE_EGG_KEY = 'ddf_candle_egg_claimed';
   var shrine = document.getElementById('candle-shrine');
   var countEl = document.getElementById('candle-count');
   var myEl = document.getElementById('my-candles');
-  var lightBtn = document.getElementById('light-candle');
-  var MAX_SHOWN = 48;
 
-  function myLit() {
-    try { return parseInt(localStorage.getItem('ddf_my_candles') || '0', 10) || 0; }
-    catch (e) { return 0; }
+  function litIdx() {
+    try {
+      var a = JSON.parse(localStorage.getItem(LIT_KEY) || '[]');
+      return Array.isArray(a) ? a.filter(function (x) {
+        return x >= 0 && x < CANDLE_TOTAL;
+      }) : [];
+    } catch (e) { return []; }
   }
-  function setMyLit(n) {
-    try { localStorage.setItem('ddf_my_candles', String(n)); } catch (e) {}
-    if (myEl) myEl.textContent = String(n);
+  function saveLit(a) {
+    try { localStorage.setItem(LIT_KEY, JSON.stringify(a)); } catch (e) {}
   }
-  function renderShrine(total) {
+  function paintCandleCount() {
+    var n = litIdx().length;
+    if (myEl) myEl.textContent = n + '/' + CANDLE_TOTAL;
+  }
+  function setGlobalCount(n) { if (countEl) countEl.textContent = String(n); }
+
+  function renderCandles() {
     if (!shrine) return;
+    var lit = litIdx();
     shrine.innerHTML = '';
-    var show = Math.min(total, MAX_SHOWN);
-    for (var i = 0; i < show; i++) {
-      var c = document.createElement('div');
-      c.className = 'candle' + (i === show - 1 ? ' newest' : '');
-      c.setAttribute('aria-hidden', 'true');
-      c.innerHTML = '<div class="flame"></div><div class="wick"></div><div class="wax"></div>';
-      shrine.appendChild(c);
+    for (var i = 0; i < CANDLE_TOTAL; i++) {
+      (function (idx) {
+        var isLit = lit.indexOf(idx) !== -1;
+        var c = document.createElement('button');
+        c.type = 'button';
+        c.className = 'candle' + (isLit ? ' lit' : '');
+        c.setAttribute('aria-label', isLit ? 'Candle ' + (idx + 1) + ' is lit' : 'Light candle ' + (idx + 1));
+        c.innerHTML = '<span class="flame"></span><span class="wick"></span><span class="wax"></span>';
+        if (!isLit) {
+          c.addEventListener('click', function () { lightCandle(idx, c); });
+        }
+        shrine.appendChild(c);
+      })(i);
     }
-    if (total > MAX_SHOWN) {
-      var more = document.createElement('div');
-      more.className = 'candle-more';
-      more.textContent = '+' + (total - MAX_SHOWN) + ' more';
-      shrine.appendChild(more);
-    }
-    if (total === 0) {
-      var none = document.createElement('p');
-      none.className = 'fine';
-      none.textContent = 'No candles burn yet. Light the first one.';
-      shrine.appendChild(none);
+    paintCandleCount();
+  }
+
+  function lightCandle(idx, el) {
+    var lit = litIdx();
+    if (lit.indexOf(idx) !== -1) return;
+    lit.push(idx); saveLit(lit);
+    el.classList.add('lit');
+    el.setAttribute('aria-label', 'Candle ' + (idx + 1) + ' is lit');
+    whisper(1.25);
+    paintCandleCount();
+    fetch('/api/candles/light', { method: 'POST' })
+      .then(function (r) { return r.json(); })
+      .then(function (d) { if (d && typeof d.count === 'number') setGlobalCount(d.count); })
+      .catch(function () {});
+    if (lit.length >= CANDLE_TOTAL) {
+      setTimeout(wakeCandleEgg, 900);
     }
   }
-  function setCount(n) { if (countEl) countEl.textContent = String(n); }
+
+  /* ── Candle Easter egg: all 13 lit → free Episode 5 ── */
+  var candleOverlay = null;
+  function candleEggClaimed() {
+    try { return localStorage.getItem(CANDLE_EGG_KEY) === '1'; } catch (e) { return false; }
+  }
+  function candleEggEl(tag, cls, html) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (html != null) n.innerHTML = html;
+    return n;
+  }
+  function closeCandleEgg() {
+    if (candleOverlay && candleOverlay.parentNode) candleOverlay.parentNode.removeChild(candleOverlay);
+    candleOverlay = null;
+  }
+  function renderCandleEgg(state, wickNumber) {
+    var modal = candleEggEl('div', 'egg-modal');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    if (state === 'offer') {
+      modal.appendChild(candleEggEl('div', 'egg-kicker', 'thirteen flames&hellip;'));
+      modal.appendChild(candleEggEl('h2', null, 'The dead <span>accept</span> your light.'));
+      modal.appendChild(candleEggEl('p', null,
+        'You lit all thirteen candles. Take your reward &mdash; Episode 5 Early Access, free. ' +
+        'Only 13 wicks will ever burn this bright.'));
+      var claim = candleEggEl('button', 'btn', 'Claim your episode');
+      claim.type = 'button';
+      claim.addEventListener('click', doCandleClaim);
+      modal.appendChild(claim);
+      modal.appendChild(candleEggEl('br'));
+    } else if (state === 'already') {
+      modal.appendChild(candleEggEl('div', 'egg-kicker', 'the wax remembers'));
+      modal.appendChild(candleEggEl('h2', null, 'You already <span>claimed</span> this light.'));
+      modal.appendChild(candleEggEl('p', null, 'One wick, one claim. Your Episode 5 Early Access is waiting.'));
+      var watch1 = candleEggEl('a', 'btn', 'Watch Episode 5');
+      watch1.href = '/watch/ep5';
+      modal.appendChild(watch1);
+      modal.appendChild(candleEggEl('br'));
+    } else if (state === 'success') {
+      modal.appendChild(candleEggEl('div', 'egg-kicker', 'it is written'));
+      modal.appendChild(candleEggEl('h2', null, 'Wick <span>claimed</span>.'));
+      modal.appendChild(candleEggEl('div', 'egg-soul', '#' + wickNumber));
+      modal.appendChild(candleEggEl('p', null,
+        'You are wick ' + wickNumber + ' of 13. Episode 5 Early Access is yours &mdash; no payment, no questions.'));
+      var watch2 = candleEggEl('a', 'btn', 'Watch Episode 5');
+      watch2.href = '/watch/ep5';
+      modal.appendChild(watch2);
+      modal.appendChild(candleEggEl('br'));
+    } else if (state === 'closed') {
+      modal.appendChild(candleEggEl('div', 'egg-kicker', 'snuffed out'));
+      modal.appendChild(candleEggEl('h2', null, 'The <span>thirteen</span> are taken.'));
+      modal.appendChild(candleEggEl('p', null, 'All thirteen wicks are claimed. The dead have what they need &mdash; for now.'));
+    } else {
+      modal.appendChild(candleEggEl('div', 'egg-kicker', 'static'));
+      modal.appendChild(candleEggEl('h2', null, 'The flame <span>flickered</span> out.'));
+      modal.appendChild(candleEggEl('p', null, 'Something went wrong on our end. Try again in a moment.'));
+    }
+    var close = candleEggEl('button', 'egg-close', 'Slip back into the dark');
+    close.type = 'button';
+    close.addEventListener('click', closeCandleEgg);
+    modal.appendChild(close);
+    candleOverlay.innerHTML = '';
+    candleOverlay.appendChild(modal);
+  }
+  function doCandleClaim() {
+    var modal = candleOverlay.firstChild;
+    var btn = modal.querySelector('.btn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Listening\u2026'; }
+    fetch('/api/candle-egg/claim', { method: 'POST', credentials: 'same-origin' })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data && data.ok) {
+          try { localStorage.setItem(CANDLE_EGG_KEY, '1'); } catch (e) {}
+          renderCandleEgg('success', data.wickNumber);
+        } else if (data && data.reason === 'closed') {
+          renderCandleEgg('closed', null);
+        } else {
+          renderCandleEgg('error', null);
+        }
+      })
+      .catch(function () { renderCandleEgg('error', null); });
+  }
+  function wakeCandleEgg() {
+    if (candleOverlay) return;
+    candleOverlay = candleEggEl('div', 'egg-overlay');
+    candleOverlay.addEventListener('click', function (e) {
+      if (e.target === candleOverlay) closeCandleEgg();
+    });
+    document.body.appendChild(candleOverlay);
+    whisper(0.5);
+    setTimeout(function () { whisper(0.7); }, 500);
+    renderCandleEgg(candleEggClaimed() ? 'already' : 'offer', null);
+  }
 
   if (shrine) {
-    setMyLit(myLit());
+    renderCandles();
     fetch('/api/candles', { cache: 'no-store' })
       .then(function (r) { return r.json(); })
-      .then(function (d) { setCount(d.count || 0); renderShrine(d.count || 0); })
-      .catch(function () { setCount('many'); });
-    if (lightBtn) {
-      lightBtn.addEventListener('click', function () {
-        lightBtn.disabled = true;
-        whisper(1.25);
-        fetch('/api/candles/light', { method: 'POST' })
-          .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
-          .then(function (res) {
-            if (res.ok) {
-              setCount(res.d.count);
-              renderShrine(res.d.count);
-              setMyLit(myLit() + 1);
-            }
-            setTimeout(function () { lightBtn.disabled = false; }, 10000);
-          })
-          .catch(function () { lightBtn.disabled = false; });
-      });
-    }
+      .then(function (d) { setGlobalCount(d.count || 0); })
+      .catch(function () { setGlobalCount('many'); });
   }
 
   /* ── Souls released (banished apparitions) ── */
@@ -225,7 +352,7 @@
     paintSouls(true);
   });
 
-  /* ── Sigil hunt ── */
+  /* ── Sigil hunt: find all 5 → the ELIAS Easter egg wakes ── */
   var SIGIL_TOTAL = 5;
   var sigilCount = document.getElementById('sigil-count');
   var reward = document.getElementById('sigil-reward');
@@ -256,8 +383,11 @@
         f.push(id); saveSigils(f);
         whisper(1.5);
         if (f.length === SIGIL_TOTAL) {
-          /* The grand whisper. */
+          /* The grand whisper — then the real Easter egg opens. */
           setTimeout(function () { whisper(0.5); }, 600);
+          setTimeout(function () {
+            if (typeof window.__ddfOpenElias === 'function') window.__ddfOpenElias();
+          }, 1600);
         }
       }
       paintSigils();

@@ -721,14 +721,33 @@ canvas.embers {
   box-shadow: inset 0 0 60px rgba(0,0,0,.75);
 }
 .wall-name {
+  display: inline-flex; flex-direction: column; align-items: center; gap: .45rem;
   font-family: Georgia, 'Times New Roman', serif; letter-spacing: .14em;
   font-size: .82rem; color: #b9a88f; background: none;
-  border: 1px solid transparent; border-radius: 4px;
-  padding: .35rem .6rem; cursor: pointer;
+  border: 1px solid transparent; border-radius: 6px;
+  padding: .5rem .6rem; cursor: pointer;
   text-shadow: 0 0 8px rgba(185,168,143,.25);
   -webkit-transition: color .25s, text-shadow .25s, border-color .25s;
   transition: color .25s, text-shadow .25s, border-color .25s;
 }
+.wall-face {
+  width: 64px; height: 64px; border-radius: 50%; object-fit: cover;
+  border: 2px solid #3a2f26; background: #0a0908;
+  filter: grayscale(.35) brightness(.85);
+  -webkit-transition: filter .25s, border-color .25s, transform .25s;
+  transition: filter .25s, border-color .25s, transform .25s;
+}
+.wall-veiled {
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #5a4f42; font-size: 1.6rem; font-family: Georgia, serif;
+  background: radial-gradient(circle at 50% 35%, #1c1614, #0a0908 75%);
+}
+.wall-name:hover .wall-face, .wall-name:focus-visible .wall-face,
+.wall-name.heard .wall-face {
+  filter: grayscale(0) brightness(1.05); border-color: #8a6f4d;
+  -webkit-transform: scale(1.06); transform: scale(1.06);
+}
+.wall-label { line-height: 1.3; }
 .wall-name:hover, .wall-name:focus-visible {
   color: #f3e6cf; border-color: #5a4a38; outline: none;
   text-shadow: 0 0 14px rgba(243,230,207,.6);
@@ -751,21 +770,32 @@ canvas.embers {
   align-items: flex-end; min-height: 74px; max-width: 640px; margin: 1rem auto;
   padding: 1rem; background: #0b0a0c; border: 1px solid #241f1c; border-radius: 10px;
 }
-.candle { position: relative; width: 16px; height: 52px; }
-.candle .wax {
-  position: absolute; bottom: 0; left: 2px; right: 2px; height: 34px;
-  background: linear-gradient(180deg, #e8dcc2, #b8a67e);
-  border-radius: 3px 3px 2px 2px;
+.candle {
+  position: relative; width: 24px; height: 58px;
+  background: none; border: none; padding: 6px 4px 0; cursor: pointer;
 }
+.candle .wax {
+  position: absolute; bottom: 0; left: 6px; right: 6px; height: 34px;
+  background: linear-gradient(180deg, #4a4038, #241f1a);
+  border-radius: 3px 3px 2px 2px;
+  -webkit-transition: background .4s; transition: background .4s;
+}
+.candle.lit .wax { background: linear-gradient(180deg, #e8dcc2, #b8a67e); }
 .candle .wick {
-  position: absolute; bottom: 33px; left: 7px; width: 2px; height: 6px; background: #1a1512;
+  position: absolute; bottom: 33px; left: 11px; width: 2px; height: 6px; background: #1a1512;
 }
 .candle .flame {
-  position: absolute; bottom: 38px; left: 2px; width: 12px; height: 20px;
+  position: absolute; bottom: 38px; left: 6px; width: 12px; height: 20px;
   background: radial-gradient(circle at 50% 72%, #fff7d6 0%, #ffcf5e 38%, #ff8a2a 68%, rgba(255,90,20,0) 100%);
   border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
   -webkit-transform-origin: 50% 100%;
   transform-origin: 50% 100%;
+  opacity: 0;
+  -webkit-transition: opacity .5s; transition: opacity .5s;
+}
+.candle.lit { cursor: default; }
+.candle.lit .flame {
+  opacity: 1;
   -webkit-animation: flame-flicker .5s ease-in-out infinite alternate;
   animation: flame-flicker .5s ease-in-out infinite alternate;
 }
@@ -793,9 +823,20 @@ canvas.embers {
   font-size: 1.15rem; line-height: 1; color: #6f6250; opacity: .16; padding: .4rem;
   -webkit-transition: opacity .3s, color .3s, text-shadow .3s, transform .3s;
   transition: opacity .3s, color .3s, text-shadow .3s, transform .3s;
+  -webkit-animation: sigil-breathe 4.5s ease-in-out infinite;
+  animation: sigil-breathe 4.5s ease-in-out infinite;
+}
+@-webkit-keyframes sigil-breathe {
+  0%, 100% { opacity: .14; }
+  50% { opacity: .55; }
+}
+@keyframes sigil-breathe {
+  0%, 100% { opacity: .14; }
+  50% { opacity: .55; }
 }
 .sigil:hover, .sigil:focus-visible { opacity: .65; color: #c9b891; outline: none; }
 .sigil.found {
+  -webkit-animation: none; animation: none;
   opacity: 1; color: #ff5a3c; cursor: default;
   text-shadow: 0 0 12px rgba(255,90,60,.8);
   -webkit-transform: scale(1.15); transform: scale(1.15);
@@ -825,6 +866,7 @@ canvas.embers {
   canvas.embers { display: none; }
   .candle .flame, .candle.newest .flame { -webkit-animation: none; animation: none; }
   .wall-name.heard, .soul-chip.pulse, #sigil-reward.revealed { -webkit-animation: none; animation: none; }
+  .sigil { -webkit-animation: none; animation: none; opacity: .3; }
 }
 /* Phones: keep the grain whisper-thin so the GPU stays cool. */
 @media (max-width: 768px) {

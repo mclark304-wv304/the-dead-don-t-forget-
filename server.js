@@ -596,6 +596,34 @@ app.post("/api/easter-egg/claim", (req, res) => {
   }
 });
 
+// ── Candle Easter egg: light all 13 candles ───────────────────
+// Independent from the ELIAS egg — rewards stack, so a visitor may claim
+// both. The first 13 claims get Episode 5 Early Access free, via the same
+// signed entitlement cookie shape as the PayPal flow ("ep5-early").
+db.exec(`
+  CREATE TABLE IF NOT EXISTS candle_egg_claims (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL UNIQUE,
+    claimed_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )
+`);
+app.post("/api/candle-egg/claim", (req, res) => {
+  try {
+    const claimed = db.prepare("SELECT COUNT(*) AS n FROM candle_egg_claims").get().n;
+    if (claimed >= 13) {
+      return res.json({ ok: false, reason: "closed" });
+    }
+    const wickNumber = claimed + 1;
+    const email = `candle-egg-wick-${wickNumber}-${crypto.randomBytes(4).toString("hex")}@example.invalid`;
+    db.prepare("INSERT INTO candle_egg_claims (email) VALUES (?)").run(email);
+    grantEntitlement(email, "ep5-early");
+    issueAccessCookie(res, email);
+    res.json({ ok: true, wickNumber });
+  } catch (err) {
+    res.status(500).json({ ok: false, reason: "error", message: err.message });
+  }
+});
+
 // ── Promo codes: private free-pass links ─────────────────────
 // Owner-generated codes (scripts/make-promo.js) that bypass the paywall for
 // a capped number of redeemers. Each redeemer gets a unique per-claim

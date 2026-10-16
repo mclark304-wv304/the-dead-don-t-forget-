@@ -184,4 +184,8 @@
   if (!armFooter()) {
     document.addEventListener("DOMContentLoaded", armFooter);
   }
+
+  /* Exposed so other haunt features (e.g. the 13-candle Easter egg) can
+     open the same modal with its normal claim rules. */
+  window.__ddfOpenElias = openModal;
 })();
