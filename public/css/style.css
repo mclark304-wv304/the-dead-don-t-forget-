@@ -850,21 +850,22 @@ canvas.embers {
 .has-sigils { position: relative; }
 .sigil {
   position: absolute; z-index: 5; background: none; border: none; cursor: pointer;
-  font-size: 1.15rem; line-height: 1; color: #6f6250; opacity: .16; padding: .4rem;
+  font-size: 1.4rem; line-height: 1; color: #c9a86a; opacity: .4; padding: .5rem;
+  text-shadow: 0 0 10px rgba(201,168,106,.55);
   -webkit-transition: opacity .3s, color .3s, text-shadow .3s, transform .3s;
   transition: opacity .3s, color .3s, text-shadow .3s, transform .3s;
-  -webkit-animation: sigil-breathe 4.5s ease-in-out infinite;
-  animation: sigil-breathe 4.5s ease-in-out infinite;
+  -webkit-animation: sigil-breathe 3s ease-in-out infinite;
+  animation: sigil-breathe 3s ease-in-out infinite;
 }
 @-webkit-keyframes sigil-breathe {
-  0%, 100% { opacity: .14; }
-  50% { opacity: .55; }
+  0%, 100% { opacity: .38; text-shadow: 0 0 10px rgba(201,168,106,.55); }
+  50% { opacity: .95; text-shadow: 0 0 20px rgba(255,200,110,.95); }
 }
 @keyframes sigil-breathe {
-  0%, 100% { opacity: .14; }
-  50% { opacity: .55; }
+  0%, 100% { opacity: .38; text-shadow: 0 0 10px rgba(201,168,106,.55); }
+  50% { opacity: .95; text-shadow: 0 0 20px rgba(255,200,110,.95); }
 }
-.sigil:hover, .sigil:focus-visible { opacity: .65; color: #c9b891; outline: none; }
+.sigil:hover, .sigil:focus-visible { opacity: 1; color: #ffe1a8; outline: none; }
 .sigil.found {
   -webkit-animation: none; animation: none;
   opacity: 1; color: #ff5a3c; cursor: default;
