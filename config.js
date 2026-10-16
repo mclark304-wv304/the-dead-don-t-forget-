@@ -80,6 +80,11 @@ module.exports = {
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
   ep12VideoId: "",
 
+  // Episode 13 premiere: paste the YouTube video ID here when Ep13 is ready
+  // and it will appear on the early-access watch page automatically.
+  // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
+  ep13VideoId: "",
+
   // Episode 14 premiere: paste the YouTube video ID here when Ep14 is ready
   // and it will appear on the early-access watch page automatically.
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
@@ -177,6 +182,12 @@ module.exports = {
       synopsis: "Eleven minutes dead. Twenty minutes until the first wave. The dead are coming for everyone who remembers."
     },
     {
+      n: 13,
+      title: "The First Wave",
+      runtime: "46:24",
+      synopsis: "The lights go out. The dead rise together — and the first wave comes for everyone."
+    },
+    {
       n: 14,
       title: "The Rules of the Vault",
       runtime: "37:12",
@@ -265,6 +276,13 @@ module.exports = {
       priceCents: 299,
       entitlement: "ep12-early",
       deliveryPath: "/watch/ep12"
+    },
+    "ep13-early": {
+      name: "Episode 13 — Early Access",
+      tagline: "Watch Episode 13 'The First Wave' here before it hits YouTube.",
+      priceCents: 299,
+      entitlement: "ep13-early",
+      deliveryPath: "/watch/ep13"
     },
     "ep14-early": {
       name: "Episode 14 — Early Access",
