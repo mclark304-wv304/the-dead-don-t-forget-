@@ -48,6 +48,34 @@ db.exec(`
 `);
 const TRAFFIC_SALT = crypto.randomBytes(16).toString("hex");
 
+// ── Candle shrine (global count of candles lit for the dead) ───
+db.exec(`
+  CREATE TABLE IF NOT EXISTS candle_lights (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ip TEXT NOT NULL,
+    lit_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+`);
+/* In-memory per-IP throttle: one candle per 10s. Survives redeploys losing
+   nothing important — the count itself is in SQLite. */
+const candleThrottle = new Map();
+app.get("/api/candles", (req, res) => {
+  const n = db.prepare("SELECT COUNT(*) AS n FROM candle_lights").get().n;
+  res.json({ count: n });
+});
+app.post("/api/candles/light", express.json(), (req, res) => {
+  const ip = String(req.ip || "unknown");
+  const now = Date.now();
+  const last = candleThrottle.get(ip) || 0;
+  if (now - last < 10000) {
+    return res.status(429).json({ error: "One candle at a time — wait a few seconds." });
+  }
+  candleThrottle.set(ip, now);
+  db.prepare("INSERT INTO candle_lights (ip) VALUES (?)").run(ip);
+  const n = db.prepare("SELECT COUNT(*) AS n FROM candle_lights").get().n;
+  res.json({ count: n });
+});
+
 // ── Poster pack zip (built once at startup, served only to buyers) ──
 const POSTER_ZIP = path.join(DATA_DIR, "poster-pack.zip");
 function buildPosterZip() {

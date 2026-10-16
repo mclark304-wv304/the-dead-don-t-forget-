@@ -675,3 +675,158 @@ main h2.battle-head.lit .w > span { transform: translateY(0); opacity: 1;
   main h2.battle-head .w > span { transform: none; opacity: 1; transition: none; }
   .card:hover, .card:active, .product:hover { transform: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   THE HAUNTING — embers, film grain, wall of names, candles,
+   sigils, souls-released. All transform/opacity/canvas-only; no blur.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Film grain: tiled SVG noise, jittered with steps() + faint flicker. */
+.grain {
+  position: fixed; inset: -120px; z-index: 9990; pointer-events: none;
+  opacity: .05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+  -webkit-animation: grain-shift .45s steps(3) infinite, grain-flicker 3.2s steps(5) infinite;
+  animation: grain-shift .45s steps(3) infinite, grain-flicker 3.2s steps(5) infinite;
+  will-change: transform, opacity;
+}
+@-webkit-keyframes grain-shift {
+  0% { -webkit-transform: translate(0,0); } 33% { -webkit-transform: translate(-46px,28px); }
+  66% { -webkit-transform: translate(34px,-38px); } 100% { -webkit-transform: translate(0,0); }
+}
+@keyframes grain-shift {
+  0% { transform: translate(0,0); } 33% { transform: translate(-46px,28px); }
+  66% { transform: translate(34px,-38px); } 100% { transform: translate(0,0); }
+}
+@-webkit-keyframes grain-flicker {
+  0%,100% { opacity: .05; } 20% { opacity: .075; } 40% { opacity: .04; }
+  60% { opacity: .068; } 80% { opacity: .045; }
+}
+@keyframes grain-flicker {
+  0%,100% { opacity: .05; } 20% { opacity: .075; } 40% { opacity: .04; }
+  60% { opacity: .068; } 80% { opacity: .045; }
+}
+
+/* Embers canvas: fixed, above smoke, below text. JS paints the rest. */
+canvas.embers {
+  position: fixed; inset: 0; z-index: 2000; pointer-events: none;
+}
+
+/* ── Wall of Names ── */
+.name-wall {
+  display: flex; flex-wrap: wrap; gap: .55rem; justify-content: center;
+  max-width: 720px; margin: 1.2rem auto 0; padding: 1.4rem 1rem;
+  background: linear-gradient(180deg, #0d0c0e, #141216);
+  border: 1px solid #2b2320; border-radius: 10px;
+  box-shadow: inset 0 0 60px rgba(0,0,0,.75);
+}
+.wall-name {
+  font-family: Georgia, 'Times New Roman', serif; letter-spacing: .14em;
+  font-size: .82rem; color: #b9a88f; background: none;
+  border: 1px solid transparent; border-radius: 4px;
+  padding: .35rem .6rem; cursor: pointer;
+  text-shadow: 0 0 8px rgba(185,168,143,.25);
+  -webkit-transition: color .25s, text-shadow .25s, border-color .25s;
+  transition: color .25s, text-shadow .25s, border-color .25s;
+}
+.wall-name:hover, .wall-name:focus-visible {
+  color: #f3e6cf; border-color: #5a4a38; outline: none;
+  text-shadow: 0 0 14px rgba(243,230,207,.6);
+}
+.wall-name.heard {
+  -webkit-animation: name-heard .9s ease; animation: name-heard .9s ease;
+}
+@-webkit-keyframes name-heard {
+  0% { color: #fff; text-shadow: 0 0 22px rgba(255,240,210,.95); }
+  100% { color: #b9a88f; text-shadow: 0 0 8px rgba(185,168,143,.25); }
+}
+@keyframes name-heard {
+  0% { color: #fff; text-shadow: 0 0 22px rgba(255,240,210,.95); }
+  100% { color: #b9a88f; text-shadow: 0 0 8px rgba(185,168,143,.25); }
+}
+
+/* ── Candles ── */
+.shrine {
+  display: flex; flex-wrap: wrap; gap: 10px 14px; justify-content: center;
+  align-items: flex-end; min-height: 74px; max-width: 640px; margin: 1rem auto;
+  padding: 1rem; background: #0b0a0c; border: 1px solid #241f1c; border-radius: 10px;
+}
+.candle { position: relative; width: 16px; height: 52px; }
+.candle .wax {
+  position: absolute; bottom: 0; left: 2px; right: 2px; height: 34px;
+  background: linear-gradient(180deg, #e8dcc2, #b8a67e);
+  border-radius: 3px 3px 2px 2px;
+}
+.candle .wick {
+  position: absolute; bottom: 33px; left: 7px; width: 2px; height: 6px; background: #1a1512;
+}
+.candle .flame {
+  position: absolute; bottom: 38px; left: 2px; width: 12px; height: 20px;
+  background: radial-gradient(circle at 50% 72%, #fff7d6 0%, #ffcf5e 38%, #ff8a2a 68%, rgba(255,90,20,0) 100%);
+  border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+  -webkit-transform-origin: 50% 100%;
+  transform-origin: 50% 100%;
+  -webkit-animation: flame-flicker .5s ease-in-out infinite alternate;
+  animation: flame-flicker .5s ease-in-out infinite alternate;
+}
+@-webkit-keyframes flame-flicker {
+  from { -webkit-transform: scale(1) skewX(0deg); opacity: .92; }
+  to { -webkit-transform: scale(1.12,.94) skewX(3deg); opacity: 1; }
+}
+@keyframes flame-flicker {
+  from { transform: scale(1) skewX(0deg); opacity: .92; }
+  to { transform: scale(1.12,.94) skewX(3deg); opacity: 1; }
+}
+.candle.newest .flame {
+  -webkit-animation: flame-flicker .5s ease-in-out infinite alternate, candle-born 1.2s ease;
+  animation: flame-flicker .5s ease-in-out infinite alternate, candle-born 1.2s ease;
+}
+@-webkit-keyframes candle-born { from { opacity: 0; } to { opacity: 1; } }
+@keyframes candle-born { from { opacity: 0; } to { opacity: 1; } }
+.candle-more { color: #8d7f68; font-size: .85rem; align-self: center; }
+.fine { color: #8d7f68; font-size: .85rem; }
+
+/* ── Sigils ── */
+.has-sigils { position: relative; }
+.sigil {
+  position: absolute; z-index: 5; background: none; border: none; cursor: pointer;
+  font-size: 1.15rem; line-height: 1; color: #6f6250; opacity: .16; padding: .4rem;
+  -webkit-transition: opacity .3s, color .3s, text-shadow .3s, transform .3s;
+  transition: opacity .3s, color .3s, text-shadow .3s, transform .3s;
+}
+.sigil:hover, .sigil:focus-visible { opacity: .65; color: #c9b891; outline: none; }
+.sigil.found {
+  opacity: 1; color: #ff5a3c; cursor: default;
+  text-shadow: 0 0 12px rgba(255,90,60,.8);
+  -webkit-transform: scale(1.15); transform: scale(1.15);
+}
+#sigil-reward {
+  margin-top: 1rem; padding: 1rem 1.2rem; border: 1px solid #5a2b22; border-radius: 8px;
+  background: #120c0a; color: #e8c9a8; font-family: Georgia, serif; letter-spacing: .06em;
+}
+#sigil-reward.revealed { -webkit-animation: candle-born 1.6s ease; animation: candle-born 1.6s ease; }
+
+/* ── Souls released chip ── */
+.soul-chip {
+  position: fixed; right: 14px; bottom: 14px; z-index: 10002;
+  display: none; padding: .45rem .8rem; border-radius: 999px;
+  background: rgba(12,8,8,.88); border: 1px solid #4a2c20;
+  color: #e8c9a8; font-size: .82rem; letter-spacing: .08em;
+  pointer-events: none;
+}
+.soul-chip b { color: #ffb35e; }
+.soul-chip.pulse { -webkit-animation: chip-pulse .6s ease; animation: chip-pulse .6s ease; }
+@-webkit-keyframes chip-pulse { 0% { -webkit-transform: scale(1); } 40% { -webkit-transform: scale(1.12); } 100% { -webkit-transform: scale(1); } }
+@keyframes chip-pulse { 0% { transform: scale(1); } 40% { transform: scale(1.12); } 100% { transform: scale(1); } }
+
+/* Reduced motion: the haunting stands still. */
+@media (prefers-reduced-motion: reduce) {
+  .grain { -webkit-animation: none; animation: none; opacity: .035; }
+  canvas.embers { display: none; }
+  .candle .flame, .candle.newest .flame { -webkit-animation: none; animation: none; }
+  .wall-name.heard, .soul-chip.pulse, #sigil-reward.revealed { -webkit-animation: none; animation: none; }
+}
+/* Phones: keep the grain whisper-thin so the GPU stays cool. */
+@media (max-width: 768px) {
+  .grain { opacity: .035; }
+}

@@ -115,6 +115,8 @@
     apparition = null;
     if (tapped) {
       try { var s = getSting(); s.currentTime = 0; s.play().catch(function () {}); } catch (e) {}
+      /* A tapped apparition is released — the haunt layer keeps score. */
+      try { document.dispatchEvent(new CustomEvent('ddf:banished')); } catch (e) {}
     }
     el.classList.remove('risen');
     el.classList.add('banished');

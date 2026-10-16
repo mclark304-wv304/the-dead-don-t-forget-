@@ -1,7 +1,8 @@
 <%- include('partials/header', { active: 'home', pageTitle: 'Home', config }) %>
 
 <div class="hero">
-  <div class="wrap">
+  <div class="wrap has-sigils">
+    <button class="sigil" data-sigil="1" style="top:.4rem;right:.6rem" aria-label="A strange marking">ᛟ</button>
     <div class="kicker">AN ANIMATED HORROR SERIES BY MAYA CLARK</div>
     <h1>THE DEAD <span>DON'T</span> FORGET</h1>
     <div class="tagline"><%= config.tagline %></div>
@@ -26,7 +27,8 @@
 </section>
 
 <section>
-  <div class="wrap">
+  <div class="wrap has-sigils">
+    <button class="sigil" data-sigil="2" style="bottom:.4rem;left:.8rem" aria-label="A strange marking">ᛞ</button>
     <h2>The <span>Episodes</span></h2>
     <p class="section-sub">Every episode streams free. The Bonus Store is where supporters go deeper.</p>
     <div class="cards">
@@ -65,8 +67,53 @@
 <section>
   <div class="wrap gate">
     <h2>The Full <span>Story</span></h2>
-    <p>69 episodes of the original audio series — free on Pocket FM.</p>
+    <div class="has-sigils" style="position:relative">
+      <button class="sigil" data-sigil="5" style="top:-.6rem;right:12%" aria-label="A strange marking">ᚨ</button>
+      <p>69 episodes of the original audio series — free on Pocket FM.</p>
+    </div>
     <a class="btn ghost" href="<%= config.pocketFmUrl %>" target="_blank" rel="noopener">Listen on Pocket FM</a>
+  </div>
+</section>
+
+<section>
+  <div class="wrap gate">
+    <h2>The <span>Haunting</span> Ground</h2>
+    <p class="section-sub">The dead are restless tonight. Touch the wall. Light a candle. Banish what rises. Five sigils hide across this page.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap gate has-sigils">
+    <button class="sigil" data-sigil="3" style="top:.2rem;left:.6rem" aria-label="A strange marking">ᛚ</button>
+    <h2>The Wall <span>of Names</span></h2>
+    <p class="section-sub">Every name has a debt. Click one — and listen.</p>
+    <div id="wall-of-names" class="name-wall" role="list" aria-label="Wall of the dead"></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap gate has-sigils">
+    <button class="sigil" data-sigil="4" style="top:.2rem;right:.8rem" aria-label="A strange marking">ᛇ</button>
+    <h2>Light a <span>Candle</span></h2>
+    <p class="section-sub"><strong><span id="candle-count">…</span> candles</strong> burning for the dead.</p>
+    <div id="candle-shrine" class="shrine" aria-live="polite"></div>
+    <button id="light-candle" class="btn" type="button">🕯️ Light a candle</button>
+    <p class="fine">You have lit <span id="my-candles">0</span>.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap gate">
+    <h2>Banish the <span>Risen</span></h2>
+    <p class="section-sub">Apparitions surface unbidden across this site. Tap one to release it — <strong><span id="souls-count">0</span> souls released</strong> by you so far.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap gate">
+    <h2>The Hidden <span>Sigils</span></h2>
+    <p class="section-sub">Five sigils hide across this page — faint marks in unlikely corners. Found: <strong><span id="sigil-count">0</span>/5</strong>.</p>
+    <p id="sigil-reward" hidden>The dead acknowledge you. They whisper a single name: <strong>ELIAS</strong>… — try typing it anywhere on this site.</p>
   </div>
 </section>
 
