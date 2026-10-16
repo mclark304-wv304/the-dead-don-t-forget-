@@ -850,22 +850,22 @@ canvas.embers {
 .has-sigils { position: relative; }
 .sigil {
   position: absolute; z-index: 5; background: none; border: none; cursor: pointer;
-  font-size: 1.4rem; line-height: 1; color: #c9a86a; opacity: .4; padding: .5rem;
-  text-shadow: 0 0 10px rgba(201,168,106,.55);
-  -webkit-transition: opacity .3s, color .3s, text-shadow .3s, transform .3s;
-  transition: opacity .3s, color .3s, text-shadow .3s, transform .3s;
-  -webkit-animation: sigil-breathe 3s ease-in-out infinite;
-  animation: sigil-breathe 3s ease-in-out infinite;
+  font-size: 2rem; line-height: 1; color: #ffd98a; opacity: .85; padding: .6rem;
+  text-shadow: 0 0 16px rgba(255,200,110,.95), 0 0 44px rgba(255,170,60,.55);
+  -webkit-transition: transform .3s;
+  transition: transform .3s;
+  -webkit-animation: sigil-breathe 2.5s ease-in-out infinite;
+  animation: sigil-breathe 2.5s ease-in-out infinite;
 }
 @-webkit-keyframes sigil-breathe {
-  0%, 100% { opacity: .38; text-shadow: 0 0 10px rgba(201,168,106,.55); }
-  50% { opacity: .95; text-shadow: 0 0 20px rgba(255,200,110,.95); }
+  0%, 100% { opacity: .78; -webkit-transform: scale(1); }
+  50% { opacity: 1; -webkit-transform: scale(1.14); }
 }
 @keyframes sigil-breathe {
-  0%, 100% { opacity: .38; text-shadow: 0 0 10px rgba(201,168,106,.55); }
-  50% { opacity: .95; text-shadow: 0 0 20px rgba(255,200,110,.95); }
+  0%, 100% { opacity: .78; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.14); }
 }
-.sigil:hover, .sigil:focus-visible { opacity: 1; color: #ffe1a8; outline: none; }
+.sigil:hover, .sigil:focus-visible { opacity: 1; color: #fff0c8; outline: none; -webkit-transform: scale(1.2); transform: scale(1.2); }
 .sigil.found {
   -webkit-animation: none; animation: none;
   opacity: 1; color: #ff5a3c; cursor: default;
