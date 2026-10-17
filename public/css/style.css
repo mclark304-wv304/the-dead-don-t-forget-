@@ -100,7 +100,7 @@ nav ul a:focus-visible { outline: 2px solid var(--blood); outline-offset: 4px; b
 .btn {
   display: inline-block; background: var(--blood); color: #fff;
   padding: .85rem 1.9rem; text-decoration: none; letter-spacing: .12em;
-  font-size: 1rem; border: none; cursor: pointer; border-radius: 2px;
+  font-size: 1rem; border: none; cursor: pointer; border-radius: 4px;
   font-family: inherit;
   transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
 }
@@ -172,8 +172,14 @@ section h2 span { color: var(--blood); }
 .player { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; background: #000; border: 1px solid #26262c; border-radius: 4px; }
 .player iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
 .episode-block { margin-bottom: 3rem; }
-.episode-block h3 { font-size: 1.6rem; margin: 1rem 0 .3rem; }
+.episode-block h3 { font-size: 1.6rem; margin: 1rem 0 .3rem; letter-spacing: .02em; }
 .episode-block .meta { color: var(--dim); margin-bottom: 1rem; }
+.locked-episode {
+  background: linear-gradient(180deg, #121214, #0d0d0f);
+  border: 1px solid #2a2a30; border-radius: 8px;
+  padding: 1.6rem;
+  box-shadow: 0 4px 18px rgba(0,0,0,.45);
+}
 .early-access-banner {
   margin: 1rem 0 3rem;
   padding: 2.2rem 2rem;
@@ -225,9 +231,18 @@ section h2 span { color: var(--blood); }
 
 /* ── Store ── */
 .product {
-  background: var(--coal); border: 1px solid #2a2a30; border-radius: 4px;
+  background: linear-gradient(180deg, #151517, #101012);
+  border: 1px solid #2a2a30; border-radius: 8px;
   padding: 2rem; margin-bottom: 1.6rem;
   display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; flex-wrap: wrap;
+  box-shadow: 0 4px 18px rgba(0,0,0,.45);
+  -webkit-transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+.product:hover {
+  -webkit-transform: translateY(-2px); transform: translateY(-2px);
+  border-color: #3d3d46;
+  box-shadow: 0 8px 28px rgba(0,0,0,.55), 0 0 24px rgba(193,18,31,.08);
 }
 .product h3 { font-size: 1.5rem; margin-bottom: .3rem; }
 .product .tagline { color: var(--dim); font-style: italic; }
