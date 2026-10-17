@@ -105,6 +105,11 @@ module.exports = {
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
   ep17VideoId: "vMbATeoeDlM",
 
+  // Episode 18 premiere: paste the YouTube video ID here when Ep18 is ready
+  // and it will appear on the early-access watch page automatically.
+  // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
+  ep18VideoId: "",
+
   pocketFmUrl: "https://pocketfm.com/show/850e2acdfbf37afa82efe1af45a3d32ea6e188f2",
 
   // ── Free episodes (YouTube stays free) ─────────────────────
@@ -220,6 +225,12 @@ module.exports = {
       title: "The Fourth Door",
       runtime: "27:58",
       synopsis: "The fourth door opens for a verified memory. A container marked ORIGIN. The dead flood the corridor — and the fourth source is closer than Daniel thinks."
+    },
+    {
+      n: 18,
+      title: "The Original",
+      runtime: "34:48",
+      synopsis: "The fourth door opens onto the original. Noah. The first Daniel. Forty-four subjects — and a woman's voice that remembers everything."
     }
   ],
 
@@ -333,6 +344,13 @@ module.exports = {
       priceCents: 299,
       entitlement: "ep17-early",
       deliveryPath: "/watch/ep17"
+    },
+    "ep18-early": {
+      name: "Episode 18 — Early Access",
+      tagline: "Watch Episode 18 'The Original' here before it hits YouTube.",
+      priceCents: 299,
+      entitlement: "ep18-early",
+      deliveryPath: "/watch/ep18"
     },
     "poster-pack": {
       name: "Official Poster Pack",
