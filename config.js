@@ -95,6 +95,11 @@ module.exports = {
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
   ep15VideoId: "",
 
+  // Episode 16 premiere: paste the YouTube video ID here when Ep16 is ready
+  // and it will appear on the early-access watch page automatically.
+  // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
+  ep16VideoId: "",
+
   pocketFmUrl: "https://pocketfm.com/show/850e2acdfbf37afa82efe1af45a3d32ea6e188f2",
 
   // ── Free episodes (YouTube stays free) ─────────────────────
@@ -198,6 +203,12 @@ module.exports = {
       title: "The Man Before the Forty-Three",
       runtime: "30:09",
       synopsis: "The original archive. Daniel Vale. Noah remembers four children — but the fourth child's identity was removed."
+    },
+    {
+      n: 16,
+      title: "What Belongs to Me",
+      runtime: "42:15",
+      synopsis: "Miriam Hale is alive — and dead. Forty-five versions of Daniel. A father's recording. The dead march east, toward the first copied memory."
     }
   ],
 
@@ -297,6 +308,13 @@ module.exports = {
       priceCents: 299,
       entitlement: "ep15-early",
       deliveryPath: "/watch/ep15"
+    },
+    "ep16-early": {
+      name: "Episode 16 — Early Access",
+      tagline: "Watch Episode 16 'What Belongs to Me' here before it hits YouTube.",
+      priceCents: 299,
+      entitlement: "ep16-early",
+      deliveryPath: "/watch/ep16"
     },
     "poster-pack": {
       name: "Official Poster Pack",
