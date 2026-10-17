@@ -23,8 +23,37 @@
 
     <div id="checkout-error" class="notice" style="display:none"></div>
 
+    <% /* Thumbnails for every product. Episode art mirrors the /episodes
+          locked cards; future episodes fall back to series key art. */ %>
+    <% const PRODUCT_THUMBS = {
+      'ep4-early': '/img/apparitions/elias.jpg',
+      'ep5-early': '/img/apparitions/lena-mercer.jpg',
+      'ep6-early': '/img/apparitions/ruth-mercer.jpg',
+      'ep7-early': '/img/wall/evelyn-shaw.jpg',
+      'ep8-early': '/img/wall/claire.jpg',
+      'ep9-early': '/img/apparitions/jonah-bell.jpg',
+      'ep10-early': '/img/ep1-poster-man-at-the-gate.webp',
+      'ep11-early': '/img/apparitions/mara.jpg',
+      'ep12-early': '/img/wall/marcus.jpg',
+      'ep13-early': '/img/series-key-art.webp',
+      'ep14-early': '/img/ep3-poster-the-ledger.webp',
+      'ep15-early': '/img/wall/daniel-vale.jpg',
+      'ep16-early': '/img/apparitions/elias.jpg',
+      'ep17-early': '/img/series-key-art.webp',
+      'ep18-early': '/img/ep18-the-original.webp',
+      'poster-pack': '/img/ep1-poster-man-at-the-gate.webp',
+      'complete-scripts': '/img/series-key-art.webp',
+      'character-art-pack': '/img/wall/daniel-vale.jpg'
+    };
+    const FREEBIE_THUMBS = {
+      '/free/ep1-script': '/img/ep1-poster-man-at-the-gate.webp',
+      '/free/wallpaper': '/img/series-key-art.webp',
+      '/free/poster': '/img/series-key-art.webp'
+    }; %>
+
     <% Object.entries(config.products).forEach(([id, p]) => { %>
     <div class="product">
+      <img class="product-thumb" src="<%= (PRODUCT_THUMBS[id] || '/img/series-key-art.webp') %>?v=<%= config.assetV %>" alt="" loading="lazy">
       <div>
         <h3><%= p.name %></h3>
         <div class="tagline"><%= p.tagline %></div>
@@ -46,6 +75,7 @@
 
     <% config.freebies.forEach(f => { %>
     <div class="product">
+      <img class="product-thumb" src="<%= (FREEBIE_THUMBS[f.downloadPath] || '/img/series-key-art.webp') %>?v=<%= config.assetV %>" alt="" loading="lazy">
       <div>
         <h3><%= f.name %> <span class="free-badge">FREE</span></h3>
         <div class="tagline"><%= f.tagline %></div>
