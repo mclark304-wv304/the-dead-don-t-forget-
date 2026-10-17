@@ -799,6 +799,25 @@ canvas.embers {
   0% { color: #fff; text-shadow: 0 0 22px rgba(255,240,210,.95); }
   100% { color: #b9a88f; text-shadow: 0 0 8px rgba(185,168,143,.25); }
 }
+/* character quotes: tap a name and they whisper one of their chapter lines */
+.wall-quote {
+  font-style: italic; font-size: .8rem; line-height: 1.45; letter-spacing: .02em;
+  color: #eadfc8; text-shadow: 0 0 12px rgba(234,223,200,.45);
+  margin-top: .55rem; padding-top: .55rem; border-top: 1px solid #2e2620;
+  -webkit-animation: quote-fade .7s ease; animation: quote-fade .7s ease;
+}
+.wall-quote .q-ep {
+  display: block; font-style: normal; font-size: .68rem; letter-spacing: .14em;
+  color: #8a7457; margin-top: .3rem;
+}
+@-webkit-keyframes quote-fade {
+  0% { opacity: 0; -webkit-transform: translateY(6px); transform: translateY(6px); }
+  100% { opacity: 1; -webkit-transform: none; transform: none; }
+}
+@keyframes quote-fade {
+  0% { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: none; }
+}
 
 /* ── Candles ── */
 .shrine {

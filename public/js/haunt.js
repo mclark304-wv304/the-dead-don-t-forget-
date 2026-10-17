@@ -106,8 +106,73 @@
     requestAnimationFrame(tick);
   })();
 
-  /* ── Wall of Names (faces underneath) ── */
+  /* ── Wall of Names (faces underneath) ──
+     Click a name → they whisper one of their own quotes from the chapters.
+     Three quotes per soul; each tap speaks the next one. */
   var IMG_V = '?v=20261016q';
+  var CHARACTER_QUOTES = {
+    'ELIAS': [
+      { text: "Is there anything I can do?", ep: "Ep1" },
+      { text: "If you're hearing this, Daniel Vale was wrong.", ep: "Ep2" },
+      { text: "I want him to remember.", ep: "Ep4" }
+    ],
+    'MARA': [
+      { text: "There's someone at the gate.", ep: "Ep1" },
+      { text: "That's exactly what we're going to find out.", ep: "Ep14" },
+      { text: "Nobody moves.", ep: "Ep15" }
+    ],
+    'DANIEL VALE': [
+      { text: "Elias.", ep: "Ep1" },
+      { text: "I did those things.", ep: "Ep16" },
+      { text: "You already were.", ep: "Ep18" }
+    ],
+    'JONAH BELL': [
+      { text: "You were supposed to burn these.", ep: "Ep3" },
+      { text: "Three thousand, two hundred and nineteen.", ep: "Ep4" },
+      { text: "The people who started this.", ep: "Ep5" }
+    ],
+    'RUTH MERCER': [
+      { text: "Basement.", ep: "Ep3" },
+      { text: "Is he dead?", ep: "Ep5" },
+      { text: "Let the rest of us survive without being punished for your past.", ep: "Ep6" }
+    ],
+    'ELENA MERCER': [
+      { text: "My father believed the outbreak isn't creating memories.", ep: "Ep2" },
+      { text: "Sometimes the dead come for the person who caused the pain.", ep: "Ep13" },
+      { text: "That's what makes him human.", ep: "Ep18" }
+    ],
+    'THOMAS REED': [
+      { text: "Not him.", ep: "Ep13" },
+      { text: "You.", ep: "Ep13" },
+      { text: "You knew.", ep: "Ep13" }
+    ],
+    'EVELYN SHAW': [
+      { text: "Maybe they're wrong.", ep: "Ep5" },
+      { text: "I never forgot.", ep: "Ep7" },
+      { text: "But you remember my childhood.", ep: "Ep16" }
+    ],
+    'MARCUS': [
+      { text: "Someone studied them.", ep: "Ep8" },
+      { text: "They know you.", ep: "Ep10" },
+      { text: "We're losing the upper level!", ep: "Ep13" }
+    ],
+    'CLAIRE': [
+      { text: "You were the man who opened the door.", ep: "Ep5" },
+      { text: "They found another one.", ep: "Ep8" },
+      { text: "Because the procedure didn't stop with death.", ep: "Ep9" }
+    ],
+    'THOMAS RUSK': [
+      { text: "I was the man your father called when he wanted unpleasant things handled without leaving fingerprints.", ep: "Ep5" },
+      { text: "You sent me.", ep: "Ep5" },
+      { text: "To be remembered.", ep: "Ep5" }
+    ],
+    'RICHARD CRANE': [
+      { text: "Because you were there at the beginning.", ep: "Ep9" },
+      { text: "If you shoot me, you'll lose the only person who can explain what happened.", ep: "Ep10" },
+      { text: "You remember consequences. That's different.", ep: "Ep10" }
+    ]
+  };
+  var quoteIdx = {};
   var NAMES = [
     { name: 'ELIAS',        img: '/img/apparitions/elias.jpg' + IMG_V },
     { name: 'MARA',         img: '/img/apparitions/mara.jpg' + IMG_V },
@@ -153,6 +218,32 @@
         b.classList.remove('heard');
         void b.offsetWidth; /* restart the flash */
         b.classList.add('heard');
+        /* they speak: one of their three chapter quotes, cycling */
+        var quotes = CHARACTER_QUOTES[n.name];
+        if (quotes && quotes.length) {
+          var qi = quoteIdx[n.name] || 0;
+          var q = quotes[qi % quotes.length];
+          quoteIdx[n.name] = qi + 1;
+          var qb = b.querySelector('.wall-quote');
+          if (!qb) {
+            qb = document.createElement('div');
+            qb.className = 'wall-quote';
+            qb.setAttribute('aria-live', 'polite');
+            b.appendChild(qb);
+          }
+          while (qb.firstChild) qb.removeChild(qb.firstChild);
+          var qt = document.createElement('span');
+          qt.className = 'q-text';
+          qt.textContent = '\u201C' + q.text + '\u201D';
+          qb.appendChild(qt);
+          var qe = document.createElement('span');
+          qe.className = 'q-ep';
+          qe.textContent = '— ' + q.ep;
+          qb.appendChild(qe);
+          qb.style.animation = 'none';
+          void qb.offsetWidth; /* restart the fade */
+          qb.style.animation = '';
+        }
       });
       wall.appendChild(b);
     });

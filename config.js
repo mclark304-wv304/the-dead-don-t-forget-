@@ -9,7 +9,7 @@ module.exports = {
   creator: "Maya Clark",
 
   // Bump this when CSS/JS/audio change so phones fetch fresh files.
-  assetV: "20261016r",
+  assetV: "20261017a",
 
   // Base URL of the deployed site (used for PayPal return URLs).
   // Locally: http://localhost:3000 — in production set the BASE_URL env var.
