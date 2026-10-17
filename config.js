@@ -100,6 +100,11 @@ module.exports = {
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
   ep16VideoId: "",
 
+  // Episode 17 premiere: paste the YouTube video ID here when Ep17 is ready
+  // and it will appear on the early-access watch page automatically.
+  // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
+  ep17VideoId: "",
+
   pocketFmUrl: "https://pocketfm.com/show/850e2acdfbf37afa82efe1af45a3d32ea6e188f2",
 
   // ── Free episodes (YouTube stays free) ─────────────────────
@@ -209,6 +214,12 @@ module.exports = {
       title: "What Belongs to Me",
       runtime: "42:15",
       synopsis: "Miriam Hale is alive — and dead. Forty-five versions of Daniel. A father's recording. The dead march east, toward the first copied memory."
+    },
+    {
+      n: 17,
+      title: "The Fourth Door",
+      runtime: "27:58",
+      synopsis: "The fourth door opens for a verified memory. A container marked ORIGIN. The dead flood the corridor — and the fourth source is closer than Daniel thinks."
     }
   ],
 
@@ -315,6 +326,13 @@ module.exports = {
       priceCents: 299,
       entitlement: "ep16-early",
       deliveryPath: "/watch/ep16"
+    },
+    "ep17-early": {
+      name: "Episode 17 — Early Access",
+      tagline: "Watch Episode 17 'The Fourth Door' here before it hits YouTube.",
+      priceCents: 299,
+      entitlement: "ep17-early",
+      deliveryPath: "/watch/ep17"
     },
     "poster-pack": {
       name: "Official Poster Pack",
