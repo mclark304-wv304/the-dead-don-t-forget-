@@ -227,6 +227,21 @@ section h2 span { color: var(--blood); }
   box-shadow: 0 0 18px rgba(193,18,31,.35);
 }
 .locked-episode .btn { margin-top: .4rem; }
+.locked-episode .locked-poster { overflow: hidden; }
+.locked-episode .locked-poster img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; display: block; border-radius: 6px;
+  filter: brightness(.72) saturate(.92);
+  transition: transform .35s ease, filter .35s ease;
+}
+.locked-episode .locked-poster .locked-badge { position: relative; z-index: 1; }
+.locked-episode:hover .locked-poster img { transform: scale(1.045); filter: brightness(.92) saturate(1); }
+.locked-episode { transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease; }
+.locked-episode:hover {
+  transform: translateY(-4px);
+  border-color: rgba(193,18,31,.6);
+  box-shadow: 0 14px 40px rgba(0,0,0,.55), 0 0 22px rgba(193,18,31,.3);
+}
 .shorts-row { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 2.5rem; }
 
 /* ── Store ── */

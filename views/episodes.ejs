@@ -16,9 +16,31 @@
     </div>
     <% }) %>
 
-    <% config.lockedEpisodes.forEach(ep => { %>
+    <% /* Per-episode art for locked cards, keyed by episode number.
+         Generic: applies to current AND future locked entries (Ep16/Ep17 when they land)
+         without editing config.js. Any locked episode without an entry falls back to key art. */ %>
+    <% const LOCKED_ART = {
+      4:  '/img/apparitions/elias.jpg',
+      5:  '/img/apparitions/lena-mercer.jpg',
+      6:  '/img/apparitions/ruth-mercer.jpg',
+      7:  '/img/wall/evelyn-shaw.jpg',
+      8:  '/img/wall/claire.jpg',
+      9:  '/img/apparitions/jonah-bell.jpg',
+      10: '/img/ep1-poster-man-at-the-gate.webp',
+      11: '/img/apparitions/mara.jpg',
+      12: '/img/wall/marcus.jpg',
+      13: '/img/series-key-art.webp',
+      14: '/img/ep3-poster-the-ledger.webp',
+      15: '/img/wall/daniel-vale.jpg',
+      16: '/img/apparitions/elias.jpg',
+      17: '/img/series-key-art.webp'
+    }; %>
+    <% config.lockedEpisodes.forEach(ep => {
+      const lockedArt = LOCKED_ART[ep.n] || '/img/series-key-art.webp';
+    %>
     <div class="episode-block locked-episode">
       <div class="locked-poster">
+        <img src="<%= lockedArt %>?v=<%= config.assetV %>" alt="Episode <%= ep.n %>: <%= ep.title %> — locked" loading="lazy">
         <span class="locked-badge">LOCKED</span>
       </div>
       <h3>Episode <%= ep.n %>: <%= ep.title %></h3>
