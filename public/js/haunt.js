@@ -107,17 +107,18 @@
   })();
 
   /* ── Wall of Names (faces underneath) ── */
+  var IMG_V = '?v=20261016q';
   var NAMES = [
-    { name: 'ELIAS',        img: '/img/apparitions/elias.jpg' },
-    { name: 'MARA',         img: '/img/apparitions/mara.jpg' },
-    { name: 'DANIEL VALE',  img: '/img/wall/daniel-vale.jpg' },
-    { name: 'JONAH BELL',   img: '/img/apparitions/jonah-bell.jpg' },
-    { name: 'RUTH MERCER',  img: '/img/apparitions/ruth-mercer.jpg' },
-    { name: 'ELENA MERCER', img: '/img/apparitions/lena-mercer.jpg' },
+    { name: 'ELIAS',        img: '/img/apparitions/elias.jpg' + IMG_V },
+    { name: 'MARA',         img: '/img/apparitions/mara.jpg' + IMG_V },
+    { name: 'DANIEL VALE',  img: '/img/wall/daniel-vale.jpg' + IMG_V },
+    { name: 'JONAH BELL',   img: '/img/apparitions/jonah-bell.jpg' + IMG_V },
+    { name: 'RUTH MERCER',  img: '/img/apparitions/ruth-mercer.jpg' + IMG_V },
+    { name: 'ELENA MERCER', img: '/img/apparitions/lena-mercer.jpg' + IMG_V },
     { name: 'THOMAS REED',  img: null }, /* face still lost to the dark */
-    { name: 'EVELYN SHAW',  img: '/img/wall/evelyn-shaw.jpg' },
-    { name: 'MARCUS',       img: '/img/wall/marcus.jpg' },
-    { name: 'CLAIRE',       img: '/img/wall/claire.jpg' },
+    { name: 'EVELYN SHAW',  img: '/img/wall/evelyn-shaw.jpg' + IMG_V },
+    { name: 'MARCUS',       img: '/img/wall/marcus.jpg' + IMG_V },
+    { name: 'CLAIRE',       img: '/img/wall/claire.jpg' + IMG_V },
     { name: 'THOMAS RUSK',  img: null }, /* face still lost to the dark */
     { name: 'RICHARD CRANE', img: null } /* face still lost to the dark */
   ];

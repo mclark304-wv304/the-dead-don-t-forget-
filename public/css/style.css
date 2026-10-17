@@ -55,7 +55,7 @@ nav ul a:focus-visible { outline: 2px solid var(--blood); outline-offset: 4px; b
 }
 .hero::before {
   content: ""; position: absolute; inset: 0;
-  background: url('/img/series-key-art.webp') center/cover no-repeat;
+  background: url('/img/series-key-art.webp?v=20261016q') center/cover no-repeat;
   -webkit-animation: hero-breathe 42s ease-in-out infinite alternate;
   animation: hero-breathe 42s ease-in-out infinite alternate;
   will-change: transform;
