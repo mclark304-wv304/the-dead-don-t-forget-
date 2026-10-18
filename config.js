@@ -249,8 +249,8 @@ module.exports = {
   products: {
     "bundle-10": {
       name: "The First Ten — Bundle",
-      tagline: "Episodes 4–13 early access, all in one. Save $10 off buying them one by one.",
-      priceCents: 1999,
+      tagline: "Episodes 4–13 early access, all in one bundle.",
+      priceCents: 2999,
       entitlements: ["ep4-early", "ep5-early", "ep6-early", "ep7-early", "ep8-early", "ep9-early", "ep10-early", "ep11-early", "ep12-early", "ep13-early"],
       deliveryPath: "/episodes"
     },
