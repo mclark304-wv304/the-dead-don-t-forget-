@@ -9,7 +9,7 @@ module.exports = {
   creator: "Maya Clark",
 
   // Bump this when CSS/JS/audio change so phones fetch fresh files.
-  assetV: "20261018c",
+  assetV: "20261018d",
 
   // Base URL of the deployed site (used for PayPal return URLs).
   // Locally: http://localhost:3000 — in production set the BASE_URL env var.
@@ -520,6 +520,11 @@ module.exports = {
   // ever get it. The server enforces this cap (SQLite); browsers also
   // remember a claim in localStorage as a courtesy.
   easterEggMaxClaims: 13,
+
+  // Beating all 13 doors of THE THIRTEEN DOORS grants free Episode 7
+  // Early Access to the first this many finishers. Enforced server-side
+  // (SQLite); browsers also keep a localStorage flag as a courtesy.
+  gameEggMaxClaims: 100,
 
   // ── Free downloads (no payment, no login — public) ────────
   freebies: [

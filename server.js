@@ -743,6 +743,37 @@ app.post("/api/candle-egg/claim", (req, res) => {
   }
 });
 
+// ── Game Easter egg: beat all 13 doors of THE THIRTEEN DOORS ───
+// The first config.gameEggMaxClaims finishers get Episode 7 Early Access
+// free — via the EXACT same signed entitlement cookie the PayPal success
+// flow issues (entitlement "ep7-early"). The SQLite count is the real
+// backstop; browsers also keep a localStorage flag as a courtesy so a
+// replay doesn't re-fire the claim. Independent from the ELIAS egg.
+db.exec(`
+  CREATE TABLE IF NOT EXISTS game_egg_claims (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL UNIQUE,
+    claimed_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )
+`);
+app.post("/api/game-egg/claim", (req, res) => {
+  try {
+    const claimed = db.prepare("SELECT COUNT(*) AS n FROM game_egg_claims").get().n;
+    if (claimed >= config.gameEggMaxClaims) {
+      return res.json({ ok: false, exhausted: true });
+    }
+    const soulNumber = claimed + 1;
+    // Unique per-claim identity so the entitlement cookie is per-soul.
+    const email = `game-egg-soul-${soulNumber}-${crypto.randomBytes(4).toString("hex")}@example.invalid`;
+    db.prepare("INSERT INTO game_egg_claims (email) VALUES (?)").run(email);
+    grantProductEntitlements(email, config.products['ep7-early']);
+    issueAccessCookie(res, email);
+    res.json({ ok: true, soulNumber });
+  } catch (err) {
+    res.status(500).json({ ok: false, reason: "error", message: err.message });
+  }
+});
+
 // ── Promo codes: private free-pass links ─────────────────────
 // Owner-generated codes (scripts/make-promo.js) that bypass the paywall for
 // a capped number of redeemers. Each redeemer gets a unique per-claim
@@ -1007,6 +1038,9 @@ app.get("/watch/ep21", requireEntitlement("ep21-early"), (req, res) => {
 });
 app.get("/watch/ep24", requireEntitlement("ep24-early"), (req, res) => {
   res.render("watch-ep24", { config });
+});
+app.get("/watch/ep25", requireEntitlement("ep25-early"), (req, res) => {
+  res.render("watch-ep25", { config });
 });
 
 app.get("/download/posters", requireEntitlement("poster-pack"), (req, res) => {

@@ -258,6 +258,12 @@
     );
     overlayAction = () => startRun();
   }
+  function victoryCard(extraHtml) {
+    return '<div class="t13-card"><h3>EVERY NAME HAS A DEBT.<br>YOU PAID YOURS.</h3>' +
+      '<p>All thirteen doors stand open behind you.<br>Souls banished: <b>' + score + '</b></p>' +
+      extraHtml +
+      '<button class="btn-blood" type="button">WALK IT AGAIN</button></div>';
+  }
   function victory() {
     state = 'victory';
     sWin();
@@ -266,12 +272,46 @@
     localStorage.setItem('t13_best', String(best));
     localStorage.setItem('t13_best_door', '12');
     elBest.textContent = best;
+    // dramatic beat before the reward reveal
     showOverlay(
       '<div class="t13-card"><h3>EVERY NAME HAS A DEBT.<br>YOU PAID YOURS.</h3>' +
       '<p>All thirteen doors stand open behind you.<br>Souls banished: <b>' + score + '</b></p>' +
-      '<button class="btn-blood" type="button">WALK IT AGAIN</button></div>'
+      '<p class="t13-beat">The thirteenth door opens onto something unexpected&hellip;</p></div>'
     );
-    overlayAction = () => startRun();
+    overlayAction = () => {};
+    setTimeout(revealGameEgg, 2200);
+  }
+  function revealGameEgg() {
+    if (state !== 'victory') return;
+    if (localStorage.getItem('game-egg-claimed')) {
+      showOverlay(victoryCard(
+        '<p class="t13-bestline">The dead remember your victory.</p>' +
+        '<p><a class="btn-blood t13-watchbtn" href="/watch/ep7">WATCH EPISODE 7</a></p>'));
+      overlayAction = () => startRun();
+      return;
+    }
+    fetch('/api/game-egg/claim', { method: 'POST' })
+      .then(r => r.json())
+      .then(data => {
+        if (state !== 'victory') return;
+        if (data && data.ok) {
+          localStorage.setItem('game-egg-claimed', '1');
+          sClear();
+          showOverlay(victoryCard(
+            '<p class="t13-reward">EPISODE 7 IS YOURS<br><span>The Choice awaits.</span></p>' +
+            '<p><a class="btn-blood t13-watchbtn" href="/watch/ep7">WATCH IT NOW</a></p>'));
+        } else {
+          showOverlay(victoryCard(
+            '<p class="t13-rule">The hundred souls have already been freed.<br>Episode 7 waits in the <a href="/bonus">Bonus Store</a>.</p>'));
+        }
+        overlayAction = () => startRun();
+      })
+      .catch(() => {
+        if (state !== 'victory') return;
+        showOverlay(victoryCard(
+          '<p class="t13-rule">The dark hiccuped &mdash; your victory stands.<br>Episode 7 waits in the <a href="/bonus">Bonus Store</a>.</p>'));
+        overlayAction = () => startRun();
+      });
   }
 
   /* ── Spawning ── */
