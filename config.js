@@ -248,10 +248,10 @@ module.exports = {
   // priceCents: 299 = $2.99
   products: {
     "bundle-10": {
-      name: "The First Ten — Bundle",
-      tagline: "Episodes 4–13 early access, all in one bundle.",
+      name: "The First Eleven — Bundle",
+      tagline: "Episodes 4–14 early access, all in one bundle.",
       priceCents: 2999,
-      entitlements: ["ep4-early", "ep5-early", "ep6-early", "ep7-early", "ep8-early", "ep9-early", "ep10-early", "ep11-early", "ep12-early", "ep13-early"],
+      entitlements: ["ep4-early", "ep5-early", "ep6-early", "ep7-early", "ep8-early", "ep9-early", "ep10-early", "ep11-early", "ep12-early", "ep13-early", "ep14-early"],
       deliveryPath: "/episodes"
     },
     "ep4-early": {
