@@ -331,7 +331,7 @@ module.exports = {
     {
       n: 24,
       title: "The Name Beneath The Names",
-      runtime: "TBD",
+      runtime: "37:11",
       synopsis: "The names beneath the names are who remembered them. At the Vale house, Source 45 is counting — and something upstairs knows Daniel's name."
     },
     {
