@@ -9,7 +9,7 @@ module.exports = {
   creator: "Maya Clark",
 
   // Bump this when CSS/JS/audio change so phones fetch fresh files.
-  assetV: "20261018i",
+  assetV: "20261018j",
 
   // Base URL of the deployed site (used for PayPal return URLs).
   // Locally: http://localhost:3000 — in production set the BASE_URL env var.
@@ -145,6 +145,11 @@ module.exports = {
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
   ep26VideoId: "",
 
+  // Episode 27 premiere: paste the YouTube video ID here when Ep27 is ready
+  // and it will appear on the early-access watch page automatically.
+  // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
+  ep27VideoId: "",
+
   // Series trailer for the homepage hero. Paste the UNLISTED YouTube video
   // ID here once the trailer is uploaded; the hero shows the trailer
   // facade only when this is set. (Upload: series-trailer-hero-16x9.mp4
@@ -175,7 +180,8 @@ module.exports = {
     22: '/img/ep22-the-city-was-breathing.webp',
     24: '/img/ep24-the-name-beneath-the-names.webp',
     25: '/img/ep25-the-last-name.webp',
-    26: '/img/ep26-the-archive-beneath-the-house.webp'
+    26: '/img/ep26-the-archive-beneath-the-house.webp',
+    27: '/img/ep27-the-secret-daniel-buried.webp'
   },
 
   // One public teaser Short per episode — tap a locked card to watch it
@@ -351,6 +357,12 @@ module.exports = {
       title: "The Archive Beneath the House",
       runtime: "43:52",
       synopsis: "Beneath the house, a staircase descends farther than the house should allow — into an archive of forty-four doors. The Vault is tracing provenance, and the trail ends at Source 46: a copy Daniel made himself, from someone whose identity he locked."
+    },
+    {
+      n: 27,
+      title: "The Secret Daniel Buried",
+      runtime: "39:10",
+      synopsis: "Forty-four doors. A Fibonacci trail of evidence. A voice with no verified source. Daniel finds proof he buried the secret himself — and chose to forget why."
     }
   ],
 
@@ -527,6 +539,13 @@ module.exports = {
       priceCents: 299,
       entitlement: "ep26-early",
       deliveryPath: "/watch/ep26"
+    },
+    "ep27-early": {
+      name: "Episode 27 — Early Access",
+      tagline: "Watch Episode 27 'The Secret Daniel Buried' here — a website exclusive.",
+      priceCents: 299,
+      entitlement: "ep27-early",
+      deliveryPath: "/watch/ep27"
     },
     "poster-pack": {
       name: "Official Poster Pack",
