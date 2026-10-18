@@ -139,7 +139,7 @@ module.exports = {
   // ID here once the trailer is uploaded; the hero shows the trailer
   // facade only when this is set. (Upload: series-trailer-hero-16x9.mp4
   // in ~/workspace/dead_dont_forget/ — unlisted, "Maya Clark" channel.)
-  seriesTrailerYoutubeId: "",
+  seriesTrailerYoutubeId: "FO8kDYSgoME",
 
   // Locked-card art, keyed by episode number. Applies to current AND future
   // locked entries without editing templates. Falls back to series key art.
