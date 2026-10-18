@@ -203,6 +203,12 @@ function stripe() {
 
 // ── Access tokens (signed, httpOnly cookie) ──────────────────
 const COOKIE_NAME = "ddf_access";
+function grantProductEntitlements(email, product) {
+  // Bundles carry `entitlements` (array); single products carry `entitlement`.
+  const list = Array.isArray(product.entitlements) ? product.entitlements
+    : product.entitlement ? [product.entitlement] : [];
+  list.forEach(e => grantEntitlement(email, e));
+}
 function issueAccessCookie(res, email) {
   const products = productsForEmail(email);
   const token = jwt.sign({ email, products }, config.jwtSecret, { expiresIn: "365d" });
@@ -344,7 +350,7 @@ app.get("/paypal/return", async (req, res) => {
     // stable per-order id so the record is still useful if PayPal omits it.
     const payer = data.payer || {};
     const email = (payer.email_address || `paypal-buyer-${String(orderId).toLowerCase()}@example.invalid`).toLowerCase();
-    grantEntitlement(email, product.entitlement);
+    grantProductEntitlements(email, product);
     issueAccessCookie(res, email);
     res.redirect(product.deliveryPath);
   } catch (err) {
@@ -493,7 +499,7 @@ app.get("/stripe/return", async (req, res) => {
     // stable per-session id so the record is still useful if Stripe omits it.
     const email = ((session.customer_details && session.customer_details.email) ||
       `stripe-buyer-${String(sessionId).toLowerCase()}@example.invalid`).toLowerCase();
-    grantEntitlement(email, product.entitlement);
+    grantProductEntitlements(email, product);
     issueAccessCookie(res, email);
     res.redirect(product.deliveryPath);
   } catch (err) {
