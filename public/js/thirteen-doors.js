@@ -195,15 +195,19 @@
   function showOverlay(html) {
     overlay.innerHTML = html;
     overlay.hidden = false;
-    const btn = overlay.querySelector('button');
-    if (btn) {
-      // pointerup fires reliably on touch even if the finger shifts;
-      // click is kept as a fallback for mouse/keyboard. Guard against double-fire.
-      let fired = false;
-      const fire = (e) => { if (fired) return; fired = true; e.stopPropagation(); overlayAction(); };
-      btn.addEventListener('pointerup', fire);
-      btn.addEventListener('click', fire);
-    }
+    // Make the ENTIRE overlay tappable — not just the button. On mobile,
+    // tiny buttons can miss touches; tapping anywhere on the card retries.
+    // Guard against double-fire across pointerup/click/touchend.
+    let fired = false;
+    const fire = (e) => {
+      if (fired) return; fired = true;
+      if (e && e.stopPropagation) e.stopPropagation();
+      if (e && e.cancelable) e.preventDefault();
+      overlayAction();
+    };
+    overlay.addEventListener('pointerup', fire);
+    overlay.addEventListener('click', fire);
+    overlay.addEventListener('touchend', fire, { passive: false });
   }
   function hideOverlay() { overlay.hidden = true; overlay.innerHTML = ''; }
   let overlayAction = () => {};

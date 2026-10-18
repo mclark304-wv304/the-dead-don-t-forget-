@@ -9,7 +9,7 @@ module.exports = {
   creator: "Maya Clark",
 
   // Bump this when CSS/JS/audio change so phones fetch fresh files.
-  assetV: "20261018l",
+  assetV: "20261018m",
   gaMeasurementId: "G-K9ZXBD6PNY", // set to your GA4 Measurement ID (G-XXXXXXXXXX)
 
   // Base URL of the deployed site (used for PayPal return URLs).
