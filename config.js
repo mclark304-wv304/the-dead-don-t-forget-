@@ -342,152 +342,152 @@ module.exports = {
   ],
 
   // ── Paid products (prices in cents — change freely) ────────
-  // priceCents: 299 = $2.99
+  // priceCents: 200 = $2.00
   products: {
     "bundle-10": {
       name: "The First Eleven — Bundle",
       tagline: "Episodes 4–14 early access, all in one bundle.",
-      priceCents: 2999,
+      priceCents: 2000,
       entitlements: ["ep4-early", "ep5-early", "ep6-early", "ep7-early", "ep8-early", "ep9-early", "ep10-early", "ep11-early", "ep12-early", "ep13-early", "ep14-early"],
       deliveryPath: "/episodes"
     },
     "ep4-early": {
       name: "Episode 4 — Early Access",
       tagline: "Watch Episode 4 here — a website exclusive.",
-      priceCents: 299,
+      priceCents: 200,
       entitlement: "ep4-early",
       deliveryPath: "/watch/ep4"
     },
     "ep5-early": {
       name: "Episode 5 — Early Access",
       tagline: "Watch Episode 5 'The First Memory' here — a website exclusive.",
-      priceCents: 299,
+      priceCents: 200,
       entitlement: "ep5-early",
       deliveryPath: "/watch/ep5"
     },
     "ep6-early": {
       name: "Episode 6 — Early Access",
       tagline: "Watch Episode 6 'What We Keep' here — a website exclusive.",
-      priceCents: 299,
+      priceCents: 200,
       entitlement: "ep6-early",
       deliveryPath: "/watch/ep6"
     },
     "ep7-early": {
       name: "Episode 7 — Early Access",
       tagline: "Watch Episode 7 'The Choice' here — a website exclusive.",
-      priceCents: 299,
+      priceCents: 200,
       entitlement: "ep7-early",
       deliveryPath: "/watch/ep7"
     },
     "ep8-early": {
       name: "Episode 8 — Early Access",
       tagline: "Watch Episode 8 'What Elena Knows' here — a website exclusive.",
-      priceCents: 299,
+      priceCents: 200,
       entitlement: "ep8-early",
       deliveryPath: "/watch/ep8"
     },
     "ep9-early": {
       name: "Episode 9 — Early Access",
       tagline: "Watch Episode 9 'The Road Beneath the City' here — a website exclusive.",
-      priceCents: 299,
+      priceCents: 200,
       entitlement: "ep9-early",
       deliveryPath: "/watch/ep9"
     },
     "ep10-early": {
       name: "Episode 10 — Early Access",
       tagline: "Watch Episode 10 'The Things We Buried' here — a website exclusive.",
-      priceCents: 299,
+      priceCents: 200,
       entitlement: "ep10-early",
       deliveryPath: "/watch/ep10"
     },
     "ep11-early": {
       name: "Episode 11 — Early Access",
       tagline: "Watch Episode 11 'The Woman in the Photograph' here — a website exclusive.",
-      priceCents: 299,
+      priceCents: 200,
       entitlement: "ep11-early",
       deliveryPath: "/watch/ep11"
     },
     "ep12-early": {
       name: "Episode 12 — Early Access",
       tagline: "Watch Episode 12 'Eleven Minutes' here — a website exclusive.",
-      priceCents: 299,
+      priceCents: 200,
       entitlement: "ep12-early",
       deliveryPath: "/watch/ep12"
     },
     "ep13-early": {
       name: "Episode 13 — Early Access",
       tagline: "Watch Episode 13 'The First Wave' here — a website exclusive.",
-      priceCents: 299,
+      priceCents: 200,
       entitlement: "ep13-early",
       deliveryPath: "/watch/ep13"
     },
     "ep14-early": {
       name: "Episode 14 — Early Access",
       tagline: "Watch Episode 14 'The Rules of the Vault' here — a website exclusive.",
-      priceCents: 299,
+      priceCents: 200,
       entitlement: "ep14-early",
       deliveryPath: "/watch/ep14"
     },
     "ep15-early": {
       name: "Episode 15 — Early Access",
       tagline: "Watch Episode 15 'The Man Before the Forty-Three' here — a website exclusive.",
-      priceCents: 299,
+      priceCents: 200,
       entitlement: "ep15-early",
       deliveryPath: "/watch/ep15"
     },
     "ep16-early": {
       name: "Episode 16 — Early Access",
       tagline: "Watch Episode 16 'What Belongs to Me' here — a website exclusive.",
-      priceCents: 299,
+      priceCents: 200,
       entitlement: "ep16-early",
       deliveryPath: "/watch/ep16"
     },
     "ep17-early": {
       name: "Episode 17 — Early Access",
       tagline: "Watch Episode 17 'The Fourth Door' here — a website exclusive.",
-      priceCents: 299,
+      priceCents: 200,
       entitlement: "ep17-early",
       deliveryPath: "/watch/ep17"
     },
     "ep18-early": {
       name: "Episode 18 — Early Access",
       tagline: "Watch Episode 18 'The Original' here — a website exclusive.",
-      priceCents: 299,
+      priceCents: 200,
       entitlement: "ep18-early",
       deliveryPath: "/watch/ep18"
     },
     "ep19-early": {
       name: "Episode 19 — Early Access",
       tagline: "Watch Episode 19 'The Woman in the Memories' here — a website exclusive.",
-      priceCents: 299,
+      priceCents: 200,
       entitlement: "ep19-early",
       deliveryPath: "/watch/ep19"
     },
     "ep20-early": {
       name: "Episode 20 — Early Access",
       tagline: "Watch Episode 20 'The Witness' here — a website exclusive.",
-      priceCents: 299,
+      priceCents: 200,
       entitlement: "ep20-early",
       deliveryPath: "/watch/ep20"
     },
     "ep21-early": {
       name: "Episode 21 — Early Access",
       tagline: "Watch Episode 21 'The Man Behind The Glass' here — a website exclusive.",
-      priceCents: 299,
+      priceCents: 200,
       entitlement: "ep21-early",
       deliveryPath: "/watch/ep21"
     },
     "ep24-early": {
       name: "Episode 24 — Early Access",
       tagline: "Watch Episode 24 'The Name Beneath The Names' here — a website exclusive.",
-      priceCents: 299,
+      priceCents: 200,
       entitlement: "ep24-early",
       deliveryPath: "/watch/ep24"
     },
     "ep25-early": {
       name: "Episode 25 — Early Access",
       tagline: "Watch Episode 25 'The Last Name' here — a website exclusive.",
-      priceCents: 299,
+      priceCents: 200,
       entitlement: "ep25-early",
       deliveryPath: "/watch/ep25"
     },

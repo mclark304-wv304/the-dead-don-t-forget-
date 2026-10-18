@@ -64,7 +64,7 @@ const latestArt = latest ? ((config.lockedArt && config.lockedArt[latest.n]) || 
       <h3>Episode <%= latest.n %>: <%= latest.title %></h3>
       <div class="meta"><%= latest.runtime %> &middot; Website Exclusive</div>
       <p class="section-sub"><%= latest.synopsis %></p>
-      <a class="btn" href="/bonus">Unlock Episode <%= latest.n %> — $2.99</a>
+      <a class="btn" href="/bonus">Unlock Episode <%= latest.n %> — $2.00</a>
     </div>
   </div>
 </section>
@@ -95,7 +95,7 @@ const latestArt = latest ? ((config.lockedArt && config.lockedArt[latest.n]) || 
       <h3>Finished Episode 3? The Ledger was only the beginning.</h3>
       <p class="section-sub">Episode 4: "The Man That Wasn't There" — a man who was never there, and Daniel can't stop remembering him. Website exclusive. Pay once, yours forever.</p>
       <div class="cta-row">
-        <a class="btn" href="/bonus">Continue the story — $2.99</a>
+        <a class="btn" href="/bonus">Continue the story — $2.00</a>
         <% if (config.trailers && config.trailers[4]) { %>
         <button type="button" class="btn ghost trailer-btn" data-trailer="<%= config.trailers[4] %>" data-title="Episode 4: The Man That Wasn't There">&#9654; Watch the trailer</button>
         <% } %>
