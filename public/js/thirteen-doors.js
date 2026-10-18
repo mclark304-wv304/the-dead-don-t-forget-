@@ -87,7 +87,7 @@
   const SPR = 192;
   const variants = { risen: [], hollow: [], mourner: [] }; // baked canvases per art index
   const glows = {};
-  let emberSprite = null, darkSprite = null;
+  let filmHot = null, filmMid = null, filmCold = null, filmPale = null, darkSprite = null;
 
   function bakeCircle(img, tint) {
     const c = document.createElement('canvas'); c.width = c.height = SPR;
@@ -116,12 +116,27 @@
     glows.risen = bakeGlow('rgba(193,18,31,0.5)', 'rgba(193,18,31,0)');
     glows.hollow = bakeGlow('rgba(90,0,8,0.65)', 'rgba(90,0,8,0)');
     glows.mourner = bakeGlow('rgba(170,190,220,0.45)', 'rgba(170,190,220,0)');
-    const e = document.createElement('canvas'); e.width = e.height = 32;
-    const eg = e.getContext('2d');
-    const gr = eg.createRadialGradient(16, 16, 1, 16, 16, 16);
-    gr.addColorStop(0, 'rgba(255,220,150,1)'); gr.addColorStop(0.5, 'rgba(226,88,34,0.8)'); gr.addColorStop(1, 'rgba(226,88,34,0)');
-    eg.fillStyle = gr; eg.fillRect(0, 0, 32, 32);
-    emberSprite = e;
+    // Burning film pieces: little celluloid fragments with sprocket holes,
+  // edges glowing hot, cooling to ash as they tumble.
+  function bakeFilm(base, edge, hole) {
+    const c = document.createElement('canvas'); c.width = 48; c.height = 32;
+    const g = c.getContext('2d');
+    g.fillStyle = base; g.fillRect(0, 0, 48, 32);
+    // sprocket holes, top + bottom rows
+    g.fillStyle = hole;
+    for (let x = 4; x < 44; x += 10) { g.fillRect(x, 3, 5, 6); g.fillRect(x, 23, 5, 6); }
+    // frame cell between the holes
+    g.strokeStyle = 'rgba(0,0,0,0.65)'; g.lineWidth = 1;
+    g.strokeRect(9, 12, 30, 8);
+    // burning edge
+    g.strokeStyle = edge; g.lineWidth = 3;
+    g.strokeRect(1.5, 1.5, 45, 29);
+    return c;
+  }
+    filmHot = bakeFilm('#1a0d06', 'rgba(255,140,20,0.95)', 'rgba(255,205,130,0.9)');
+    filmMid = bakeFilm('#150b06', 'rgba(205,45,12,0.9)', 'rgba(130,65,32,0.7)');
+    filmCold = bakeFilm('#0d0d0f', 'rgba(70,70,80,0.55)', 'rgba(42,42,50,0.65)');
+    filmPale = bakeFilm('#101016', 'rgba(150,170,205,0.7)', 'rgba(120,140,175,0.6)');
     // closing-darkness vignette, baked full-board once
     const d = document.createElement('canvas'); d.width = d.height = SIZE;
     const dg = d.getContext('2d');
@@ -352,6 +367,7 @@
       const a = Math.random() * Math.PI * 2, sp = 60 + Math.random() * 260;
       particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 40,
         life: 0.5 + Math.random() * 0.5, age: 0, s: 10 + Math.random() * 22,
+        rot: Math.random() * Math.PI * 2, vr: (Math.random() - 0.5) * 12,
         mourner: !!mourner });
     }
   }
@@ -437,7 +453,7 @@
       const p = particles[i];
       p.age += dt;
       if (p.age >= p.life) { particles.splice(i, 1); continue; }
-      p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 160 * dt;
+      p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 160 * dt; p.rot += p.vr * dt;
     }
     if (particles.length > 220) particles.splice(0, particles.length - 220);
     for (let i = floaters.length - 1; i >= 0; i--) {
@@ -503,13 +519,17 @@
     ctx.fillText('ᛟ', CX, CY + 2);
     // entities
     for (const e of entities) drawSprite(e);
-    // particles (ember sprites)
-    if (emberSprite) {
+    // particles (burning film pieces — hot, cooling, ash)
+    if (filmHot) {
       for (const p of particles) {
-        const a = 1 - p.age / p.life;
-        ctx.globalAlpha = a;
-        ctx.drawImage(emberSprite, p.x - p.s / 2, p.y - p.s / 2, p.s, p.s);
-        ctx.globalAlpha = 1;
+        const t = p.age / p.life;
+        const spr = p.mourner ? filmPale : t < 0.4 ? filmHot : t < 0.75 ? filmMid : filmCold;
+        ctx.save();
+        ctx.globalAlpha = 1 - t;
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.drawImage(spr, -p.s / 2, -p.s / 3, p.s, p.s * 0.66);
+        ctx.restore();
       }
     }
     // floaters
