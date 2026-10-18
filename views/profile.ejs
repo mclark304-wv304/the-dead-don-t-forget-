@@ -1,5 +1,15 @@
 <%- include('partials/header', { active: '', pageTitle: 'Your profile', config }) %>
 
+<style>
+.profile-name { cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; }
+.profile-name.egg-tap { animation: egg-flicker .18s; }
+@keyframes egg-flicker { 0% { opacity: 1; } 50% { opacity: .35; text-shadow: 0 0 14px #c1121f; } 100% { opacity: 1; } }
+#profile-egg { margin-top: 1.2rem; padding: 1.3rem 1rem; border: 1px solid #8a0303; background: rgba(12,0,0,.78); border-radius: 10px; text-align: center; }
+#profile-egg .egg-whisper { color: #e5383b; font-style: italic; min-height: 2.4em; font-size: 1.05em; }
+#profile-egg-claim { animation: egg-pulse 1.6s infinite; }
+@keyframes egg-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(193,18,31,.55); } 50% { box-shadow: 0 0 24px 5px rgba(193,18,31,.6); } }
+</style>
+
 <section>
   <div class="wrap gate">
     <h2>Your <span>Profile</span></h2>
@@ -57,6 +67,89 @@
     }).catch(function () {
       msg.textContent = 'The dead are quiet right now — try again in a moment.';
     });
+  });
+})();
+
+// Profile Easter egg: tap your display name 8 times. The name flickers with
+// each tap; on the eighth, the dead whisper back with a gift for the quick:
+// Episodes 8 + 9 free for the first 20 tappers.
+(function () {
+  var nameEl = document.querySelector('.profile-name');
+  var card = document.querySelector('.profile-card');
+  var target = nameEl || (card && card.querySelector('h3'));
+  if (!target || !card) return;
+  var CLAIM_KEY = 'ddf_profile_egg_claimed';
+  var taps = 0, timer = null, revealed = false;
+
+  if (localStorage.getItem(CLAIM_KEY)) {
+    var done = document.createElement('p');
+    done.className = 'fine';
+    done.textContent = 'The dead already know you — your gift is in your library.';
+    card.appendChild(done);
+    return;
+  }
+
+  var egg = document.createElement('div');
+  egg.id = 'profile-egg'; egg.hidden = true;
+  card.appendChild(egg);
+
+  function whisper(text, done) {
+    var w = egg.querySelector('.egg-whisper');
+    var i = 0; w.textContent = '';
+    var iv = setInterval(function () {
+      w.textContent = text.slice(0, ++i);
+      if (i >= text.length) { clearInterval(iv); if (done) done(); }
+    }, 34);
+  }
+
+  function claim() {
+    var msg = document.getElementById('profile-egg-msg');
+    var btn = document.getElementById('profile-egg-claim');
+    msg.textContent = 'The dead are deciding…';
+    if (btn) btn.disabled = true;
+    fetch('/api/profile-egg/claim', { method: 'POST' })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d.ok) {
+          localStorage.setItem(CLAIM_KEY, '1');
+          var acts = egg.querySelector('.egg-actions');
+          if (acts) acts.hidden = true;
+          whisper('EPISODES 8 & 9 ARE YOURS — soul #' + d.soulNumber + ' of 20.');
+          msg.innerHTML = '<a class="btn" href="/watch/ep8">Watch Episode 8</a> ' +
+            '<a class="btn ghost" href="/watch/ep9">Watch Episode 9</a>';
+        } else if (d.exhausted) {
+          msg.textContent = 'The twenty gifts are gone. The dead keep what they catch.';
+        } else {
+          msg.textContent = 'The dead are quiet right now — try again in a moment.';
+          if (btn) btn.disabled = false;
+        }
+      })
+      .catch(function () {
+        msg.textContent = 'The dead are quiet right now — try again in a moment.';
+        if (btn) btn.disabled = false;
+      });
+  }
+
+  function reveal() {
+    revealed = true;
+    egg.hidden = false;
+    egg.innerHTML = '<p class="egg-whisper"></p>' +
+      '<div class="egg-actions" hidden><button class="btn" id="profile-egg-claim">Claim your gift</button></div>' +
+      '<p class="fine" id="profile-egg-msg"></p>';
+    var display = nameEl ? nameEl.textContent.trim() : 'nameless one';
+    whisper('You found us, ' + display + '. Twenty gifts for the quick. Take yours.', function () {
+      egg.querySelector('.egg-actions').hidden = false;
+    });
+    document.getElementById('profile-egg-claim').addEventListener('click', claim);
+  }
+
+  target.addEventListener('click', function () {
+    if (revealed) return;
+    taps++;
+    target.classList.remove('egg-tap'); void target.offsetWidth; target.classList.add('egg-tap');
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(function () { taps = 0; }, 2500);
+    if (taps >= 8) { taps = 0; reveal(); }
   });
 })();
 </script>

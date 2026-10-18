@@ -774,6 +774,36 @@ app.post("/api/game-egg/claim", (req, res) => {
   }
 });
 
+// ── Profile Easter egg: tap your display name 8 times ────────────────────
+// The first config.profileEggMaxClaims tappers get Episodes 8 + 9 free.
+// Same trust model as the other eggs: server-side cap is the real guard;
+// browsers keep a localStorage flag as a courtesy so a revisit doesn't
+// re-fire the claim. Independent from the ELIAS and game eggs.
+db.exec(`
+  CREATE TABLE IF NOT EXISTS profile_egg_claims (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL UNIQUE,
+    claimed_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )
+`);
+app.post("/api/profile-egg/claim", (req, res) => {
+  try {
+    const claimed = db.prepare("SELECT COUNT(*) AS n FROM profile_egg_claims").get().n;
+    if (claimed >= config.profileEggMaxClaims) {
+      return res.json({ ok: false, exhausted: true });
+    }
+    const soulNumber = claimed + 1;
+    const email = `profile-egg-soul-${soulNumber}-${crypto.randomBytes(4).toString("hex")}@example.invalid`;
+    db.prepare("INSERT INTO profile_egg_claims (email) VALUES (?)").run(email);
+    grantProductEntitlements(email, config.products['ep8-early']);
+    grantProductEntitlements(email, config.products['ep9-early']);
+    issueAccessCookie(res, email);
+    res.json({ ok: true, soulNumber });
+  } catch (err) {
+    res.status(500).json({ ok: false, reason: "error", message: err.message });
+  }
+});
+
 // ── Promo codes: private free-pass links ─────────────────────
 // Owner-generated codes (scripts/make-promo.js) that bypass the paywall for
 // a capped number of redeemers. Each redeemer gets a unique per-claim

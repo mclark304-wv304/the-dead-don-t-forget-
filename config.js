@@ -525,6 +525,7 @@ module.exports = {
   // Early Access to the first this many finishers. Enforced server-side
   // (SQLite); browsers also keep a localStorage flag as a courtesy.
   gameEggMaxClaims: 100,
+  profileEggMaxClaims: 20,
 
   // ── Free downloads (no payment, no login — public) ────────
   freebies: [
