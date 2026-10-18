@@ -1,0 +1,19 @@
+<%- include('partials/header', { active: '', pageTitle: 'Episode alerts', config }) %>
+
+<section>
+  <div class="wrap">
+    <h2>Episode <span>Alerts</span></h2>
+    <p class="section-sub">Private — only you can see this. <%= subs.length %> soul<%= subs.length === 1 ? '' : 's' %> waiting for word.</p>
+    <p><a class="btn" href="/admin/alerts.csv?token=<%= encodeURIComponent(token) %>">Download CSV</a></p>
+
+    <table class="traffic-table">
+      <tr><th>Email</th><th>Signed up</th></tr>
+      <% subs.forEach(s => { %>
+      <tr><td><%= s.email %></td><td><%= s.created_at %></td></tr>
+      <% }) %>
+      <% if (!subs.length) { %><tr><td colspan="2">No signups yet.</td></tr><% } %>
+    </table>
+  </div>
+</section>
+
+<%- include('partials/footer', { config }) %>

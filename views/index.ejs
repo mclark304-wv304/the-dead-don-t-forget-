@@ -123,4 +123,42 @@
   </div>
 </section>
 
+<section>
+  <div class="wrap gate">
+    <h2>Hear It <span>First</span></h2>
+    <p class="section-sub">New episodes drop without warning. Leave your email and the dead will whisper when the next one rises. No spam — only the drop.</p>
+    <form id="alert-form" class="alert-form">
+      <input type="email" name="email" placeholder="you@example.com" required aria-label="Email for new-episode alerts">
+      <button class="btn" type="submit">Whisper to me</button>
+    </form>
+    <p id="alert-msg" class="fine" aria-live="polite"></p>
+  </div>
+</section>
+<script>
+(function () {
+  var form = document.getElementById('alert-form');
+  if (!form) return;
+  var msg = document.getElementById('alert-msg');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var email = form.email.value.trim();
+    msg.textContent = 'Listening…';
+    fetch('/api/alerts/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email })
+    }).then(function (r) { return r.json(); }).then(function (d) {
+      if (d.ok) {
+        msg.textContent = 'Done. When the next episode rises, you\u2019ll hear it first.';
+        form.reset();
+      } else {
+        msg.textContent = 'That email doesn\u2019t look right — try again.';
+      }
+    }).catch(function () {
+      msg.textContent = 'The dead are quiet right now — try again in a moment.';
+    });
+  });
+})();
+</script>
+
 <%- include('partials/footer', { config }) %>

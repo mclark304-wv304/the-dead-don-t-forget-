@@ -1,0 +1,64 @@
+<%- include('partials/header', { active: '', pageTitle: 'Your profile', config }) %>
+
+<section>
+  <div class="wrap gate">
+    <h2>Your <span>Profile</span></h2>
+    <p class="section-sub"><%= email %></p>
+
+    <div class="profile-card">
+      <h3>Display name</h3>
+      <% if (displayName) { %>
+      <p class="profile-name"><%= displayName %></p>
+      <% } %>
+      <form id="profile-form" class="alert-form">
+        <input type="text" name="display_name" maxlength="40" placeholder="<%= displayName ? 'New display name' : 'Choose a display name' %>" required aria-label="Display name">
+        <button class="btn" type="submit"><%= displayName ? 'Change it' : 'Set it' %></button>
+      </form>
+      <p id="profile-msg" class="fine" aria-live="polite"></p>
+    </div>
+
+    <h3 style="margin-top:2rem">Your library <span class="fine">(<%= library.length %>)</span></h3>
+    <% if (library.length) { %>
+    <div class="library-list">
+      <% library.forEach(p => { %>
+      <div class="library-item">
+        <div>
+          <strong><%= p.name %></strong>
+          <div class="tagline"><%= p.tagline %></div>
+        </div>
+        <% if (p.deliveryPath) { %><a class="btn" href="<%= p.deliveryPath %>">Open</a><% } %>
+      </div>
+      <% }) %>
+    </div>
+    <% } else { %>
+    <p class="section-sub">Nothing unlocked yet — the <a href="/bonus">Bonus Store</a> awaits.</p>
+    <% } %>
+  </div>
+</section>
+<script>
+(function () {
+  var form = document.getElementById('profile-form');
+  if (!form) return;
+  var msg = document.getElementById('profile-msg');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    msg.textContent = 'Carving it in…';
+    fetch('/api/profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ display_name: form.display_name.value })
+    }).then(function (r) { return r.json(); }).then(function (d) {
+      if (d.ok) {
+        msg.textContent = 'Done — the dead will know you as ' + d.display_name + '.';
+        setTimeout(function () { location.reload(); }, 900);
+      } else {
+        msg.textContent = 'Keep it to 40 characters or fewer.';
+      }
+    }).catch(function () {
+      msg.textContent = 'The dead are quiet right now — try again in a moment.';
+    });
+  });
+})();
+</script>
+
+<%- include('partials/footer', { config }) %>

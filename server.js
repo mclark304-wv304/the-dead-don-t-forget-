@@ -30,6 +30,13 @@ db.exec(`
 const grantEntitlement = (email, product) => {
   db.prepare("INSERT OR IGNORE INTO entitlements (email, product) VALUES (?, ?)").run(email.toLowerCase(), product);
 };
+// New-episode alert signups: one email per soul, no spam ever.
+db.exec(`
+  CREATE TABLE IF NOT EXISTS alert_subscribers (
+    email TEXT PRIMARY KEY,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )
+`);
 const productsForEmail = (email) => {
   return db.prepare("SELECT product FROM entitlements WHERE email = ?").all(email.toLowerCase()).map(r => r.product);
 };
@@ -253,11 +260,13 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
+// Every template knows whether the visitor holds any entitlement —
+// the nav uses it to show the Profile link only to supporters.
 // Every template (including the error page) gets `config` — the header and
 // footer partials depend on it, so this must run before any res.render.
 // stripeOn gates the Stripe ("pay with card") buttons in the donate partial
 // and on /bonus; it is false until STRIPE_SECRET_KEY is set.
-app.use((req, res, next) => { res.locals.config = config; res.locals.stripeOn = stripeConfigured(); next(); });
+app.use((req, res, next) => { res.locals.config = config; res.locals.stripeOn = stripeConfigured(); res.locals.access = readAccess(req); next(); });
 
 // PayPal webhook (backup only — the capture-on-return flow below is the
 // primary, server-verified path, so this endpoint only logs for now).
@@ -587,6 +596,92 @@ app.post("/api/restore", (req, res) => {
   if (productsForEmail(email).length === 0) return res.redirect("/bonus?error=no-purchases");
   issueAccessCookie(res, email);
   res.redirect("/bonus?restored=1");
+});
+
+// ── Profiles: supporters pick a display name, see their library ──
+db.exec(`
+  CREATE TABLE IF NOT EXISTS profiles (
+    email TEXT PRIMARY KEY,
+    display_name TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )
+`);
+const profileName = (email) => {
+  const row = db.prepare("SELECT display_name FROM profiles WHERE email = ?").get(email.toLowerCase());
+  return row ? row.display_name : null;
+};
+app.get("/profile", (req, res) => {
+  const access = readAccess(req);
+  if (!access || !Array.isArray(access.products) || access.products.length === 0) {
+    return res.status(403).render("error", {
+      title: "No profile yet",
+      message: "Profiles belong to supporters. Unlock something in the Bonus Store first.",
+      cta: "/bonus"
+    });
+  }
+  const email = access.email;
+  // Build their library: match each entitlement to its product.
+  const byEntitlement = {};
+  Object.entries(config.products).forEach(([id, p]) => {
+    (p.entitlements || [p.entitlement]).filter(Boolean).forEach(e => { byEntitlement[e] = { id, ...p }; });
+  });
+  const library = [];
+  const seen = new Set();
+  access.products.forEach(e => {
+    if (e === "all-access") {
+      Object.entries(config.products).forEach(([id, p]) => {
+        if (!seen.has(id)) { seen.add(id); library.push({ id, ...p }); }
+      });
+      return;
+    }
+    const p = byEntitlement[e];
+    if (p && !seen.has(p.id)) { seen.add(p.id); library.push(p); }
+  });
+  res.render("profile", { config, email, displayName: profileName(email), library });
+});
+app.post("/api/profile", express.json(), (req, res) => {
+  const access = readAccess(req);
+  if (!access || !access.email) return res.status(403).json({ ok: false, error: "no-access" });
+  let name = ((req.body && req.body.display_name) || "").trim().replace(/\s+/g, " ");
+  if (!name || name.length > 40) return res.status(400).json({ ok: false, error: "bad-name" });
+  db.prepare("INSERT INTO profiles (email, display_name) VALUES (?, ?) ON CONFLICT(email) DO UPDATE SET display_name = excluded.display_name")
+    .run(access.email.toLowerCase(), name);
+  res.json({ ok: true, display_name: name });
+});
+// One email per soul. No spam, ever — only "a new episode dropped" notes.
+app.post("/api/alerts/signup", express.json(), (req, res) => {
+  const email = ((req.body && req.body.email) || "").trim().toLowerCase();
+  if (!email || !email.includes("@") || email.length > 254) {
+    return res.status(400).json({ ok: false, error: "bad-email" });
+  }
+  db.prepare("INSERT OR IGNORE INTO alert_subscribers (email) VALUES (?)").run(email);
+  res.json({ ok: true });
+});
+
+// Owner-only: GET /admin/alerts?token=<SOUL_STATS_TOKEN> — subscriber list.
+app.get("/admin/alerts", (req, res) => {
+  if (!soulStatsAuthorized(req)) {
+    return res.status(404).render("error", {
+      title: "Not found",
+      message: "That page doesn't exist.",
+      cta: "/"
+    });
+  }
+  const subs = db.prepare(
+    "SELECT email, created_at FROM alert_subscribers ORDER BY created_at DESC"
+  ).all();
+  res.render("admin-alerts", { config, subs, token: req.query.token });
+});
+
+// Owner-only: GET /admin/alerts.csv?token=<SOUL_STATS_TOKEN> — CSV export.
+app.get("/admin/alerts.csv", (req, res) => {
+  if (!soulStatsAuthorized(req)) return res.status(404).send("Not found");
+  const subs = db.prepare(
+    "SELECT email, created_at FROM alert_subscribers ORDER BY created_at"
+  ).all();
+  res.type("text/csv");
+  res.set("Content-Disposition", "attachment; filename=alert-subscribers.csv");
+  res.send("email,created_at\n" + subs.map(s => `${s.email},${s.created_at}`).join("\n"));
 });
 
 // ── Easter egg: hidden ELIAS trigger ─────────────────────────

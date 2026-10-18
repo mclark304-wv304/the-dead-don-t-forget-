@@ -19,8 +19,7 @@
     <% /* Per-episode art for locked cards, keyed by episode number.
          Generic: applies to current AND future locked entries (Ep16/Ep17 when they land)
          without editing config.js. Any locked episode without an entry falls back to key art. */ %>
-    <% const LOCKED_ART = {
-      4:  '/img/apparitions/elias.jpg',
+    <% const LOCKED_ART = {      4:  '/img/apparitions/elias.jpg',
       5:  '/img/apparitions/lena-mercer.jpg',
       6:  '/img/apparitions/ruth-mercer.jpg',
       7:  '/img/wall/evelyn-shaw.jpg',
@@ -35,6 +34,15 @@
       16: '/img/apparitions/elias.jpg',
       17: '/img/series-key-art.webp',
       18: '/img/ep18-the-original.webp'
+    };
+    /* One public teaser Short per episode — tap a locked card to watch it
+       right there. Selling the episode instead of just sitting locked. */
+    const EP_TRAILERS = {
+      4: 'n9hCmQ9vORs', 5: 'tM3UoG-yfUg', 6: '6mHq5FXSpjg',
+      7: 'Udge1d2-PpE', 8: 'zx6DolrZqVw', 9: 'p2ebo5kNmxk',
+      10: 'XipLeLgApHo', 11: 'XrSwavFMrFI', 12: 'Taf03Cf-rHU',
+      13: '8DCG8SBm_X4', 14: '8m2EdpfjW4Y', 15: 'jYq5Zg5cvGA',
+      16: 'cwakz4MxWtQ', 17: 'JC76p4cYhAw', 18: 'gl64W5jd-n4'
     }; %>
     <% config.lockedEpisodes.forEach(ep => {
       const lockedArt = LOCKED_ART[ep.n] || '/img/series-key-art.webp';
@@ -43,6 +51,9 @@
       <div class="locked-poster">
         <img src="<%= lockedArt %>?v=<%= config.assetV %>" alt="Episode <%= ep.n %>: <%= ep.title %> — locked" loading="lazy">
         <span class="locked-badge">LOCKED</span>
+        <% if (EP_TRAILERS[ep.n]) { %>
+        <button type="button" class="trailer-btn" data-trailer="<%= EP_TRAILERS[ep.n] %>" data-title="Episode <%= ep.n %>: <%= ep.title %>">&#9654; Trailer</button>
+        <% } %>
       </div>
       <h3>Episode <%= ep.n %>: <%= ep.title %></h3>
       <div class="meta"><%= ep.runtime %> &middot; Website Exclusive</div>
@@ -60,5 +71,39 @@
     </div>
   </div>
 </section>
+
+<div id="trailer-modal" class="trailer-modal" hidden>
+  <div class="trailer-box" role="dialog" aria-modal="true" aria-label="Episode trailer">
+    <button type="button" class="trailer-close" aria-label="Close trailer">&times;</button>
+    <div class="trailer-title"></div>
+    <div class="trailer-frame">
+      <iframe title="Episode trailer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </div>
+</div>
+<script>
+(function () {
+  var modal = document.getElementById('trailer-modal');
+  var frame = modal.querySelector('iframe');
+  var title = modal.querySelector('.trailer-title');
+  function close() {
+    frame.src = '';
+    modal.hidden = true;
+    document.body.style.overflow = '';
+  }
+  document.querySelectorAll('.trailer-btn').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      title.textContent = btn.getAttribute('data-title') + ' — trailer';
+      frame.src = 'https://www.youtube-nocookie.com/embed/' + btn.getAttribute('data-trailer') + '?autoplay=1&rel=0';
+      modal.hidden = false;
+      document.body.style.overflow = 'hidden';
+    });
+  });
+  modal.querySelector('.trailer-close').addEventListener('click', close);
+  modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.hidden) close(); });
+})();
+</script>
 
 <%- include('partials/footer', { config }) %>

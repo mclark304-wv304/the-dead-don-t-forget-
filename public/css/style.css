@@ -808,6 +808,60 @@ canvas.embers {
   0% { color: #fff; text-shadow: 0 0 22px rgba(255,240,210,.95); }
   100% { color: #b9a88f; text-shadow: 0 0 8px rgba(185,168,143,.25); }
 }
+/* new-episode alerts signup */
+.alert-form { display: flex; gap: .6rem; justify-content: center; flex-wrap: wrap; margin-top: 1rem; }
+.alert-form input[type="email"] {
+  background: #0d0c0e; border: 1px solid #2b2320; border-radius: 4px;
+  color: #eadfc8; padding: .7rem 1rem; font-size: 1rem; min-width: 260px;
+}
+.alert-form input[type="email"]:focus { outline: none; border-color: #5a4a38; }
+/* supporter profiles */
+.profile-card {
+  background: #141216; border: 1px solid #2b2320; border-radius: 10px;
+  padding: 1.4rem; margin-top: 1rem; max-width: 560px;
+}
+.profile-card h3 { margin-bottom: .6rem; }
+.profile-name { font-size: 1.6rem; color: #f3e6cf; margin-bottom: .8rem; }
+.alert-form input[type="text"] {
+  background: #0d0c0e; border: 1px solid #2b2320; border-radius: 4px;
+  color: #eadfc8; padding: .7rem 1rem; font-size: 1rem; min-width: 220px;
+}
+.alert-form input[type="text"]:focus { outline: none; border-color: #5a4a38; }
+.library-list { display: grid; gap: .8rem; margin-top: 1rem; }
+.library-item {
+  display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;
+  background: #141216; border: 1px solid #2b2320; border-radius: 8px; padding: 1rem 1.2rem;
+}
+.library-item .tagline { color: var(--dim); font-style: italic; font-size: .9rem; }
+
+/* locked-episode trailers */
+.locked-poster { position: relative; }
+.trailer-btn {
+  position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%);
+  background: rgba(10,8,8,.82); color: #f3e6cf; border: 1px solid #5a4a38;
+  border-radius: 20px; padding: .45rem 1rem; font-size: .8rem; letter-spacing: .08em;
+  cursor: pointer; white-space: nowrap;
+  -webkit-transition: background .2s, border-color .2s; transition: background .2s, border-color .2s;
+}
+.trailer-btn:hover { background: #c1121f; border-color: #c1121f; }
+.trailer-modal {
+  position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.88);
+  display: flex; align-items: center; justify-content: center; padding: 1rem;
+}
+.trailer-modal[hidden] { display: none; }
+.trailer-box {
+  position: relative; width: min(420px, 94vw);
+  background: #141216; border: 1px solid #3a2f26; border-radius: 10px; padding: 1rem;
+}
+.trailer-close {
+  position: absolute; top: .4rem; right: .7rem; background: none; border: none;
+  color: #b9a88f; font-size: 1.8rem; cursor: pointer; line-height: 1;
+}
+.trailer-close:hover { color: #fff; }
+.trailer-title { color: #eadfc8; font-size: .95rem; margin-bottom: .7rem; padding-right: 2rem; }
+.trailer-frame { position: relative; width: 100%; padding-top: 177.78%; }
+.trailer-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 6px; }
+
 /* character quotes: tap a name and they whisper one of their chapter lines */
 .wall-quote {
   font-style: italic; font-size: .8rem; line-height: 1.45; letter-spacing: .02em;

@@ -22,6 +22,9 @@
       <li><a href="/" class="<%= typeof active !== 'undefined' && active === 'home' ? 'active' : '' %>">Home</a></li>
       <li><a href="/episodes" class="<%= typeof active !== 'undefined' && active === 'episodes' ? 'active' : '' %>">Episodes</a></li>
       <li><a href="/bonus" class="<%= typeof active !== 'undefined' && active === 'bonus' ? 'active' : '' %>">Bonus Store</a></li>
+      <% if (typeof access !== 'undefined' && access && access.products && access.products.length) { %>
+      <li><a href="/profile">Profile</a></li>
+      <% } %>
     </ul>
   </div>
 </nav>
