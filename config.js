@@ -9,7 +9,7 @@ module.exports = {
   creator: "Maya Clark",
 
   // Bump this when CSS/JS/audio change so phones fetch fresh files.
-  assetV: "20261017d",
+  assetV: "20261017e",
 
   // Base URL of the deployed site (used for PayPal return URLs).
   // Locally: http://localhost:3000 — in production set the BASE_URL env var.
@@ -109,6 +109,21 @@ module.exports = {
   // and it will appear on the early-access watch page automatically.
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
   ep18VideoId: "xVzdHnLNfes",
+
+  // Episode 19 premiere: paste the YouTube video ID here when Ep19 is ready
+  // and it will appear on the early-access watch page automatically.
+  // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
+  ep19VideoId: "",
+
+  // Episode 20 premiere: paste the YouTube video ID here when Ep20 is ready
+  // and it will appear on the early-access watch page automatically.
+  // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
+  ep20VideoId: "",
+
+  // Episode 21 premiere: paste the YouTube video ID here when Ep21 is ready
+  // and it will appear on the early-access watch page automatically.
+  // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
+  ep21VideoId: "",
 
   pocketFmUrl: "https://pocketfm.com/show/850e2acdfbf37afa82efe1af45a3d32ea6e188f2",
 
@@ -231,6 +246,24 @@ module.exports = {
       title: "The Original",
       runtime: "34:48",
       synopsis: "The fourth door opens onto the original. Noah. The first Daniel. Forty-four subjects — and a woman's voice that remembers everything."
+    },
+    {
+      n: 19,
+      title: "The Woman in the Memories",
+      runtime: "TBD",
+      synopsis: "Beneath the Vault: a too-clean corridor, forty-three reconstruction attempts, and a woman's voice warning Daniel not to open the forty-third record."
+    },
+    {
+      n: 20,
+      title: "The Witness",
+      runtime: "TBD",
+      synopsis: "Ruth Mercer has waited nineteen years to testify. The forty-three were never people — and behind the sealed door, someone is breathing."
+    },
+    {
+      n: 21,
+      title: "The Man Behind The Glass",
+      runtime: "TBD",
+      synopsis: "Nathan Cross has been waiting years for Daniel. Attempt Forty-Four was never a person — and Mara is alive."
     }
   ],
 
@@ -358,6 +391,27 @@ module.exports = {
       priceCents: 299,
       entitlement: "ep18-early",
       deliveryPath: "/watch/ep18"
+    },
+    "ep19-early": {
+      name: "Episode 19 — Early Access",
+      tagline: "Watch Episode 19 'The Woman in the Memories' here before it hits YouTube.",
+      priceCents: 299,
+      entitlement: "ep19-early",
+      deliveryPath: "/watch/ep19"
+    },
+    "ep20-early": {
+      name: "Episode 20 — Early Access",
+      tagline: "Watch Episode 20 'The Witness' here before it hits YouTube.",
+      priceCents: 299,
+      entitlement: "ep20-early",
+      deliveryPath: "/watch/ep20"
+    },
+    "ep21-early": {
+      name: "Episode 21 — Early Access",
+      tagline: "Watch Episode 21 'The Man Behind The Glass' here before it hits YouTube.",
+      priceCents: 299,
+      entitlement: "ep21-early",
+      deliveryPath: "/watch/ep21"
     },
     "poster-pack": {
       name: "Official Poster Pack",
