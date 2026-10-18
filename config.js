@@ -9,7 +9,7 @@ module.exports = {
   creator: "Maya Clark",
 
   // Bump this when CSS/JS/audio change so phones fetch fresh files.
-  assetV: "20261018f",
+  assetV: "20261018g",
 
   // Base URL of the deployed site (used for PayPal return URLs).
   // Locally: http://localhost:3000 — in production set the BASE_URL env var.
@@ -109,6 +109,11 @@ module.exports = {
   // and it will appear on the early-access watch page automatically.
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
   ep18VideoId: "xVzdHnLNfes",
+
+  // Episode 22 premiere: paste the YouTube video ID here when Ep22 is ready
+  // and it will appear on the early-access watch page automatically.
+  // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
+  ep22VideoId: "",
 
   // Episode 19 premiere: paste the YouTube video ID here when Ep19 is ready
   // and it will appear on the early-access watch page automatically.
@@ -318,6 +323,12 @@ module.exports = {
       synopsis: "Nathan Cross has been waiting years for Daniel. Attempt Forty-Four was never a person — and Mara is alive."
     },
     {
+      n: 22,
+      title: "The City Was Breathing",
+      runtime: "34:43",
+      synopsis: "An abandoned city that breathes. A figure wearing Daniel's face. The original Daniel is in the tower — and Mara's voice on the radio says don't go."
+    },
+    {
       n: 24,
       title: "The Name Beneath The Names",
       runtime: "TBD",
@@ -476,6 +487,13 @@ module.exports = {
       priceCents: 200,
       entitlement: "ep21-early",
       deliveryPath: "/watch/ep21"
+    },
+    "ep22-early": {
+      name: "Episode 22 — Early Access",
+      tagline: "Watch Episode 22 'The City Was Breathing' here — a website exclusive.",
+      priceCents: 200,
+      entitlement: "ep22-early",
+      deliveryPath: "/watch/ep22"
     },
     "ep24-early": {
       name: "Episode 24 — Early Access",
