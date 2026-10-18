@@ -9,7 +9,7 @@ module.exports = {
   creator: "Maya Clark",
 
   // Bump this when CSS/JS/audio change so phones fetch fresh files.
-  assetV: "20261017e",
+  assetV: "20261017f",
 
   // Base URL of the deployed site (used for PayPal return URLs).
   // Locally: http://localhost:3000 — in production set the BASE_URL env var.
@@ -129,6 +129,47 @@ module.exports = {
   // and it will appear on the early-access watch page automatically.
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
   ep24VideoId: "",
+
+  // Series trailer for the homepage hero. Paste the UNLISTED YouTube video
+  // ID here once the trailer is uploaded; the hero shows the trailer
+  // facade only when this is set. (Upload: series-trailer-hero-16x9.mp4
+  // in ~/workspace/dead_dont_forget/ — unlisted, "Maya Clark" channel.)
+  seriesTrailerYoutubeId: "",
+
+  // Locked-card art, keyed by episode number. Applies to current AND future
+  // locked entries without editing templates. Falls back to series key art.
+  lockedArt: {
+    4: '/img/apparitions/elias.jpg',
+    5: '/img/apparitions/lena-mercer.jpg',
+    6: '/img/apparitions/ruth-mercer.jpg',
+    7: '/img/wall/evelyn-shaw.jpg',
+    8: '/img/wall/claire.jpg',
+    9: '/img/apparitions/jonah-bell.jpg',
+    10: '/img/ep1-poster-man-at-the-gate.webp',
+    11: '/img/apparitions/mara.jpg',
+    12: '/img/wall/marcus.jpg',
+    13: '/img/series-key-art.webp',
+    14: '/img/ep3-poster-the-ledger.webp',
+    15: '/img/wall/daniel-vale.jpg',
+    16: '/img/apparitions/elias.jpg',
+    17: '/img/series-key-art.webp',
+    18: '/img/ep18-the-original.webp',
+    19: '/img/ep19-the-woman-in-the-memories.webp',
+    20: '/img/ep20-the-witness.webp',
+    21: '/img/ep21-the-man-behind-the-glass.webp',
+    22: '/img/ep22-the-city-was-breathing.webp',
+    24: '/img/ep24-the-name-beneath-the-names.webp'
+  },
+
+  // One public teaser Short per episode — tap a locked card to watch it
+  // right there. Selling the episode instead of just sitting locked.
+  trailers: {
+    4: 'n9hCmQ9vORs', 5: 'tM3UoG-yfUg', 6: '6mHq5FXSpjg',
+    7: 'Udge1d2-PpE', 8: 'zx6DolrZqVw', 9: 'p2ebo5kNmxk',
+    10: 'XipLeLgApHo', 11: 'XrSwavFMrFI', 12: 'Taf03Cf-rHU',
+    13: '8DCG8SBm_X4', 14: '8m2EdpfjW4Y', 15: 'jYq5Zg5cvGA',
+    16: 'cwakz4MxWtQ', 17: 'JC76p4cYhAw', 18: 'gl64W5jd-n4'
+  },
 
   pocketFmUrl: "https://pocketfm.com/show/850e2acdfbf37afa82efe1af45a3d32ea6e188f2",
 

@@ -1018,3 +1018,108 @@ canvas.embers {
 @media (max-width: 768px) {
   .grain { opacity: .035; }
 }
+
+/* ── Series trailer hero facade (click-to-play; no autoplay) ── */
+.trailer-facade {
+  position: relative;
+  margin: 2rem auto 0;
+  max-width: 860px;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--blood-dark);
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #000;
+  box-shadow: 0 0 34px rgba(193,18,31,.22), 0 10px 40px rgba(0,0,0,.6);
+}
+.trailer-facade img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  filter: brightness(.62) saturate(.95);
+  transition: filter .3s ease, transform .3s ease;
+}
+.trailer-facade:hover img, .trailer-facade:focus-visible img { filter: brightness(.78) saturate(1); transform: scale(1.02); }
+.trailer-facade iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.trailer-facade:focus-visible { outline: 2px solid var(--blood); outline-offset: 3px; }
+.trailer-play {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 84px; height: 84px; border-radius: 50%;
+  background: rgba(10,10,12,.72);
+  border: 2px solid var(--blood);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 26px rgba(193,18,31,.5);
+  transition: transform .25s ease, background .25s ease;
+}
+.trailer-play span { color: var(--blood); font-size: 2rem; margin-left: .3rem; }
+.trailer-facade:hover .trailer-play { transform: translate(-50%, -50%) scale(1.08); background: rgba(122,12,20,.85); }
+.trailer-facade:hover .trailer-play span { color: #fff; }
+.trailer-facade-label {
+  position: absolute; bottom: 1rem; left: 50%; transform: translateX(-50%);
+  letter-spacing: .4em; text-indent: .4em; font-size: .8rem; color: var(--bone);
+  text-shadow: 0 2px 8px #000;
+  white-space: nowrap;
+}
+
+/* ── Ep3 → Ep4 cliffhanger handoff ── */
+.handoff-card {
+  margin: 2.5rem 0;
+  padding: 2.2rem 2rem;
+  text-align: center;
+  border: 1px solid var(--blood-dark);
+  border-radius: 8px;
+  background:
+    radial-gradient(ellipse at 50% 120%, rgba(193,18,31,.22), transparent 65%),
+    linear-gradient(180deg, #141416, #0c0c0e);
+  box-shadow: 0 0 30px rgba(193,18,31,.16), 0 8px 30px rgba(0,0,0,.5);
+}
+.handoff-kicker {
+  color: var(--blood); letter-spacing: .35em; text-indent: .35em;
+  font-size: .8rem; margin-bottom: .8rem;
+}
+.handoff-card h3 { font-size: 1.5rem; letter-spacing: .02em; margin-bottom: .8rem; }
+.handoff-card .section-sub { max-width: 36rem; margin-left: auto; margin-right: auto; }
+.handoff-card .cta-row { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 1.2rem; }
+
+/* ── About the creator ── */
+.about-creator {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 2rem;
+  align-items: center;
+}
+.about-portrait {
+  border: 1px solid var(--blood-dark);
+  border-radius: 8px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #141416, #0a0a0c);
+  box-shadow: 0 0 24px rgba(193,18,31,.14), 0 8px 28px rgba(0,0,0,.5);
+  aspect-ratio: 4 / 5;
+}
+.about-portrait img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(.9); }
+.about-copy h2 { margin-bottom: 1rem; }
+.about-copy p { color: var(--dim); margin-bottom: 1rem; max-width: 42rem; }
+.about-copy p strong { color: var(--bone); }
+
+@media (max-width: 640px) {
+  .about-creator { grid-template-columns: 1fr; gap: 1.4rem; }
+  .about-portrait { max-width: 240px; margin: 0 auto; }
+  .trailer-play { width: 68px; height: 68px; }
+  .trailer-play span { font-size: 1.6rem; }
+  .handoff-card { padding: 1.8rem 1.2rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .trailer-facade img, .trailer-play { transition: none; }
+}
+
+/* ── Wall of Names: speaking indicator (audio playing) ── */
+.wall-name.speaking .wall-label::after {
+  content: ' \266A';
+  color: var(--blood);
+  -webkit-animation: speak-pulse 1s ease-in-out infinite;
+  animation: speak-pulse 1s ease-in-out infinite;
+}
+@-webkit-keyframes speak-pulse { 0%, 100% { opacity: .4; } 50% { opacity: 1; } }
+@keyframes speak-pulse { 0%, 100% { opacity: .4; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .wall-name.speaking .wall-label::after { -webkit-animation: none; animation: none; }
+}

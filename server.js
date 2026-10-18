@@ -299,9 +299,9 @@ app.use((req, res, next) => {
 });
 
 // ── Public pages ─────────────────────────────────────────────
-app.get("/", (req, res) => res.render("index", { config }));
-app.get("/episodes", (req, res) => res.render("episodes", { config }));
-app.get("/bonus", (req, res) => res.render("bonus", { config, notice: req.query }));
+app.get("/", (req, res) => res.render("index", { config, canonicalPath: "/" }));
+app.get("/episodes", (req, res) => res.render("episodes", { config, canonicalPath: "/episodes" }));
+app.get("/bonus", (req, res) => res.render("bonus", { config, notice: req.query, canonicalPath: "/bonus" }));
 
 // ── Checkout (PayPal order → buyer approves on paypal.com) ─────
 app.post("/api/checkout/:productId", async (req, res) => {

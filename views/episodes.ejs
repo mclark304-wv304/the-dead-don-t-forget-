@@ -3,12 +3,12 @@
 <section>
   <div class="wrap">
     <h2>All <span>Episodes</span></h2>
-    <p class="section-sub">Every episode streams free, right here.</p>
+    <p class="section-sub">The first three episodes stream free, right here. The rest are website exclusives.</p>
 
     <% config.episodes.forEach(ep => { %>
     <div class="episode-block">
       <div class="player">
-        <iframe src="https://www.youtube.com/embed/<%= ep.youtubeId %>" title="The Dead Don't Forget — Episode <%= ep.n %>: <%= ep.title %>" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        <iframe src="https://www.youtube-nocookie.com/embed/<%= ep.youtubeId %>" title="The Dead Don't Forget — Episode <%= ep.n %>: <%= ep.title %>" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
       </div>
       <h3>Episode <%= ep.n %>: <%= ep.title %></h3>
       <div class="meta"><%= ep.runtime %> &middot; <a href="https://youtu.be/<%= ep.youtubeId %>" target="_blank" rel="noopener">Watch on YouTube</a></div>
@@ -16,47 +16,29 @@
     </div>
     <% }) %>
 
-    <% /* Per-episode art for locked cards, keyed by episode number.
-         Generic: applies to current AND future locked entries (Ep16/Ep17 when they land)
-         without editing config.js. Any locked episode without an entry falls back to key art. */ %>
-    <% const LOCKED_ART = {      4:  '/img/apparitions/elias.jpg',
-      5:  '/img/apparitions/lena-mercer.jpg',
-      6:  '/img/apparitions/ruth-mercer.jpg',
-      7:  '/img/wall/evelyn-shaw.jpg',
-      8:  '/img/wall/claire.jpg',
-      9:  '/img/apparitions/jonah-bell.jpg',
-      10: '/img/ep1-poster-man-at-the-gate.webp',
-      11: '/img/apparitions/mara.jpg',
-      12: '/img/wall/marcus.jpg',
-      13: '/img/series-key-art.webp',
-      14: '/img/ep3-poster-the-ledger.webp',
-      15: '/img/wall/daniel-vale.jpg',
-      16: '/img/apparitions/elias.jpg',
-      17: '/img/series-key-art.webp',
-      18: '/img/ep18-the-original.webp',
-      19: '/img/ep19-the-woman-in-the-memories.webp',
-      20: '/img/ep20-the-witness.webp',
-      21: '/img/ep21-the-man-behind-the-glass.webp',
-      24: '/img/ep24-the-name-beneath-the-names.webp'
-    };
-    /* One public teaser Short per episode — tap a locked card to watch it
-       right there. Selling the episode instead of just sitting locked. */
-    const EP_TRAILERS = {
-      4: 'n9hCmQ9vORs', 5: 'tM3UoG-yfUg', 6: '6mHq5FXSpjg',
-      7: 'Udge1d2-PpE', 8: 'zx6DolrZqVw', 9: 'p2ebo5kNmxk',
-      10: 'XipLeLgApHo', 11: 'XrSwavFMrFI', 12: 'Taf03Cf-rHU',
-      13: '8DCG8SBm_X4', 14: '8m2EdpfjW4Y', 15: 'jYq5Zg5cvGA',
-      16: 'cwakz4MxWtQ', 17: 'JC76p4cYhAw', 18: 'gl64W5jd-n4'
-    }; %>
+    <div class="handoff-card">
+      <div class="handoff-kicker">THE STORY DOESN'T STOP HERE</div>
+      <h3>Finished Episode 3? The Ledger was only the beginning.</h3>
+      <p class="section-sub">Episode 4: "The Man That Wasn't There" — a man who was never there, and Daniel can't stop remembering him. Website exclusive. Pay once, yours forever.</p>
+      <div class="cta-row">
+        <a class="btn" href="/bonus">Continue the story — $2.99</a>
+        <% if (config.trailers && config.trailers[4]) { %>
+        <button type="button" class="btn ghost trailer-btn" data-trailer="<%= config.trailers[4] %>" data-title="Episode 4: The Man That Wasn't There">&#9654; Watch the trailer</button>
+        <% } %>
+      </div>
+    </div>
+
+    <% /* Locked-card art and trailers live in config.js (lockedArt, trailers).
+         Any locked episode without an entry falls back to series key art. */ %>
     <% config.lockedEpisodes.forEach(ep => {
-      const lockedArt = LOCKED_ART[ep.n] || '/img/series-key-art.webp';
+      const lockedArt = (config.lockedArt && config.lockedArt[ep.n]) || '/img/series-key-art.webp';
     %>
     <div class="episode-block locked-episode">
       <div class="locked-poster">
         <img src="<%= lockedArt %>?v=<%= config.assetV %>" alt="Episode <%= ep.n %>: <%= ep.title %> — locked" loading="lazy">
         <span class="locked-badge">LOCKED</span>
-        <% if (EP_TRAILERS[ep.n]) { %>
-        <button type="button" class="trailer-btn" data-trailer="<%= EP_TRAILERS[ep.n] %>" data-title="Episode <%= ep.n %>: <%= ep.title %>">&#9654; Trailer</button>
+        <% if (config.trailers && config.trailers[ep.n]) { %>
+        <button type="button" class="trailer-btn" data-trailer="<%= config.trailers[ep.n] %>" data-title="Episode <%= ep.n %>: <%= ep.title %>">&#9654; Trailer</button>
         <% } %>
       </div>
       <h3>Episode <%= ep.n %>: <%= ep.title %></h3>
@@ -76,38 +58,6 @@
   </div>
 </section>
 
-<div id="trailer-modal" class="trailer-modal" hidden>
-  <div class="trailer-box" role="dialog" aria-modal="true" aria-label="Episode trailer">
-    <button type="button" class="trailer-close" aria-label="Close trailer">&times;</button>
-    <div class="trailer-title"></div>
-    <div class="trailer-frame">
-      <iframe title="Episode trailer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    </div>
-  </div>
-</div>
-<script>
-(function () {
-  var modal = document.getElementById('trailer-modal');
-  var frame = modal.querySelector('iframe');
-  var title = modal.querySelector('.trailer-title');
-  function close() {
-    frame.src = '';
-    modal.hidden = true;
-    document.body.style.overflow = '';
-  }
-  document.querySelectorAll('.trailer-btn').forEach(function (btn) {
-    btn.addEventListener('click', function (e) {
-      e.stopPropagation();
-      title.textContent = btn.getAttribute('data-title') + ' — trailer';
-      frame.src = 'https://www.youtube-nocookie.com/embed/' + btn.getAttribute('data-trailer') + '?autoplay=1&rel=0';
-      modal.hidden = false;
-      document.body.style.overflow = 'hidden';
-    });
-  });
-  modal.querySelector('.trailer-close').addEventListener('click', close);
-  modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.hidden) close(); });
-})();
-</script>
+<%- include('partials/trailer-modal', {}) %>
 
 <%- include('partials/footer', { config }) %>

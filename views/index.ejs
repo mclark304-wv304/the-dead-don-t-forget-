@@ -10,27 +10,71 @@
       <a class="btn" href="/episodes">Watch Free</a>
       <a class="btn ghost" href="/bonus">Bonus Store</a>
     </div>
+    <% if (config.seriesTrailerYoutubeId) { %>
+    <div class="trailer-facade" id="hero-trailer" role="button" tabindex="0" aria-label="Play the series trailer">
+      <img src="/img/series-key-art.webp?v=<%= config.assetV %>" alt="THE DEAD DON'T FORGET — series trailer" loading="lazy">
+      <span class="trailer-play"><span>&#9654;</span></span>
+      <span class="trailer-facade-label">WATCH THE TRAILER</span>
+    </div>
+    <script>
+    (function () {
+      var f = document.getElementById('hero-trailer');
+      if (!f) return;
+      function play() {
+        var frame = document.createElement('iframe');
+        frame.src = 'https://www.youtube-nocookie.com/embed/<%= config.seriesTrailerYoutubeId %>?autoplay=1&rel=0';
+        frame.title = "THE DEAD DON'T FORGET — series trailer";
+        frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+        frame.allowFullscreen = true;
+        f.innerHTML = '';
+        f.appendChild(frame);
+        f.removeAttribute('role');
+      }
+      f.addEventListener('click', play);
+      f.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); play(); } });
+    })();
+    </script>
+    <% } %>
     <div style="margin-top:1.2rem">
       <%- include('partials/donate', { compact: false }) %>
     </div>
   </div>
 </div>
 
+<%
+/* Latest live locked episode = highest-numbered lockedEpisode with a wired
+   video ID. Always shows the real newest drop — never goes stale. */
+const liveLocked = config.lockedEpisodes.filter(ep => config['ep' + ep.n + 'VideoId']);
+const latest = liveLocked.length ? liveLocked[liveLocked.length - 1] : null;
+const latestArt = latest ? ((config.lockedArt && config.lockedArt[latest.n]) || '/img/series-key-art.webp') : null;
+%>
+<% if (latest) { %>
 <section>
   <div class="wrap">
-    <h2>Latest <span>Episode</span></h2>
-    <p class="section-sub">Episode 3: "The Ledger" — streaming free right now.</p>
-    <div class="player">
-      <iframe src="https://www.youtube.com/embed/<%= config.episodes[2].youtubeId %>" title="The Dead Don't Forget — Episode 3: The Ledger" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <h2>Latest <span>Drop</span></h2>
+    <p class="section-sub">Episode <%= latest.n %>: &ldquo;<%= latest.title %>&rdquo; — fresh from the vault. Website exclusive.</p>
+    <div class="episode-block locked-episode">
+      <div class="locked-poster">
+        <img src="<%= latestArt %>?v=<%= config.assetV %>" alt="Episode <%= latest.n %>: <%= latest.title %> — locked" loading="lazy">
+        <span class="locked-badge">LOCKED</span>
+        <% if (config.trailers && config.trailers[latest.n]) { %>
+        <button type="button" class="trailer-btn" data-trailer="<%= config.trailers[latest.n] %>" data-title="Episode <%= latest.n %>: <%= latest.title %>">&#9654; Trailer</button>
+        <% } %>
+      </div>
+      <h3>Episode <%= latest.n %>: <%= latest.title %></h3>
+      <div class="meta"><%= latest.runtime %> &middot; Website Exclusive</div>
+      <p class="section-sub"><%= latest.synopsis %></p>
+      <a class="btn" href="/bonus">Unlock Episode <%= latest.n %> — $2.99</a>
     </div>
   </div>
 </section>
+<% } %>
 
 <section>
   <div class="wrap has-sigils">
     <button class="sigil" data-sigil="2" style="bottom:.4rem;left:.8rem" aria-label="A strange marking">ᛞ</button>
     <h2>The <span>Episodes</span></h2>
-    <p class="section-sub">Every episode streams free. The Bonus Store is where supporters go deeper.</p>
+    <p class="section-sub">The first three episodes stream free. The Bonus Store is where the story continues.</p>
     <div class="cards">
       <% config.episodes.forEach(ep => { %>
       <div class="card">
@@ -40,10 +84,22 @@
           <h3><%= ep.title %></h3>
           <div class="runtime"><%= ep.runtime %></div>
           <p><%= ep.synopsis %></p>
-          <a class="btn" href="https://youtu.be/<%= ep.youtubeId %>" target="_blank" rel="noopener">Watch Free</a>
+          <a class="btn" href="/episodes">Watch Free</a>
         </div>
       </div>
       <% }) %>
+    </div>
+
+    <div class="handoff-card">
+      <div class="handoff-kicker">THE STORY DOESN'T STOP HERE</div>
+      <h3>Finished Episode 3? The Ledger was only the beginning.</h3>
+      <p class="section-sub">Episode 4: "The Man That Wasn't There" — a man who was never there, and Daniel can't stop remembering him. Website exclusive. Pay once, yours forever.</p>
+      <div class="cta-row">
+        <a class="btn" href="/bonus">Continue the story — $2.99</a>
+        <% if (config.trailers && config.trailers[4]) { %>
+        <button type="button" class="btn ghost trailer-btn" data-trailer="<%= config.trailers[4] %>" data-title="Episode 4: The Man That Wasn't There">&#9654; Watch the trailer</button>
+        <% } %>
+      </div>
     </div>
   </div>
 </section>
@@ -61,6 +117,19 @@
       <a class="btn" href="/bonus">Unlock — $<%= (p.priceCents/100).toFixed(2) %></a>
     </div>
     <% }) %>
+  </div>
+</section>
+
+<section>
+  <div class="wrap about-creator">
+    <div class="about-portrait">
+      <img src="/img/creator-portrait-placeholder.webp?v=<%= config.assetV %>" alt="Maya Clark — portrait coming soon" loading="lazy">
+    </div>
+    <div class="about-copy">
+      <h2>About the <span>Creator</span></h2>
+      <p>Maya Clark writes, directs, and produces <strong>THE DEAD DON'T FORGET</strong> — a 69-episode horror audio drama on Pocket FM, now reborn as a full 2D animated series.</p>
+      <p>Every episode is built under her direction: the voices you hear, the dread you feel, the names you can't forget. This site is the only place to watch new episodes first — before anywhere else, if anywhere else at all.</p>
+    </div>
   </div>
 </section>
 
@@ -160,5 +229,7 @@
   });
 })();
 </script>
+
+<%- include('partials/trailer-modal', {}) %>
 
 <%- include('partials/footer', { config }) %>

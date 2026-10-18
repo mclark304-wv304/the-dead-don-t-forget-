@@ -173,6 +173,31 @@
     ]
   };
   var quoteIdx = {};
+  /* Spoken quotes: one TTS MP3 per quote, in each character's locked voice.
+     Files: /audio/wall-quotes/<slug>-<0|1|2>.mp3 — index matches the cycling quote. */
+  var QUOTE_AUDIO = {
+    'ELIAS': 'elias', 'MARA': 'mara', 'DANIEL VALE': 'daniel-vale',
+    'JONAH BELL': 'jonah-bell', 'RUTH MERCER': 'ruth-mercer',
+    'ELENA MERCER': 'elena-mercer', 'THOMAS REED': 'thomas-reed',
+    'EVELYN SHAW': 'evelyn-shaw', 'MARCUS': 'marcus', 'CLAIRE': 'claire',
+    'THOMAS RUSK': 'thomas-rusk', 'RICHARD CRANE': 'richard-crane'
+  };
+  var QUOTE_AUDIO_V = '?v=20261017f';
+  var wallAudio = null, wallAudioBtn = null;
+  function playWallQuote(btn, slug, idx) {
+    try {
+      if (wallAudio) { try { wallAudio.pause(); } catch (e) {} }
+      if (wallAudioBtn) wallAudioBtn.classList.remove('speaking');
+      wallAudio = new Audio('/audio/wall-quotes/' + slug + '-' + idx + '.mp3' + QUOTE_AUDIO_V);
+      wallAudioBtn = btn;
+      btn.classList.add('speaking');
+      var done = function () { btn.classList.remove('speaking'); };
+      wallAudio.addEventListener('ended', done, { once: true });
+      wallAudio.addEventListener('error', done, { once: true });
+      var p = wallAudio.play(); /* tap is a user gesture: mobile-safe */
+      if (p && p.catch) p.catch(done);
+    } catch (e) { btn.classList.remove('speaking'); }
+  }
   var NAMES = [
     { name: 'ELIAS',        img: '/img/apparitions/elias.jpg' + IMG_V },
     { name: 'MARA',         img: '/img/apparitions/mara.jpg' + IMG_V },
@@ -243,6 +268,9 @@
           qb.style.animation = 'none';
           void qb.offsetWidth; /* restart the fade */
           qb.style.animation = '';
+          /* they speak aloud, in their own voice */
+          var slug = QUOTE_AUDIO[n.name];
+          if (slug) playWallQuote(b, slug, qi % quotes.length);
         }
       });
       wall.appendChild(b);

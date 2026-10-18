@@ -1,0 +1,38 @@
+<% /* Shared trailer modal: click-to-play YouTube embed in a dialog.
+     Usage: include this partial once per page, then add buttons with
+     class "trailer-btn", data-trailer="<youtubeId>" and data-title="...". */ %>
+<div id="trailer-modal" class="trailer-modal" hidden>
+  <div class="trailer-box" role="dialog" aria-modal="true" aria-label="Episode trailer">
+    <button type="button" class="trailer-close" aria-label="Close trailer">&times;</button>
+    <div class="trailer-title"></div>
+    <div class="trailer-frame">
+      <iframe title="Episode trailer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </div>
+</div>
+<script>
+(function () {
+  var modal = document.getElementById('trailer-modal');
+  if (!modal || modal.dataset.wired) return;
+  modal.dataset.wired = '1';
+  var frame = modal.querySelector('iframe');
+  var title = modal.querySelector('.trailer-title');
+  function close() {
+    frame.src = '';
+    modal.hidden = true;
+    document.body.style.overflow = '';
+  }
+  document.querySelectorAll('.trailer-btn').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      title.textContent = btn.getAttribute('data-title') + ' — trailer';
+      frame.src = 'https://www.youtube-nocookie.com/embed/' + btn.getAttribute('data-trailer') + '?autoplay=1&rel=0';
+      modal.hidden = false;
+      document.body.style.overflow = 'hidden';
+    });
+  });
+  modal.querySelector('.trailer-close').addEventListener('click', close);
+  modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.hidden) close(); });
+})();
+</script>
