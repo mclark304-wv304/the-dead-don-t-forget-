@@ -106,6 +106,27 @@ const latestArt = latest ? ((config.lockedArt && config.lockedArt[latest.n]) || 
 
 <section>
   <div class="wrap">
+    <h2>The Story <span>Continues</span></h2>
+    <p class="section-sub">Website exclusives — new episodes premiere here first.</p>
+    <div class="cards">
+      <% config.lockedEpisodes.forEach(ep => { %>
+      <div class="card">
+        <div class="thumb"><img src="<%= (config.lockedArt && config.lockedArt[ep.n]) || '/img/series-key-art.webp' %>" alt="Art for Episode <%= ep.n %>: <%= ep.title %>" loading="lazy"></div>
+        <div class="card-body">
+          <div class="ep-num">EPISODE <%= ep.n %></div>
+          <h3><%= ep.title %></h3>
+          <div class="runtime"><%= ep.runtime %></div>
+          <p><%= ep.synopsis %></p>
+          <a class="btn" href="/bonus">Unlock — $2.00</a>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
     <h2>Go <span>Deeper</span></h2>
     <p class="section-sub">Early premieres and official art — straight from the creator.</p>
     <% Object.entries(config.products).forEach(([id, p]) => { %>

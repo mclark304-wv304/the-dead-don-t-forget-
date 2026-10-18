@@ -196,7 +196,14 @@
     overlay.innerHTML = html;
     overlay.hidden = false;
     const btn = overlay.querySelector('button');
-    if (btn) btn.addEventListener('click', (e) => { e.stopPropagation(); overlayAction(); });
+    if (btn) {
+      // pointerup fires reliably on touch even if the finger shifts;
+      // click is kept as a fallback for mouse/keyboard. Guard against double-fire.
+      let fired = false;
+      const fire = (e) => { if (fired) return; fired = true; e.stopPropagation(); overlayAction(); };
+      btn.addEventListener('pointerup', fire);
+      btn.addEventListener('click', fire);
+    }
   }
   function hideOverlay() { overlay.hidden = true; overlay.innerHTML = ''; }
   let overlayAction = () => {};
