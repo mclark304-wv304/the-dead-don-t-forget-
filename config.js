@@ -536,14 +536,14 @@ module.exports = {
     "ep26-early": {
       name: "Episode 26 — Early Access",
       tagline: "Watch Episode 26 'The Archive Beneath the House' here — a website exclusive.",
-      priceCents: 299,
+      priceCents: 200,
       entitlement: "ep26-early",
       deliveryPath: "/watch/ep26"
     },
     "ep27-early": {
       name: "Episode 27 — Early Access",
       tagline: "Watch Episode 27 'The Secret Daniel Buried' here — a website exclusive.",
-      priceCents: 299,
+      priceCents: 200,
       entitlement: "ep27-early",
       deliveryPath: "/watch/ep27"
     },
