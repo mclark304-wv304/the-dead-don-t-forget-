@@ -9,7 +9,7 @@ module.exports = {
   creator: "Maya Clark",
 
   // Bump this when CSS/JS/audio change so phones fetch fresh files.
-  assetV: "20261018g",
+  assetV: "20261018h",
 
   // Base URL of the deployed site (used for PayPal return URLs).
   // Locally: http://localhost:3000 — in production set the BASE_URL env var.
@@ -337,7 +337,7 @@ module.exports = {
     {
       n: 25,
       title: "The Last Name",
-      runtime: "TBD",
+      runtime: "44:56",
       synopsis: "Daniel digs up the box at his childhood home. Mara's recording names Forty-Five — and the last name was buried under his own all along."
     }
   ],
