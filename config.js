@@ -308,7 +308,7 @@ module.exports = {
     {
       n: 20,
       title: "The Witness",
-      runtime: "TBD",
+      runtime: "24:19",
       synopsis: "Ruth Mercer has waited nineteen years to testify. The forty-three were never people — and behind the sealed door, someone is breathing."
     },
     {
