@@ -307,7 +307,7 @@ module.exports = {
     {
       n: 19,
       title: "The Woman in the Memories",
-      runtime: "TBD",
+      runtime: "31:06",
       synopsis: "Beneath the Vault: a too-clean corridor, forty-three reconstruction attempts, and a woman's voice warning Daniel not to open the forty-third record."
     },
     {
