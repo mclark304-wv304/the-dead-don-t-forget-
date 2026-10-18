@@ -1123,3 +1123,39 @@ canvas.embers {
 @media (prefers-reduced-motion: reduce) {
   .wall-name.speaking .wall-label::after { -webkit-animation: none; animation: none; }
 }
+
+/* ── THE THIRTEEN DOORS (game) ── */
+.t13-section { padding: 2.5rem 0 1rem; }
+.t13-hud { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin: 1rem 0 .5rem; flex-wrap: wrap; }
+.t13-door { font-size: 1.05rem; letter-spacing: .06em; color: var(--bone); }
+.t13-door #t13-door-num { color: var(--blood); font-weight: bold; letter-spacing: .14em; }
+.t13-quota { font-size: 1.05rem; color: var(--dim); font-variant-numeric: tabular-nums; }
+.t13-lives { display: flex; gap: .55rem; align-items: center; }
+.life { width: 15px; height: 23px; display: inline-block;
+  border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+  background: radial-gradient(circle at 50% 72%, #ffe9b0 0%, var(--ember) 45%, var(--blood-dark) 100%);
+  box-shadow: 0 0 14px rgba(226,88,34,.85), 0 0 3px rgba(255,220,150,.9); }
+.life.lost { background: #232327; box-shadow: none; opacity: .4; }
+.t13-dreadwrap { position: relative; height: 22px; background: #141316; border: 1px solid #2a2a30; border-radius: 11px; overflow: hidden; margin-bottom: .9rem; }
+.t13-dread { height: 100%; width: 0; border-radius: 10px;
+  background: linear-gradient(90deg, var(--blood-dark), var(--blood) 60%, var(--ember));
+  transition: width .25s ease; }
+.t13-dreadlabel { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-size: .68rem; letter-spacing: .5em; color: var(--bone); opacity: .75; pointer-events: none; text-indent: .5em; }
+.t13-boardwrap { position: relative; max-width: 640px; margin: 0 auto; border: 1px solid #2a2a30; border-radius: 10px; overflow: hidden; background: #060607; }
+#t13-board { display: block; width: 100%; touch-action: none; user-select: none; -webkit-user-select: none; cursor: crosshair; }
+.t13-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 1.25rem;
+  background: rgba(6,6,8,.78); text-align: center; }
+.t13-overlay[hidden] { display: none; }
+.t13-card { max-width: 26rem; }
+.t13-card h3 { font-size: 1.5rem; letter-spacing: .1em; color: var(--bone); margin-bottom: .8rem; line-height: 1.35; }
+.t13-card p { color: var(--dim); margin-bottom: .8rem; }
+.t13-card p b { color: var(--bone); }
+.t13-card .t13-rule { font-size: .95rem; }
+.t13-card .t13-bestline { font-size: .9rem; color: var(--dim); }
+.t13-card .btn-blood { margin-top: .4rem; font-size: 1.05rem; padding: .8rem 1.6rem; }
+.t13-score { text-align: center; color: var(--dim); margin-top: .7rem; }
+.t13-score strong { color: var(--bone); font-variant-numeric: tabular-nums; }
+@media (min-width: 720px) {
+  .t13-card h3 { font-size: 1.8rem; }
+}
