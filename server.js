@@ -12,6 +12,8 @@ const Database = require("better-sqlite3");
 const archiver = require("archiver");
 
 const config = require("./config");
+const turso = require("./turso");
+turso.init().catch(e => console.error("Turso init failed:", e.message));
 
 const app = express();
 const DATA_DIR = path.join(__dirname, "data");
@@ -293,6 +295,7 @@ app.use((req, res, next) => {
       const ip = req.ip || req.socket.remoteAddress || "unknown";
       const visitor_hash = crypto.createHash("sha256").update(TRAFFIC_SALT + day + ip).digest("hex").slice(0, 16);
       db.prepare("INSERT INTO pageviews (path, day, visitor_hash) VALUES (?, ?, ?)").run(req.path, day, visitor_hash);
+      turso.trackPageview(req.path, day, visitor_hash);
     } catch (e) { /* analytics must never break the site */ }
   }
   next();
@@ -969,13 +972,20 @@ app.get("/admin/soul-links", (req, res) => {
 });
 
 // ── Owner-only: GET /admin/traffic?token=<SOUL_STATS_TOKEN> ──
-app.get("/admin/traffic", (req, res) => {
+app.get("/admin/traffic", async (req, res) => {
   if (!soulStatsAuthorized(req)) {
     return res.status(404).render("error", {
       title: "Not found",
       message: "That page doesn't exist.",
       cta: "/"
     });
+  }
+  // Prefer Turso (persistent) when configured; fall back to local SQLite.
+  if (turso.enabled()) {
+    try {
+      const t = await turso.getTraffic();
+      if (t) return res.render("admin-traffic", { config, days: t.days, pages: t.pages, totals: t.totals });
+    } catch (e) { /* fall through to local */ }
   }
   const days = db.prepare(`
     SELECT day,
