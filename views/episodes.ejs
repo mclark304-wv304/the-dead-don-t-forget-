@@ -23,7 +23,7 @@
       <div class="cta-row">
         <a class="btn" href="/bonus">Continue the story — $2.00</a>
         <% if (config.trailers && config.trailers[4]) { %>
-        <button type="button" class="btn ghost trailer-btn" data-trailer="<%= config.trailers[4] %>" data-title="Episode 4: The Man That Wasn't There">&#9654; Watch the trailer</button>
+        <button type="button" class="btn ghost trailer-btn" data-trailer="<%= config.trailers[4] %>" data-title="Episode 4: The Man That Wasn't There">&#9654; Watch the preview</button>
         <% } %>
       </div>
     </div>
@@ -38,7 +38,7 @@
         <img src="<%= lockedArt %>?v=<%= config.assetV %>" alt="Episode <%= ep.n %>: <%= ep.title %> — locked" loading="lazy">
         <span class="locked-badge">LOCKED</span>
         <% if (config.trailers && config.trailers[ep.n]) { %>
-        <button type="button" class="trailer-btn" data-trailer="<%= config.trailers[ep.n] %>" data-title="Episode <%= ep.n %>: <%= ep.title %>">&#9654; Trailer</button>
+        <button type="button" class="trailer-btn" data-trailer="<%= config.trailers[ep.n] %>" data-title="Episode <%= ep.n %>: <%= ep.title %>">&#9654; Preview</button>
         <% } %>
       </div>
       <h3>Episode <%= ep.n %>: <%= ep.title %></h3>

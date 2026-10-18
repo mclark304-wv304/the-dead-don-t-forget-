@@ -9,7 +9,7 @@ module.exports = {
   creator: "Maya Clark",
 
   // Bump this when CSS/JS/audio change so phones fetch fresh files.
-  assetV: "20261018e",
+  assetV: "20261018f",
 
   // Base URL of the deployed site (used for PayPal return URLs).
   // Locally: http://localhost:3000 — in production set the BASE_URL env var.
@@ -170,11 +170,11 @@ module.exports = {
   // One public teaser Short per episode — tap a locked card to watch it
   // right there. Selling the episode instead of just sitting locked.
   trailers: {
-    4: 'n9hCmQ9vORs', 5: 'tM3UoG-yfUg', 6: '6mHq5FXSpjg',
-    7: 'Udge1d2-PpE', 8: 'zx6DolrZqVw', 9: 'p2ebo5kNmxk',
-    10: 'XipLeLgApHo', 11: 'XrSwavFMrFI', 12: 'Taf03Cf-rHU',
-    13: '8DCG8SBm_X4', 14: '8m2EdpfjW4Y', 15: 'jYq5Zg5cvGA',
-    16: 'cwakz4MxWtQ', 17: 'JC76p4cYhAw', 18: 'gl64W5jd-n4'
+    4: 'PcH5xkFvR2E', 5: 'F4g6VJnG5yI', 6: 'b8B6Xij8Qlc',
+    7: 'e8xLf-CPpmE', 8: '_Z-KhrYjUWQ', 9: 'Av44uLMNtuo',
+    10: 'C6j-pFsSxHE', 11: 'MmHMqvEO9yM', 12: 'QeEWmtPUGj8',
+    13: 'dpBUqfzSsYE', 14: 'oV0-tBmbSUM', 15: 's05AumpJ59w',
+    16: 'BxAeDNFyZXY', 17: 'gjIA1rxXuYs', 18: 'w_wvxEsionQ'
   },
 
   pocketFmUrl: "https://pocketfm.com/show/850e2acdfbf37afa82efe1af45a3d32ea6e188f2",
