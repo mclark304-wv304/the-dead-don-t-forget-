@@ -125,6 +125,11 @@ module.exports = {
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
   ep21VideoId: "",
 
+  // Episode 24 premiere: paste the YouTube video ID here when Ep24 is ready
+  // and it will appear on the early-access watch page automatically.
+  // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
+  ep24VideoId: "",
+
   pocketFmUrl: "https://pocketfm.com/show/850e2acdfbf37afa82efe1af45a3d32ea6e188f2",
 
   // ── Free episodes (YouTube stays free) ─────────────────────
@@ -264,6 +269,12 @@ module.exports = {
       title: "The Man Behind The Glass",
       runtime: "TBD",
       synopsis: "Nathan Cross has been waiting years for Daniel. Attempt Forty-Four was never a person — and Mara is alive."
+    },
+    {
+      n: 24,
+      title: "The Name Beneath The Names",
+      runtime: "TBD",
+      synopsis: "The names beneath the names are who remembered them. At the Vale house, Source 45 is counting — and something upstairs knows Daniel's name."
     }
   ],
 
@@ -412,6 +423,13 @@ module.exports = {
       priceCents: 299,
       entitlement: "ep21-early",
       deliveryPath: "/watch/ep21"
+    },
+    "ep24-early": {
+      name: "Episode 24 — Early Access",
+      tagline: "Watch Episode 24 'The Name Beneath The Names' here before it hits YouTube.",
+      priceCents: 299,
+      entitlement: "ep24-early",
+      deliveryPath: "/watch/ep24"
     },
     "poster-pack": {
       name: "Official Poster Pack",

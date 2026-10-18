@@ -1005,6 +1005,9 @@ app.get("/watch/ep20", requireEntitlement("ep20-early"), (req, res) => {
 app.get("/watch/ep21", requireEntitlement("ep21-early"), (req, res) => {
   res.render("watch-ep21", { config });
 });
+app.get("/watch/ep24", requireEntitlement("ep24-early"), (req, res) => {
+  res.render("watch-ep24", { config });
+});
 
 app.get("/download/posters", requireEntitlement("poster-pack"), (req, res) => {
   res.download(POSTER_ZIP, "the-dead-dont-forget-poster-pack.zip");
