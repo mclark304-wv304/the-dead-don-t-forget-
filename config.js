@@ -166,6 +166,11 @@ module.exports = {
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
   ep30VideoId: "",
 
+  // Episode 31 premiere: paste the YouTube video ID here when Ep31 is ready
+  // and it will appear on the early-access watch page automatically.
+  // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
+  ep31VideoId: "",
+
   // Series trailer for the homepage hero. Paste the UNLISTED YouTube video
   // ID here once the trailer is uploaded; the hero shows the trailer
   // facade only when this is set. (Upload: series-trailer-hero-16x9.mp4
@@ -200,7 +205,8 @@ module.exports = {
     27: '/img/ep27-the-secret-daniel-buried.webp',
     28: '/img/ep28-the-four-chair.webp',
     29: '/img/ep29-the-memory-that-was-witnessed.webp',
-    30: '/img/ep30-check-point-233.webp'
+    30: '/img/ep30-check-point-233.webp',
+    31: '/img/ep31-the-hand-that-kept-the-record.webp'
   },
 
   // One public teaser Short per episode — tap a locked card to watch it
@@ -400,6 +406,12 @@ module.exports = {
       title: "Check Point 233",
       runtime: "37:27",
       synopsis: "The Vault unlocks a door it hasn't verified. A woman's voice through the speaker: don't open it. Checkpoint 377 demands a choice — protect the source, or reveal her."
+    },
+    {
+      n: 31,
+      title: "The Hand That Kept The Record",
+      runtime: "39:26",
+      synopsis: "Eleven years of waiting. A woman's voice kept the record when no one else would: I waited because you asked me to. Record 47 holds the question Daniel finally asks."
     }
   ],
 
@@ -604,6 +616,13 @@ module.exports = {
       priceCents: 200,
       entitlement: "ep30-early",
       deliveryPath: "/watch/ep30"
+    },
+    "ep31-early": {
+      name: "Episode 31 — Early Access",
+      tagline: "Watch Episode 31 'The Hand That Kept The Record' here — a website exclusive.",
+      priceCents: 200,
+      entitlement: "ep31-early",
+      deliveryPath: "/watch/ep31"
     },
     "poster-pack": {
       name: "Official Poster Pack",
