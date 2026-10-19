@@ -156,6 +156,11 @@ module.exports = {
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
   ep28VideoId: "",
 
+  // Episode 30 premiere: paste the YouTube video ID here when Ep30 is ready
+  // and it will appear on the early-access watch page automatically.
+  // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
+  ep30VideoId: "",
+
   // Series trailer for the homepage hero. Paste the UNLISTED YouTube video
   // ID here once the trailer is uploaded; the hero shows the trailer
   // facade only when this is set. (Upload: series-trailer-hero-16x9.mp4
@@ -188,7 +193,8 @@ module.exports = {
     25: '/img/ep25-the-last-name.webp',
     26: '/img/ep26-the-archive-beneath-the-house.webp',
     27: '/img/ep27-the-secret-daniel-buried.webp',
-    28: '/img/ep28-the-four-chair.webp'
+    28: '/img/ep28-the-four-chair.webp',
+    30: '/img/ep30-check-point-233.webp'
   },
 
   // One public teaser Short per episode — tap a locked card to watch it
@@ -376,6 +382,12 @@ module.exports = {
       title: "The Four Chair",
       runtime: "42:56",
       synopsis: "Four chairs. Four functions — not four people. A woman's voice from the records says: you finally remembered the room. But you still haven't remembered me."
+    },
+    {
+      n: 30,
+      title: "Check Point 233",
+      runtime: "37:27",
+      synopsis: "The Vault unlocks a door it hasn't verified. A woman's voice through the speaker: don't open it. Checkpoint 377 demands a choice — protect the source, or reveal her."
     }
   ],
 
@@ -566,6 +578,13 @@ module.exports = {
       priceCents: 200,
       entitlement: "ep28-early",
       deliveryPath: "/watch/ep28"
+    },
+    "ep30-early": {
+      name: "Episode 30 — Early Access",
+      tagline: "Watch Episode 30 'Check Point 233' here — a website exclusive.",
+      priceCents: 200,
+      entitlement: "ep30-early",
+      deliveryPath: "/watch/ep30"
     },
     "poster-pack": {
       name: "Official Poster Pack",
