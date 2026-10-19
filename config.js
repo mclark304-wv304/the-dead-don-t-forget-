@@ -151,6 +151,11 @@ module.exports = {
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
   ep27VideoId: "",
 
+  // Episode 28 premiere: paste the YouTube video ID here when Ep28 is ready
+  // and it will appear on the early-access watch page automatically.
+  // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
+  ep28VideoId: "",
+
   // Series trailer for the homepage hero. Paste the UNLISTED YouTube video
   // ID here once the trailer is uploaded; the hero shows the trailer
   // facade only when this is set. (Upload: series-trailer-hero-16x9.mp4
@@ -182,7 +187,8 @@ module.exports = {
     24: '/img/ep24-the-name-beneath-the-names.webp',
     25: '/img/ep25-the-last-name.webp',
     26: '/img/ep26-the-archive-beneath-the-house.webp',
-    27: '/img/ep27-the-secret-daniel-buried.webp'
+    27: '/img/ep27-the-secret-daniel-buried.webp',
+    28: '/img/ep28-the-four-chair.webp'
   },
 
   // One public teaser Short per episode — tap a locked card to watch it
@@ -364,6 +370,12 @@ module.exports = {
       title: "The Secret Daniel Buried",
       runtime: "39:10",
       synopsis: "Forty-four doors. A Fibonacci trail of evidence. A voice with no verified source. Daniel finds proof he buried the secret himself — and chose to forget why."
+    },
+    {
+      n: 28,
+      title: "The Four Chair",
+      runtime: "42:56",
+      synopsis: "Four chairs. Four functions — not four people. A woman's voice from the records says: you finally remembered the room. But you still haven't remembered me."
     }
   ],
 
@@ -547,6 +559,13 @@ module.exports = {
       priceCents: 200,
       entitlement: "ep27-early",
       deliveryPath: "/watch/ep27"
+    },
+    "ep28-early": {
+      name: "Episode 28 — Early Access",
+      tagline: "Watch Episode 28 'The Four Chair' here — a website exclusive.",
+      priceCents: 200,
+      entitlement: "ep28-early",
+      deliveryPath: "/watch/ep28"
     },
     "poster-pack": {
       name: "Official Poster Pack",
