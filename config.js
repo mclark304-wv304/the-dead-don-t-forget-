@@ -156,6 +156,11 @@ module.exports = {
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
   ep28VideoId: "",
 
+  // Episode 29 premiere: paste the YouTube video ID here when Ep29 is ready
+  // and it will appear on the early-access watch page automatically.
+  // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
+  ep29VideoId: "",
+
   // Episode 30 premiere: paste the YouTube video ID here when Ep30 is ready
   // and it will appear on the early-access watch page automatically.
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
@@ -194,6 +199,7 @@ module.exports = {
     26: '/img/ep26-the-archive-beneath-the-house.webp',
     27: '/img/ep27-the-secret-daniel-buried.webp',
     28: '/img/ep28-the-four-chair.webp',
+    29: '/img/ep29-the-memory-that-was-witnessed.webp',
     30: '/img/ep30-check-point-233.webp'
   },
 
@@ -382,6 +388,12 @@ module.exports = {
       title: "The Four Chair",
       runtime: "42:56",
       synopsis: "Four chairs. Four functions — not four people. A woman's voice from the records says: you finally remembered the room. But you still haven't remembered me."
+    },
+    {
+      n: 29,
+      title: "The Memory That Was Witnessed",
+      runtime: "27:10",
+      synopsis: "The recording was made BEFORE the Vault existed. And Mara's voice is on it. Checkpoint 144 is reached — the roles are verified, but the source stays protected."
     },
     {
       n: 30,
@@ -578,6 +590,13 @@ module.exports = {
       priceCents: 200,
       entitlement: "ep28-early",
       deliveryPath: "/watch/ep28"
+    },
+    "ep29-early": {
+      name: "Episode 29 — Early Access",
+      tagline: "Watch Episode 29 'The Memory That Was Witnessed' here — a website exclusive.",
+      priceCents: 200,
+      entitlement: "ep29-early",
+      deliveryPath: "/watch/ep29"
     },
     "ep30-early": {
       name: "Episode 30 — Early Access",
