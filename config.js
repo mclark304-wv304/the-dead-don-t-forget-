@@ -74,7 +74,7 @@ module.exports = {
   // Episode 11 premiere: paste the YouTube video ID here when Ep11 is ready
   // and it will appear on the early-access watch page automatically.
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
-  ep11VideoId: "",
+  ep11VideoId: "6CX7Z0yFOlM",
 
   // Episode 12 premiere: paste the YouTube video ID here when Ep12 is ready
   // and it will appear on the early-access watch page automatically.
