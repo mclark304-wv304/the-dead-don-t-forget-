@@ -116,6 +116,11 @@ module.exports = {
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
   ep22VideoId: "",
 
+  // Episode 23 premiere: paste the YouTube video ID here when Ep23 is ready
+  // and it will appear on the early-access watch page automatically.
+  // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
+  ep23VideoId: "",
+
   // Episode 19 premiere: paste the YouTube video ID here when Ep19 is ready
   // and it will appear on the early-access watch page automatically.
   // Example: "dQw4w9WgXcQ"  (leave empty "" until then)
@@ -199,6 +204,7 @@ module.exports = {
     20: '/img/ep20-the-witness.webp',
     21: '/img/ep21-the-man-behind-the-glass.webp',
     22: '/img/ep22-the-city-was-breathing.webp',
+    23: '/img/ep23-thefortyfourthdoor.webp',
     24: '/img/ep24-the-name-beneath-the-names.webp',
     25: '/img/ep25-the-last-name.webp',
     26: '/img/ep26-the-archive-beneath-the-house.webp',
@@ -364,6 +370,12 @@ module.exports = {
       title: "The City Was Breathing",
       runtime: "34:43",
       synopsis: "An abandoned city that breathes. A figure wearing Daniel's face. The original Daniel is in the tower — and Mara's voice on the radio says don't go."
+    },
+    {
+      n: 23,
+      title: "The Forty-Fourth Door",
+      runtime: "37:19",
+      synopsis: "Beneath Mercer Tower: a forty-fourth door with no number, no handle, no keypad — and it knows Daniel's name. All of them. Subject 44 was never a person, and forty-four is not the end."
     },
     {
       n: 24,
@@ -567,6 +579,13 @@ module.exports = {
       priceCents: 200,
       entitlement: "ep22-early",
       deliveryPath: "/watch/ep22"
+    },
+    "ep23-early": {
+      name: "Episode 23 — Early Access",
+      tagline: "Watch Episode 23 'The Forty-Fourth Door' here — a website exclusive.",
+      priceCents: 200,
+      entitlement: "ep23-early",
+      deliveryPath: "/watch/ep23"
     },
     "ep24-early": {
       name: "Episode 24 — Early Access",

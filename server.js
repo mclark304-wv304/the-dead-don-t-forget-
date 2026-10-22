@@ -1079,6 +1079,9 @@ app.get("/watch/ep21", requireEntitlement("ep21-early"), (req, res) => {
 app.get("/watch/ep22", requireEntitlement("ep22-early"), (req, res) => {
   res.render("watch-ep22", { config });
 });
+app.get("/watch/ep23", requireEntitlement("ep23-early"), (req, res) => {
+  res.render("watch-ep23", { config });
+});
 app.get("/watch/ep24", requireEntitlement("ep24-early"), (req, res) => {
   res.render("watch-ep24", { config });
 });
